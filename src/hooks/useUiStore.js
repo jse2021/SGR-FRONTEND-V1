@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from "react-redux"
 import { onOpenDateModal, onCloseDateModal } from "../store";
 
 //manipulo el store
-export const useUiStore = ()=>{
+export const useUiStore = () => {
+    
     const dispatch = useDispatch();
-    const {isDateModalOpen} = useSelector(state=> state.ui);
+    const {isDateModalOpen} = useSelector(state => state.ui);
 
     //para abril el modal al seleccionar un evento
     const openDateModal =()=>{
@@ -24,7 +25,6 @@ export const useUiStore = ()=>{
         (isDateModalOpen)
             ? openDateModal()
             : closeDateModal();
-
     }
 
     return{
@@ -35,6 +35,6 @@ export const useUiStore = ()=>{
         //metodos
         openDateModal,
         closeDateModal,
-        toggleDateModal
+        toggleDateModal 
     }
 }

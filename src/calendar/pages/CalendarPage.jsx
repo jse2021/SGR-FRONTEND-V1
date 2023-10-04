@@ -1,16 +1,16 @@
 import { Calendar } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { Navbar, CalendarEvent, CalendarModal } from "../"
+import { Navbar, CalendarEvent, CalendarModal, FabAddNew, FabDelete } from "../"
 import { addHours } from 'date-fns'
 import { localizer, getMessagesES } from '../../helpers'
 import { useState } from 'react'
-import { useUiStore, useCalendarStore } from '../../hooks/useUiStore'
+import { useUiStore, useCalendarStore } from '../../hooks'
 
  
 export const CalendarPage = () => {
 
     const {openDateModal} = useUiStore();
-    const {events} = useCalendarStore();
+    const {events, SetActiveEvent} = useCalendarStore();
     const [lastView, setlastView] = useState(localStorage.getItem('lastView') || 'week')
 
     const eventStyleGetter = (event, start, end, isSelected) => {
@@ -24,7 +24,6 @@ export const CalendarPage = () => {
         return{
             style
         }
-    
       }
 
       const onDoubleClick = (event) => {
@@ -32,8 +31,9 @@ export const CalendarPage = () => {
 
       }
       const onSelect = (event)  => {
-
+        SetActiveEvent(event);
       }
+
       const onViewChanged =(event) => {
         localStorage.setItem('lastView', event)
 
@@ -63,6 +63,9 @@ export const CalendarPage = () => {
             />
 
             <CalendarModal />
+            <FabAddNew />
+            <FabDelete/>
+            
         </>
     )
 }

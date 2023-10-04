@@ -38,3 +38,27 @@
     outline: none;
     padding: 10px;
 }
+
+/* boton agregar*/
+.fab{
+    border-radius:  100%;
+    bottom: 25px;
+    font-size: 30px;
+    padding: 25px;
+    position: fixed;
+    right: 25px;
+}
+/*Boton eliminar*/
+.fab-danger{
+    border-radius:  100%;
+    bottom: 25px;
+    font-size: 22px;
+    width: 70px;
+    height: 70px;
+    left: 25px;
+    position: fixed;
+    position: fixed;
+    
+}
+
+

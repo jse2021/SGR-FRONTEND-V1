@@ -3,12 +3,13 @@ import { addHours, differenceInSeconds } from 'date-fns';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css'
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal'
 import DatePicker, {registerLocale} from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
 import { useUiStore } from '../../hooks/useUiStore';
+import { useCalendarStore } from '../../hooks';
 
 registerLocale('es',es);
 
@@ -29,12 +30,13 @@ const customStyles = {
 export const CalendarModal = () => {
 
     const {isDateModalOpen, closeDateModal} = useUiStore();
+    const {activeEvent, startSavingEvent} = useCalendarStore();
     const [formSubmitted, setFormSubmitted] = useState(false);
 
     // tomo los valores del formulario
     const [formValues, setFormValues] = useState({
-        title: 'Jose',
-        notes: 'Maldonado',
+        title: '',
+        notes: '',
         start: new Date(),
         end: addHours(new Date(),2)
     });
@@ -48,6 +50,14 @@ export const CalendarModal = () => {
         :'is-invalid'
         
     }, [formValues.title, formSubmitted])
+
+    useEffect(() => {
+        if (activeEvent !== null) {
+            setFormValues({...activeEvent})
+        }
+    }, [activeEvent]);
+
+
 
     const onInputChanged = ({target}) =>{
         // solo actualizo el valor que entre en el parametro
@@ -69,7 +79,8 @@ export const CalendarModal = () => {
     const onCloseModal=()=>{
         closeDateModal();
     }
-    const onSubmit =(event)=>{
+    
+    const onSubmit = async(event)=>{
         event.preventDefault();//evita recargar la pagina
         setFormSubmitted(true);
 
@@ -82,6 +93,10 @@ export const CalendarModal = () => {
 
         if (formValues.title.length <= 0) return;
         console.log(formValues)
+
+        await startSavingEvent(formValues);
+        closeDateModal();
+        setFormSubmitted(false);
         
     }
   return (
