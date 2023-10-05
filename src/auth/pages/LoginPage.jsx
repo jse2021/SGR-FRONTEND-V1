@@ -3,7 +3,7 @@ import { useForm } from '../../hooks/useForm';
 import './LoginPage.css';
 
 const loginFormFields = {
-    loginEmail : "",
+    loginUser : "",
     loginPassword: "",
 }
 
@@ -17,7 +17,7 @@ const registerFormFields = {
 export const LoginPage = () => {
     const{startLogin} = useAuthStore();
 
-    const {loginEmail, loginPassword, onInputChange: onLoginInputChange}=useForm(loginFormFields);
+    const {loginUser, loginPassword, onInputChange: onLoginInputChange}=useForm(loginFormFields);
     const {registerName, registerEmail, registerPassword, registerPassword2, onInputChange: onRegisterInputChange} = useForm(registerFormFields);
 
     const registerSubmit =(event) => {
@@ -27,7 +27,7 @@ export const LoginPage = () => {
 
     const loginSubmit = (event)=> {
         event.preventDefault();
-        startLogin({email: loginEmail, password:loginPassword})
+        startLogin({user: loginUser, password:loginPassword})
     }
 
     return (
@@ -40,9 +40,9 @@ export const LoginPage = () => {
                             <input 
                                 type="text"
                                 className="form-control"
-                                placeholder="Correo"
-                                name= "loginEmail"
-                                value= {loginEmail}
+                                placeholder="Usuario"
+                                name= "loginUser"
+                                value= {loginUser}
                                 onChange={onLoginInputChange}
                             />
                         </div>

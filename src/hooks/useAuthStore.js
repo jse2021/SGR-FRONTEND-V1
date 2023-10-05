@@ -3,22 +3,21 @@ import {calendarApi} from '../api'
 
 export const useAuthStore =() =>{
 
-    const{status, user, errorMessage} = useSelector(state => state.auth || 'pending');    
+    const{status, user, errorMessage} = useSelector(state => state.auth || 'checking');    
     const dispatch = useDispatch();
 
-    const startLogin = async ({email, password}) => {
-        console.log({email, password});
+    const startLogin = async ({user, password}) => {
+        console.log({user, password});
 
         try {
             
-            const resp = await calendarApi.post('/auth',{email,password});
+            const resp = calendarApi.post('/auth',{user, password})
+            console.log({resp})
+
         } catch (error) {
-            console.log({error})
-            
+            console.log({error})    
         }
-    }
-'pending'
-   
+    }   
 
     return{
         //propiedades
@@ -30,10 +29,3 @@ export const useAuthStore =() =>{
         startLogin
     }
 }
-
-// const state = useSelector((state) => state.auth);
-    // if (!state) {
-    //   return {};
-    // }
-  
-    // const { status, user, errorMessage } = state;
