@@ -3,21 +3,21 @@ import {calendarApi} from '../api'
 
 export const useAuthStore =() =>{
 
-    const{status, user, errorMessage} = useSelector(state => state.auth);    
+    const{status, user, errorMessage} = useSelector(state => state.auth || 'pending');    
     const dispatch = useDispatch();
 
     const startLogin = async ({email, password}) => {
         console.log({email, password});
 
-        // try {
+        try {
             
-        //     const resp = await calendarApi.post('/auth',{email,password});
-        // } catch (error) {
-        //     console.log({error})
+            const resp = await calendarApi.post('/auth',{email,password});
+        } catch (error) {
+            console.log({error})
             
-        // }
+        }
     }
-
+'pending'
    
 
     return{
