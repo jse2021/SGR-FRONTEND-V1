@@ -1,6 +1,15 @@
 import { useAuthStore } from "../../hooks/useAuthStore"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
+import { MenuItemUser } from "./MenuItemUser";
+import { MenuItemReportes } from "./MenuItemReportes";
+import { MenuItemConfig } from "./MenuItemConfig";
+import { MenuItemCancha } from "./MenuItemCancha";
+import { MenuItemCliente } from "./MenuItemCliente";
+import { MenuItemCalendario } from "./MenuItemCalendario";
+import { MenuItemReserva } from "./MenuItemReserva";
+import './styles.css';
+
 
 export const Navbar = () => {
 
@@ -8,7 +17,7 @@ export const Navbar = () => {
 
   return (
     <>
-    
+   
     <div className="navbar navbar-dark bg-dark mb-4 px-4">
         <span className="navbar-brand">
             <i className="fas fa-calendar-alt"></i>
@@ -16,32 +25,14 @@ export const Navbar = () => {
             { user.user }
             
         </span>
-        <ul className="navbar-nav">
-          <li className="nav-item dropdown">
-            <a
-              className="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdownMenuLink"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Dropdown
-            </a>
-            <ul
-              className="dropdown-menu dropdown-menu-end"
-              aria-labelledby="navbarDropdownMenuLink"
-            >
-              <li>
-                <a className="dropdown-item" href="#">Item 1</a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">Item 2</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-  
+          <MenuItemCalendario />
+          <MenuItemReserva />
+          <MenuItemCliente />   
+          <MenuItemCancha />   
+          <MenuItemUser />       
+          <MenuItemReportes />
+          <MenuItemConfig />
+        
         <button 
           className="btn btn-outline-danger"
           onClick={ startLogout }
@@ -51,6 +42,8 @@ export const Navbar = () => {
             <span>Salir</span>
         </button>
     </div>
+    
+ 
     
     </>
     
