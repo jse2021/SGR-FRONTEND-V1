@@ -8,10 +8,10 @@ export const MenuItemReportes = () => {
       <li className="nav-item dropdown">
         <button className="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Reportes        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Estado de Pagos de Reserva</a></li>
-          <li><a class="dropdown-item" href="#">Recaudación</a></li>
-          <li><a class="dropdown-item" href="#">Formas de Pago</a></li>
+        <ul className="dropdown-menu">
+          <li><a className="dropdown-item" href="#">Estado de Pagos de Reserva</a></li>
+          <li><a className="dropdown-item" href="#">Recaudación</a></li>
+          <li><a className="dropdown-item" href="#">Formas de Pago</a></li>
         </ul>
       </li>
     </>

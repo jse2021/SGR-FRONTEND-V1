@@ -8,9 +8,9 @@ export const MenuItemCancha = () => {
       <li className="nav-item dropdown">
         <button className="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Gestión Cancha        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Alta de Cancha</a></li>
-          <li><a class="dropdown-item" href="#">Consultar Cancha</a></li>
+        <ul className="dropdown-menu">
+          <li><a className="dropdown-item" href="#">Alta de Cancha</a></li>
+          <li><a className="dropdown-item" href="#">Consultar Cancha</a></li>
         </ul>
       </li>
     </>

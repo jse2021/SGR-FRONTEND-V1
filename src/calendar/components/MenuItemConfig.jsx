@@ -8,9 +8,9 @@ export const MenuItemConfig = () => {
       <li className="nav-item dropdown">
         <button className="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Configuración        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Precio de la Cancha</a></li>
-          <li><a class="dropdown-item" href="#">Precio de la Seña</a></li>
+        <ul className="dropdown-menu">
+          <li><a className="dropdown-item" href="#">Precio de la Cancha</a></li>
+          <li><a className="dropdown-item" href="#">Precio de la Seña</a></li>
         </ul>
       </li>
     </>
