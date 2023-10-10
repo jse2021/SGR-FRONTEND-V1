@@ -5,8 +5,8 @@ export const MenuItemConfig = () => {
 
    return (
     <>
-      <li class="nav-item dropdown">
-        <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      <li className="nav-item dropdown">
+        <button className="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Configuración        </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">Precio de la Cancha</a></li>

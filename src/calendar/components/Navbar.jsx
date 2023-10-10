@@ -43,8 +43,6 @@ export const Navbar = () => {
         </button>
     </div>
     
- 
-    
     </>
     
   )

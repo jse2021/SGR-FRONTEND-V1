@@ -16,4 +16,5 @@ export * from './components/MenuItemCancha';
 export * from './components/MenuItemCliente';
 export * from './components/MenuItemReserva';
 export * from './components/MenuItemCalendario';
-export * from './components/usuario/altaUsuario'
+export * from './components/altaUsuario'
+export * from './components/consultarUsuario'
