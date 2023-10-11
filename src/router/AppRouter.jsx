@@ -2,10 +2,8 @@ import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { LoginPage } from '../auth';
-import { CalendarPage } from '../calendar';
+import { CalendarPage,AltaUsuario, ConsultarUsuario } from '../calendar';
 import { useAuthStore } from '../hooks';
-import {altaUsuario} from '../calendar/components/altaUsuario'
-
 
 export const AppRouter = () => {
 
@@ -38,7 +36,9 @@ export const AppRouter = () => {
                     : (
                         <>
                             <Route path="/" element={ <CalendarPage /> } />
-                            <Route path="/altaUsuario" element={<altaUsuario/>} />
+                            <Route path="/pages/CalendarPage" element={<CalendarPage />} />
+                            <Route path="/AltaUsuario" element = {<AltaUsuario />} />
+                            <Route path="/ConsultarUsuario" element = {<ConsultarUsuario />} />
                             <Route path="/*" element={ <Navigate to="/" /> } />
                         </>
                     )

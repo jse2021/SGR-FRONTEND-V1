@@ -14,6 +14,5 @@ export const MenuItemConfig = () => {
         </ul>
       </li>
     </>
-    
   )
 }

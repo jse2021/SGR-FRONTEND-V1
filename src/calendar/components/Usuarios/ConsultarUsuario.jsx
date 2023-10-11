@@ -1,8 +1,9 @@
 import React from 'react'
-
-export const consultarUsuario = () => {
+import { Navbar } from '../Navbar';
+export const ConsultarUsuario = () => {
   return (
     <>
+    <Navbar />
     <div className="container">
       <h3>Consultar usuario</h3>
 
@@ -10,4 +11,4 @@ export const consultarUsuario = () => {
     </>
   )
 }
-export default consultarUsuario;
+export default ConsultarUsuario;

@@ -11,6 +11,7 @@ import { MenuItemReserva } from "./MenuItemReserva";
 import './styles.css';
 
 
+
 export const Navbar = () => {
 
   const { startLogout, user } = useAuthStore();
@@ -25,6 +26,9 @@ export const Navbar = () => {
             { user.user }
             
         </span>
+        
+
+
           <MenuItemCalendario />
           <MenuItemReserva />
           <MenuItemCliente />   

@@ -1,8 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import './styles.css';
-import  {altaUsuario}  from "./altaUsuario";
-import {BrowserRouter ,Route, Routes, NavLink, Outlet} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 
 export const MenuItemUser = ( ) =>{
@@ -13,8 +12,8 @@ export const MenuItemUser = ( ) =>{
              Gestión Usuarios
            </button>
            <ul className="dropdown-menu">
-           <li><NavLink className="dropdown-item" to="/altaUsuario">Alta de Usuario</NavLink></li>
-           <li><NavLink className="dropdown-item" to="/consultarUsuario">Consultar Usuario</NavLink></li>
+              <li><Link className="dropdown-item" to="/AltaUsuario">Alta de Usuario</Link></li>
+              <li><Link className="dropdown-item" to="/ConsultarUsuario">Consultar Usuario</Link></li>
            </ul>
          </li>
     </>
