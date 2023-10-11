@@ -13,13 +13,13 @@ export const MenuItemUser = () => {
             Gestión Usuarios
           </button>
           <ul className="dropdown-menu">
-          <li><NavLink className="dropdown-item" to="/altaUsuario">Alta de Usuario</NavLink></li>
+          <li><NavLink className="dropdown-item" to="/components/altaUsuario">Alta de Usuario</NavLink></li>
           <li><NavLink className="dropdown-item" to="/consultarUsuario">Consultar Usuario</NavLink></li>
           </ul>
         </li>
       
       <Routes>
-        <Route path="/altaUsuario" element={ <altaUsuario />} ></Route>
+        <Route path="/components/altaUsuario" element={ <altaUsuario />} ></Route>
         <Route path="/consultarUsuario" element={ <consultarUsuario />} ></Route>
       </Routes>
    </>
