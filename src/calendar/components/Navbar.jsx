@@ -27,8 +27,6 @@ export const Navbar = () => {
             
         </span>
         
-
-
           <MenuItemCalendario />
           <MenuItemReserva />
           <MenuItemCliente />   

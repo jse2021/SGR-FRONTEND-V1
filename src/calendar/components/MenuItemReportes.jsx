@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import './styles.css';
+import { Link } from "react-router-dom";
 export const MenuItemReportes = () => {
 
    return (
@@ -9,9 +10,9 @@ export const MenuItemReportes = () => {
         <button className="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Reportes        </button>
         <ul className="dropdown-menu">
-          <li><a className="dropdown-item" href="#">Estado de Pagos de Reserva</a></li>
-          <li><a className="dropdown-item" href="#">Recaudación</a></li>
-          <li><a className="dropdown-item" href="#">Formas de Pago</a></li>
+        <li><Link className="dropdown-item" to="/FormasPago">Formas de Pago</Link></li>
+          <li><Link className="dropdown-item" to="/PagosDeReserva">Estado de Pagos de Reserva</Link></li>
+          <li><Link className="dropdown-item" to="/Recaudacion">Recaudación</Link></li>
         </ul>
       </li>
     </>
