@@ -17,12 +17,6 @@ export const MenuItemUser = ( ) =>{
            <li><NavLink className="dropdown-item" to="/consultarUsuario">Consultar Usuario</NavLink></li>
            </ul>
          </li>
-       
-       <Routes>
-       <Route path="/altaUsuario">
-          <Route render={() => <altaUsuario />} />
-        </Route>
-       </Routes>
     </>
     )
 }
