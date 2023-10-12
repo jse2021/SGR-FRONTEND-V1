@@ -1,5 +1,5 @@
 
-/* ALTA DE USUARIO */
+/* ALTA DE CLIENTE */
 .login-form-2{
     border-radius: 15px;
     box-shadow: 0px 0px 40px #848484;
@@ -33,7 +33,7 @@ input{
     margin-top: 2%;
 }
 
-/* CONSULTAR USUARIO */
+/* CONSULTAR CLIENTE */
 .login-form-3{
     border-radius: 15px;
     box-shadow: 0px 0px 40px #848484;
@@ -46,4 +46,3 @@ input{
     width: 50%;
     margin-left: 25%;
 }
-

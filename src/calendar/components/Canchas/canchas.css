@@ -32,3 +32,8 @@
 input{
     margin-top: 2%;
 }
+
+#btn-consultar{
+    width: 50%;
+    margin-left: 25%;
+}

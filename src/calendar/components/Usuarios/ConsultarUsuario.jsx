@@ -5,21 +5,22 @@ export const ConsultarUsuario = () => {
   return (
     <>
     <Navbar />
-    <h1 className='display-5'>Consultar Clientes</h1>
+    <h1 className='display-5'>Consultar Usuarios</h1>
     <div className="col-md-8 login-form-3">        
       <form>
           <div className="form-group mb-2">
-              <input
+              <input 
+                  id='btn-consultar'
                   type="text"
                   className="form-control"
-                  placeholder="Ingrese Cliente"
+                  placeholder="Ingrese Usuario"
                   name="searchText"
                   autoComplete='off'
                   // value={ registerName }
                   // onChange={ onRegisterInputChange }
               />
           </div>
-          <table class="table table-hover">
+          <table class="table table-hover table-responsive">
             <thead>
               <tr>
                 <th scope="col">Nombre</th>

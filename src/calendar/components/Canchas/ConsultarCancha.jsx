@@ -11,6 +11,7 @@ export const ConsultarCancha = () => {
       <form>
           <div className="form-group mb-2">
               <input
+                  id='btn-consultar'
                   type="text"
                   className="form-control"
                   placeholder="Ingrese Cancha"
