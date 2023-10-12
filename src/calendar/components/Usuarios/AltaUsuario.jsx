@@ -25,7 +25,7 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
   return (
     <>
     <Navbar />
-    <h1 className='display-5'>Gestión Cliente</h1>
+    <h1 className='display-5'>Gestión Usuarios</h1>
     <div className="col-md-6 login-form-2">
         
                     <form onSubmit={ registerSubmit }>
@@ -41,9 +41,19 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
                         </div>
                         <div className="form-group mb-2">
                             <input
-                                type="email"
+                                type="text"
                                 className="form-control"
-                                placeholder="Correo"
+                                placeholder="Apellido"
+                                name="registerName"
+                                value={ registerName }
+                                onChange={ onRegisterInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Celular"
                                 name="registerEmail"
                                 value={ registerEmail }
                                 onChange={ onRegisterInputChange }
@@ -51,26 +61,41 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
                         </div>
                         <div className="form-group mb-2">
                             <input
+                                type="Email"
+                                className="form-control"
+                                placeholder="Email"
+                                name="registerEmail"
+                                value={ registerEmail }
+                                onChange={ onRegisterInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Usuario"
+                                name="registerName"
+                                value={ registerName }
+                                onChange={ onRegisterInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
                                 type="password"
                                 className="form-control"
-                                placeholder="Contraseña" 
+                                placeholder="Clave" 
                                 name="registerPassword"
                                 value={ registerPassword }
                                 onChange={ onRegisterInputChange }
                             />
                         </div>
-
                         <div className="form-group mb-2">
-                            <input
-                                type="password"
-                                className="form-control"
-                                placeholder="Repita la contraseña" 
-                                name="registerPassword2"
-                                value={ registerPassword2 }
-                                onChange={ onRegisterInputChange }
-                            />
+                            <select class="form-select user" >
+                                <option selected>Tipo de Usuario</option>
+                                <option value="1">Administrador</option>
+                                <option value="2">Estandar</option>
+                            </select>
                         </div>
-
                         <div className="d-grid gap-2">
                             <input 
                                 type="submit" 
