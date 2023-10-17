@@ -29,9 +29,11 @@
     background-color: #333;
     color: #fcf9f9;
 }
-input{
+input.form-control{
     margin-top: 2%;
+    margin-left: 1%;
 }
+
 
 #btn-consultar{
     width: 50%;

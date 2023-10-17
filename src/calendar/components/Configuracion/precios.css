@@ -1,3 +1,9 @@
 .display-6{
     margin-left: 35%;
 }
+.form-control, .form-select{
+    margin-left: 55%;
+}
+.form-control.montoCancha{
+    margin-left: 55%;
+}

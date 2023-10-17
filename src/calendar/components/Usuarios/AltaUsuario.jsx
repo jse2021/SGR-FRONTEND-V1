@@ -1,41 +1,53 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Navbar } from '../Navbar';
 import Swal from 'sweetalert2';
 import { useAuthStore, useForm } from '../../../hooks';
 import './usuarios.css';
 
-export const AltaUsuario = () => {
-  const registerFormFields = {
-    registerName:      '',
-    registerEmail:     '',
-    registerPassword:  '',
-    registerPassword2: '',
+const registrarUsuario = {
+    registerNombre:      '',
+    registerApellido:     '',
+    registerCelular:  '',
+    registerUsuario: '',
+    registerTipoUsuario: '',
+    registerEmail:'',
+    registerPassword: '',
 }
-const {startRegister} = useAuthStore();
-const { registerEmail, registerName, registerPassword, registerPassword2, onInputChange:onRegisterInputChange } = useForm( registerFormFields );
-  const registerSubmit = ( event ) => {
-    event.preventDefault();
-    if ( registerPassword !== registerPassword2 ) {
-        Swal.fire('Error en registro', 'Contraseñas no son iguales', 'error');
-        return;
-    }
 
-    startRegister({ name: registerName, email: registerEmail, password: registerPassword });
+
+export const AltaUsuario = () => {
+
+const {startRegister, errorMessage} = useAuthStore();
+
+const { registerNombre, registerApellido, registerCelular, registerUsuario, registerPassword, registerTipoUsuario, registerEmail,
+    onInputChange:onRegisterInputChange, formState } = useForm( registrarUsuario );
+    
+const registerSubmit = ( event ) => {
+    event.preventDefault();
+    startRegister({ nombre: registerNombre, apellido: registerApellido, celular:registerCelular, user: registerUsuario, tipo_usuario: registerTipoUsuario,
+         email: registerEmail, password: registerPassword });
 }
+
+useEffect(() => {
+    if ( errorMessage !== undefined ) {
+      Swal.fire('Error en el registro', errorMessage, 'error');
+    }    
+  }, [errorMessage])
+
   return (
     <>
     <Navbar />
     <h1 className='display-5'>Gestión Usuarios</h1>
     <div className="col-md-6 login-form-2">
         
-                    <form onSubmit={ registerSubmit }>
+                    <form  onSubmit={registerSubmit}>
                         <div className="form-group mb-2">
                             <input
                                 type="text"
                                 className="form-control"
                                 placeholder="Nombre"
-                                name="registerName"
-                                value={ registerName }
+                                name="registerNombre"
+                                value={ registerNombre }
                                 onChange={ onRegisterInputChange }
                             />
                         </div>
@@ -44,8 +56,8 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
                                 type="text"
                                 className="form-control"
                                 placeholder="Apellido"
-                                name="registerName"
-                                value={ registerName }
+                                name="registerApellido"
+                                value={ registerApellido }
                                 onChange={ onRegisterInputChange }
                             />
                         </div>
@@ -54,14 +66,14 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
                                 type="number"
                                 className="form-control"
                                 placeholder="Celular"
-                                name="registerEmail"
-                                value={ registerEmail }
+                                name="registerCelular"
+                                value={ registerCelular }
                                 onChange={ onRegisterInputChange }
                             />
                         </div>
                         <div className="form-group mb-2">
                             <input
-                                type="Email"
+                                type="email"
                                 className="form-control"
                                 placeholder="Email"
                                 name="registerEmail"
@@ -74,8 +86,8 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
                                 type="text"
                                 className="form-control"
                                 placeholder="Usuario"
-                                name="registerName"
-                                value={ registerName }
+                                name="registerUsuario"
+                                value={ registerUsuario }
                                 onChange={ onRegisterInputChange }
                             />
                         </div>
@@ -83,17 +95,23 @@ const { registerEmail, registerName, registerPassword, registerPassword2, onInpu
                             <input
                                 type="password"
                                 className="form-control"
-                                placeholder="Clave" 
+                                placeholder="Clave"
                                 name="registerPassword"
                                 value={ registerPassword }
                                 onChange={ onRegisterInputChange }
                             />
                         </div>
                         <div className="form-group mb-2">
-                            <select class="form-select user" >
-                                <option selected>Tipo de Usuario</option>
-                                <option value="1">Administrador</option>
-                                <option value="2">Estandar</option>
+                            <select className="form-select user" 
+                                // type="text"
+                                placeholder="tipo usuario"
+                                name="registerTipoUsuario"
+                                value={ registerTipoUsuario }
+                                onChange={ onRegisterInputChange }
+                            >
+                                <option selected></option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Estandar">Estandar</option>
                             </select>
                         </div>
                         <div className="d-grid gap-2">

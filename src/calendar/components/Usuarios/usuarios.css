@@ -32,7 +32,10 @@
 input{
     margin-top: 2%;
 }
-
+.form-select.user{
+    margin-left: 1%;
+    margin-top: 2%;
+}
 /* CONSULTAR USUARIO */
 .login-form-3{
     border-radius: 15px;

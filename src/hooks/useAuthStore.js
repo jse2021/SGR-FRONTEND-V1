@@ -26,16 +26,17 @@ export const useAuthStore = () => {
         }
     }
 
-    const startRegister = async({ email, password, name }) => {
+    const startRegister = async({ nombre, apellido, celular, user, tipo_usuario, email, password}) => {
         dispatch( onChecking() );
         try {
-            const { data } = await calendarApi.post('/auth/new',{ email, password, name });
+            const { data } = await calendarApi.post('/auth/new',{ nombre, apellido, celular, user, tipo_usuario, email, password});
             localStorage.setItem('token', data.token );
-            localStorage.setItem('token-init-date', new Date().getTime() );
-            dispatch( onLogin({ name: data.name, uid: data.uid }) );
+            localStorage.setItem('token-init-date', new Date().getTime() ); 
+            dispatch( onLogin({ user: data.user}) );
+            
             
         } catch (error) {
-            dispatch( onLogout( error.response.data?.msg || '--' ) );
+            dispatch( onLogout( error.response.data?.msg || 'xx' ) );
             setTimeout(() => {
                 dispatch( clearErrorMessage() );
             }, 10);
