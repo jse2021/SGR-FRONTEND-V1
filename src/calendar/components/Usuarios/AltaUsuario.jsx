@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Navbar } from '../Navbar';
 import Swal from 'sweetalert2';
 import { useAuthStore, useForm } from '../../../hooks';
@@ -20,19 +20,20 @@ export const AltaUsuario = () => {
 const {startRegister, errorMessage} = useAuthStore();
 
 const { registerNombre, registerApellido, registerCelular, registerUsuario, registerPassword, registerTipoUsuario, registerEmail,
-    onInputChange:onRegisterInputChange, formState } = useForm( registrarUsuario );
+    onInputChange:onRegisterInputChange } = useForm( registrarUsuario );
     
 const registerSubmit = ( event ) => {
     event.preventDefault();
+
     startRegister({ nombre: registerNombre, apellido: registerApellido, celular:registerCelular, user: registerUsuario, tipo_usuario: registerTipoUsuario,
          email: registerEmail, password: registerPassword });
 }
 
 useEffect(() => {
-    if ( errorMessage !== undefined ) {
-      Swal.fire('Error en el registro', errorMessage, 'error');
-    }    
-  }, [errorMessage])
+    if (errorMessage !== undefined)  {
+        Swal.fire('Error en el registro', errorMessage, 'error');
+    }
+}, [errorMessage]);
 
   return (
     <>
@@ -117,7 +118,7 @@ useEffect(() => {
                         <div className="d-grid gap-2">
                             <input 
                                 type="submit" 
-                                className="btnSubmit" 
+                                className="btnSubmitUsuario" 
                                 value="Guardar" />
                         </div>
                     </form>

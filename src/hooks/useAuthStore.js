@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { calendarApi } from '../api';
 import { clearErrorMessage, onChecking, onLogin, onLogout } from '../store';
+import { useState } from 'react';
+
 
 
 export const useAuthStore = () => {
@@ -15,7 +17,7 @@ export const useAuthStore = () => {
             console.log({data})
             localStorage.setItem('token', data.token );
             localStorage.setItem('token-init-date', new Date().getTime() );
-            dispatch( onLogin({ user: data.user}) );
+            dispatch( onLogin({ user: data.user, id: data.token}) );
             
         } catch (error) {
             console.log({error})
@@ -32,11 +34,11 @@ export const useAuthStore = () => {
             const { data } = await calendarApi.post('/auth/new',{ nombre, apellido, celular, user, tipo_usuario, email, password});
             localStorage.setItem('token', data.token );
             localStorage.setItem('token-init-date', new Date().getTime() ); 
-            dispatch( onLogin({ user: data.user}) );
-            
+            dispatch( onLogin({ user: data.user, id: data.token}) );
             
         } catch (error) {
-            dispatch( onLogout( error.response.data?.msg || 'xx' ) );
+            console.log({error})
+            dispatch(onLogout(error.response.data?.msg || 'Error al registrarse'))
             setTimeout(() => {
                 dispatch( clearErrorMessage() );
             }, 10);
@@ -52,7 +54,7 @@ export const useAuthStore = () => {
             const { data } = await calendarApi.get('auth/renew');
             localStorage.setItem('token', data.token );
             localStorage.setItem('token-init-date', new Date().getTime() );
-            dispatch( onLogin({ name: data.name, uid: data.uid }) );
+            dispatch( onLogin({ user: data.user, id: data.token }) );
         } catch (error) {
             localStorage.clear();
             dispatch( onLogout() );
