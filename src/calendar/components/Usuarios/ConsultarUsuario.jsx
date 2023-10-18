@@ -1,7 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navbar } from '../Navbar';
+import TablaUsuarios from './TablaUsuarios';
+import { getUsuarioByApellido } from './getUsuarioByApellido';
+import { useLocation, useNavigate } from 'react-router-dom';
+import queryString from 'query-string'
+import { useForm } from '../../../hooks';
 
+
+/**
+ * 1 - SEPARAR LA TABLA EN OTRO COMPONENTE
+ * 2- INCORPORAR EL COMPONENTE AL CONSULTAR USUARIO
+ * 3- DISEÑAR EL GetUsuarioByApellido
+ * 4- LLAMARLO AL CONSULTAR USUARIO
+ */
 export const ConsultarUsuario = () => {
+  
+    const {q = ''} = queryString.parse(location.search);
+
+    const {searchText,onInputChange} = useForm({
+      searchText:q
+    });       
+    
+    const {mostrarUsuarios} = getUsuarioByApellido();
+    
+    mostrarUsuarios();  
+      
+    useEffect(()=>{    
+      
+        console.log(searchText);
+      },[searchText])
+
   return (
     <>
     <Navbar />
@@ -16,34 +44,13 @@ export const ConsultarUsuario = () => {
                   placeholder="Ingrese Usuario"
                   name="searchText"
                   autoComplete='off'
-                  // value={ registerName }
-                  // onChange={ onRegisterInputChange }
+                  value={searchText}
+                  onChange={onInputChange}
               />
           </div>
-          <table class="table table-hover table-responsive">
-            <thead>
-              <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Apellido</th>
-                <th scope="col">Celular</th>
-                <th scope="col">Email</th>
-                <th scope="col">Usuario</th>
-                <th scope="col">T.Usuario</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Ariel</td>
-                <td>Mendez</td>
-                <td>2964473552</td>
-                <td>maldonadojose201422@gmail.com</td>
-                <td>jose2022</td>
-                <td>Estandar</td>
-                <td><a class="display-8" href="#">Eliminar</a></td>
-                <td><a class="display-8" href="#">Modificar</a></td>
-              </tr>
-            </tbody>
-          </table>
+          <hr />
+          <TablaUsuarios/>
+
       </form>
     </div>
     </>

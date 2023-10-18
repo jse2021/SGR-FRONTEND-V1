@@ -96,6 +96,9 @@ const { registerNombre, registerApellido, registerCelular, registerUsuario, regi
 
         startRegister({ nombre: registerNombre, apellido: registerApellido, celular:registerCelular, user: registerUsuario, tipo_usuario: registerTipoUsuario,
             email: registerEmail, password: registerPassword });
+
+            Swal.fire('Alta de usuario', "Cliente registrado" , 'success');
+
     }
 
   return (

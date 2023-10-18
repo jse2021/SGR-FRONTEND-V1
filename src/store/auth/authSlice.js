@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const authSlice = createSlice({
     name: 'auth',
+    isLoadingUser: true,
     initialState: {
         status: 'checking', // 'authenticated','not-authenticated',
         user: {},
@@ -26,7 +27,6 @@ export const authSlice = createSlice({
         clearErrorMessage: ( state ) => {
             state.errorMessage = undefined;
         },
-
     }
 });
 
