@@ -12,6 +12,7 @@ export const useAuthStore = () => {
 
     const startLogin = async({ user, password }) => {
         dispatch( onChecking() );
+        
         try {
             const { data } = await calendarApi.post('/auth',{ user, password });
             console.log({data})
@@ -31,14 +32,15 @@ export const useAuthStore = () => {
     const startRegister = async({ nombre, apellido, celular, user, tipo_usuario, email, password}) => {
         dispatch( onChecking() );
         try {
-            const { data } = await calendarApi.post('/auth/new',{ nombre, apellido, celular, user, tipo_usuario, email, password});
+            const { data } = await calendarApi.post('/auth/new',{ nombre, apellido, celular, user, 
+                                                    tipo_usuario, email, password});
             localStorage.setItem('token', data.token );
             localStorage.setItem('token-init-date', new Date().getTime() ); 
             dispatch( onLogin({ user: data.user, id: data.token}) );
             
         } catch (error) {
             console.log({error})
-            dispatch(onLogout(error.response.data?.msg || 'Error al registrarse'))
+            //dispatch(onLogout(error.response.data?.errors.msg || 'Error al registrarse'))
             setTimeout(() => {
                 dispatch( clearErrorMessage() );
             }, 10);

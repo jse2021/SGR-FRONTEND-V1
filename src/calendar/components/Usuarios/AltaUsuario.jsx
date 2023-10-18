@@ -4,6 +4,11 @@ import Swal from 'sweetalert2';
 import { useAuthStore, useForm } from '../../../hooks';
 import './usuarios.css';
 
+/**
+ * UNICO CONTROL DE ERRORES: CUANDO HAY CAMPO VACIOS
+ * FALTAN CONTROLAR LOS QUE TRAE EL BACKEND
+ */
+
 const registrarUsuario = {
     registerNombre:      '',
     registerApellido:     '',
@@ -19,21 +24,79 @@ export const AltaUsuario = () => {
 
 const {startRegister, errorMessage} = useAuthStore();
 
+const [ formSubmitted, setFormSubmitted ] = useState(false);
+
+
+
 const { registerNombre, registerApellido, registerCelular, registerUsuario, registerPassword, registerTipoUsuario, registerEmail,
     onInputChange:onRegisterInputChange } = useForm( registrarUsuario );
+
+    const nombreClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
     
-const registerSubmit = ( event ) => {
-    event.preventDefault();
+        return ( registerNombre.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerNombre, formSubmitted ])
 
-    startRegister({ nombre: registerNombre, apellido: registerApellido, celular:registerCelular, user: registerUsuario, tipo_usuario: registerTipoUsuario,
-         email: registerEmail, password: registerPassword });
-}
+    const apellidoClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
+    
+        return ( registerApellido.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerApellido, formSubmitted ])
 
-useEffect(() => {
-    if (errorMessage !== undefined)  {
-        Swal.fire('Error en el registro', errorMessage, 'error');
+    const celularClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
+    
+        return ( registerCelular.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerCelular, formSubmitted ])
+
+    const usuarioClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
+    
+        return ( registerUsuario.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerUsuario, formSubmitted ])
+
+    const passwordClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
+    
+        return ( registerPassword.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerPassword, formSubmitted ])
+
+    const emailClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
+    
+        return ( registerEmail.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerEmail, formSubmitted ])
+
+    const tipoUsuarioClass = useMemo(() => {
+        if ( !formSubmitted ) return '';
+    
+        return ( registerTipoUsuario.length > 0 )
+            ? ''
+            : 'is-invalid';
+    }, [ registerTipoUsuario, formSubmitted ])
+    
+    const registerSubmit = ( event ) => {
+        event.preventDefault();
+        setFormSubmitted(true);
+
+        if ( registerNombre.length <= 0 || registerApellido.length <= 0 || registerCelular.length <= 0 || registerUsuario.length <= 0 ||
+             registerPassword.length <= 0 || registerEmail.length <= 0 || registerTipoUsuario.length <= 0 ) return;
+
+        startRegister({ nombre: registerNombre, apellido: registerApellido, celular:registerCelular, user: registerUsuario, tipo_usuario: registerTipoUsuario,
+            email: registerEmail, password: registerPassword });
     }
-}, [errorMessage]);
 
   return (
     <>
@@ -45,7 +108,7 @@ useEffect(() => {
                         <div className="form-group mb-2">
                             <input
                                 type="text"
-                                className="form-control"
+                                className={ `form-control ${ nombreClass }`}
                                 placeholder="Nombre"
                                 name="registerNombre"
                                 value={ registerNombre }
@@ -55,7 +118,7 @@ useEffect(() => {
                         <div className="form-group mb-2">
                             <input
                                 type="text"
-                                className="form-control"
+                                className={ `form-control ${ apellidoClass}`}
                                 placeholder="Apellido"
                                 name="registerApellido"
                                 value={ registerApellido }
@@ -65,7 +128,7 @@ useEffect(() => {
                         <div className="form-group mb-2">
                             <input
                                 type="number"
-                                className="form-control"
+                                className={ `form-control ${ celularClass}`}
                                 placeholder="Celular"
                                 name="registerCelular"
                                 value={ registerCelular }
@@ -75,7 +138,7 @@ useEffect(() => {
                         <div className="form-group mb-2">
                             <input
                                 type="email"
-                                className="form-control"
+                                className={ `form-control ${ emailClass}`}
                                 placeholder="Email"
                                 name="registerEmail"
                                 value={ registerEmail }
@@ -85,7 +148,7 @@ useEffect(() => {
                         <div className="form-group mb-2">
                             <input
                                 type="text"
-                                className="form-control"
+                                className={ `form-control ${ usuarioClass}`}
                                 placeholder="Usuario"
                                 name="registerUsuario"
                                 value={ registerUsuario }
@@ -95,7 +158,7 @@ useEffect(() => {
                         <div className="form-group mb-2">
                             <input
                                 type="password"
-                                className="form-control"
+                                className={ `form-control ${ passwordClass}`}
                                 placeholder="Clave"
                                 name="registerPassword"
                                 value={ registerPassword }
@@ -103,7 +166,8 @@ useEffect(() => {
                             />
                         </div>
                         <div className="form-group mb-2">
-                            <select className="form-select user" 
+                            <select 
+                            className={ `form-select user ${ tipoUsuarioClass}`}
                                 // type="text"
                                 placeholder="tipo usuario"
                                 name="registerTipoUsuario"
