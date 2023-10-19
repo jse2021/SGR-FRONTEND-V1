@@ -15,16 +15,7 @@ const {startRegister} = useCanchaStore();
 const [ formSubmitted, setFormSubmitted ] = useState(false);
 const { registerNombre, registerMedidas, onInputChange } 
 = useForm( registrarCancha);
-// Agrega las funciones setRegisterNombre y setRegisterMedidas
-const setRegisterNombre = (registerNombre) => {
-    setFormSubmitted(false);
-    setRegisterNombre(registerNombre);
-};
 
-const setRegisterMedidas = (registerMedidas) => {
-    setFormSubmitted(false);
-    setRegisterMedidas(registerMedidas);
-};
 const registerSubmit = ( event ) => {
     event.preventDefault();
     setFormSubmitted(true);
@@ -34,13 +25,6 @@ const registerSubmit = ( event ) => {
     startRegister({nombre: registerNombre, medidas: registerMedidas})
     Swal.fire('Alta de cancha', "Cancha registrada" , 'success');
 }
-useEffect(() => {
-    if (formSubmitted) {
-        setRegisterNombre('');
-        setRegisterMedidas('');
-    }
-}, [formSubmitted]);
-
 
   return (
    <>
@@ -57,7 +41,7 @@ useEffect(() => {
                     name="registerNombre"
                     value={ registerNombre }
                     onChange={ onInputChange }
-                    onBlur={ () => setRegisterNombre('') }
+                
                 />
             </div>
             <div className="form-group mb-2">
@@ -68,7 +52,7 @@ useEffect(() => {
                     name="registerMedidas"
                     value={ registerMedidas }
                     onChange={ onInputChange }
-                    onBlur={ () => setRegisterMedidas('') }
+
                 />
             </div>
             <div className="d-grid gap-2">
