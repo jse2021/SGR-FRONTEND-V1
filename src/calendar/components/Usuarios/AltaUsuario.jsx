@@ -19,15 +19,10 @@ const registrarUsuario = {
     registerPassword: '',
 }
 
-
 export const AltaUsuario = () => {
 
 const {startRegister, errorMessage} = useAuthStore();
-
 const [ formSubmitted, setFormSubmitted ] = useState(false);
-
-
-
 const { registerNombre, registerApellido, registerCelular, registerUsuario, registerPassword, registerTipoUsuario, registerEmail,
     onInputChange:onRegisterInputChange } = useForm( registrarUsuario );
 
@@ -98,7 +93,6 @@ const { registerNombre, registerApellido, registerCelular, registerUsuario, regi
             email: registerEmail, password: registerPassword });
 
             Swal.fire('Alta de usuario', "Cliente registrado" , 'success');
-
     }
 
   return (

@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const canchaSlice = createSlice({
     name: 'cancha',
     initialState: {
-        status: 'no registrado',
+        status: 'checking',
         errorMessage: undefined,
         cancha:{}
     },
@@ -14,9 +14,11 @@ export const canchaSlice = createSlice({
             state.cancha = payload;
             state.errorMessage = undefined;
         },
-        clearErrorMessage: ( state ) => {
+        onCheckingCancha: ( state ) => {
+            state.status = 'registrada';
+            state.cancha = {};
             state.errorMessage = undefined;
         },
     }
 })
-export const { nuevaCancha, clearErrorMessage} = canchaSlice.actions;
+export const { nuevaCancha, onCheckingCancha} = canchaSlice.actions;
