@@ -5,8 +5,7 @@ import { useAuthStore, useForm } from '../../../hooks';
 import './usuarios.css';
 
 /**
- * UNICO CONTROL DE ERRORES: CUANDO HAY CAMPO VACIOS
- * FALTAN CONTROLAR LOS QUE TRAE EL BACKEND
+ * UNICO CONTROL DE ERRORES:FALTAN CONTROLAR LOS QUE TRAE EL BACKEND
  */
 
 const registrarUsuario = {
