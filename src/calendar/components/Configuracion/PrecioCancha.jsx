@@ -1,41 +1,93 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Navbar } from '../Navbar';
 import './precios.css'
 import { useState } from 'react';
 import { calendarApi } from '../../../api';
 import { useEffect } from 'react';
+import { useConfiguracionStore } from '../../../hooks/useConfiguracionStore';
+import { useForm } from '../../../hooks';
+import Swal from 'sweetalert2';
+
+
+const registrarMontos = {
+  registerNombre:'',
+  registerPrecio:'',
+  registerSena:''
+}
 
 export const  PrecioCancha = () => {
   const [cancha, setCancha] = useState([]);
   const [id, setId] = useState(null);
-
-  async function fetchData() {
-    const response = await calendarApi.get("/cancha");
-    console.log({ response });
-    
-    if (response.data instanceof Array) {
-      setCancha(response.data.map((cancha) => {
-        return {
-          id: cancha.id,
-          nombre: cancha.nombre,
-        };
-      }));
-    } else {
-      // La respuesta del backend no es una matriz
+    async function fetchData() {
+      const {data} = await calendarApi.get("/cancha");
+      console.log({ data });
+      
+      if (data.canchas instanceof Array) {
+        setCancha(data.canchas.map((cancha) => {
+          return {
+            id: cancha.id,
+            nombre: cancha.nombre,
+          };
+        }));
+      }
     }
+    useEffect(() => {
+      
+      fetchData();
+    }, []);
+
+  const {startRegister, error} = useConfiguracionStore();
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const { registerNombre,registerPrecio,registerSena, onInputChange} = useForm(registrarMontos);
+  
+  const precioClass = useMemo(() => {
+    if ( !formSubmitted ) return '';
+
+    return ( registerPrecio.length > 0 )
+        ? ''
+        : 'is-invalid';
+}, [ registerPrecio, formSubmitted ]);  
+
+const senaClass = useMemo(() => {
+  if ( !formSubmitted ) return '';
+
+  return ( registerSena.length > 0 )
+      ? ''
+      : 'is-invalid';
+}, [ registerSena, formSubmitted ]);  
+
+  const registerSubmit = (event) => {
+    event.preventDefault();
+    setFormSubmitted(true);
+      if (registerPrecio.length <=0 || registerSena <= 0) return;
+
+      startRegister({nombre: registerNombre, monto_cancha: registerPrecio, monto_sena: registerSena});
+      const promise = Swal.fire({
+        position: 'top-center',
+        icon: 'success',
+        title: 'Precios registrados',
+        showConfirmButton: false,
+        timer: 1500
+      })
+        promise.then(() => {
+          document.getElementById('formAltaPrecio').submit();// para limpiar formulario
+      });
+
+      Swal.fire({
+        icon: 'error',
+        text: error,
+      })
+      //  const promise = Swal.fire('Alta de Precios', "Precios y Señas registrados" , 'success');
+      
   }
 
-  useEffect(() => {
-    
-    fetchData();
-  }, []);
 
   return (
     <>
       <Navbar />
       <h1 className="display-5">Precio de la Cancha</h1>
       <div className="col-md-8 login-form-3">
-        <form action="">
+      <form onSubmit={registerSubmit} id="formAltaPrecio">
           <table class="table table-hover">
             <thead>
               <tr>
@@ -62,12 +114,10 @@ export const  PrecioCancha = () => {
               <div className="form-group mb-2">
                 <select
                   class="form-select"
-                  name="cancha"
+                  name="registerNombre"
                   id="cancha"
-                  value={cancha && cancha.length > 0 ? cancha[0].nombre : null}
-                  onChange={(e) => {
-                    setId(e.target.value);
-                  }}
+                  value={registerNombre}
+                  onChange={onInputChange}
                 >
                   {cancha && cancha.length > 0 ? cancha.map((canchas) => (
                     <option key={canchas.id} value={canchas.nombre}>
@@ -80,9 +130,21 @@ export const  PrecioCancha = () => {
               <div className="form-group mb-2">
                 <input
                   type="number"
-                  class="form-control montoCancha"
-                  placeholder="Monto"
-                  name="registerEmail"
+                  className={ `form-control montoCancha ${ precioClass}`}
+                  placeholder="Monto Cancha"
+                  name="registerPrecio"
+                  value={ registerPrecio }
+                  onChange={ onInputChange }
+                />
+              </div>
+              <div className="form-group mb-2">
+                <input
+                  type="number"
+                  className={ `form-control montoSena ${ senaClass}`}
+                  placeholder="Monto Seña"
+                  name="registerSena"
+                  value={ registerSena }
+                  onChange={ onInputChange }
                 />
               </div>
             </div>
