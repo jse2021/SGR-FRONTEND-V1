@@ -7,12 +7,20 @@ import { useEffect } from 'react';
 
 export const  PrecioCancha = () => {
   const [cancha, setCancha] = useState([]);
+  const [id, setId] = useState(null);
 
   async function fetchData() {
     const response = await calendarApi.get("/cancha");
-    console.log({response})
+    console.log({ response });
 
-    setCancha(response.data);
+    if (response.data.length > 0) {
+      setCancha(response.data.map((cancha) => {
+        return {
+          id: cancha.id,
+          nombre: cancha.nombre,
+        };
+      }));
+    }
   }
 
   useEffect(() => {
@@ -53,13 +61,16 @@ export const  PrecioCancha = () => {
                   class="form-select"
                   name="cancha"
                   id="cancha"
-                  value={cancha[0].id}
+                  value={cancha && cancha.length > 0 ? cancha[0].id : null}
+                  onChange={(e) => {
+                    setId(e.target.value);
+                  }}
                 >
-                  {cancha.map((canchas) => (
-                    <option key={canchas.nombre} value={canchas.nombre}>
+                  {cancha && cancha.length > 0 ? cancha.map((canchas) => (
+                    <option key={canchas.id} value={canchas.id}>
                       {canchas.nombre}
                     </option>
-                  ))}
+                  )) : null}
                 </select>
               </div>
 
