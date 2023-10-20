@@ -12,18 +12,21 @@ export const  PrecioCancha = () => {
   async function fetchData() {
     const response = await calendarApi.get("/cancha");
     console.log({ response });
-
-    if (response.data.length > 0) {
+    
+    if (response.data instanceof Array) {
       setCancha(response.data.map((cancha) => {
         return {
           id: cancha.id,
           nombre: cancha.nombre,
         };
       }));
+    } else {
+      // La respuesta del backend no es una matriz
     }
   }
 
   useEffect(() => {
+    
     fetchData();
   }, []);
 
@@ -61,13 +64,13 @@ export const  PrecioCancha = () => {
                   class="form-select"
                   name="cancha"
                   id="cancha"
-                  value={cancha && cancha.length > 0 ? cancha[0].id : null}
+                  value={cancha && cancha.length > 0 ? cancha[0].nombre : null}
                   onChange={(e) => {
                     setId(e.target.value);
                   }}
                 >
                   {cancha && cancha.length > 0 ? cancha.map((canchas) => (
-                    <option key={canchas.id} value={canchas.id}>
+                    <option key={canchas.id} value={canchas.nombre}>
                       {canchas.nombre}
                     </option>
                   )) : null}
