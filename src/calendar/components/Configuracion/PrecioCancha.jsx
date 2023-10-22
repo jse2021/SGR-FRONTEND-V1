@@ -15,11 +15,15 @@ const registrarMontos = {
   registerSena:''
 }
 
-export const  PrecioCancha = () => {
+export const  PrecioCancha = () => {  
+
   const [cancha, setCancha] = useState([]);
+  
   const [id, setId] = useState(null);
-    async function fetchData() {
-      const {data} = await calendarApi.get("/cancha");
+   
+  async function fetchData() {
+   
+    const {data} = await calendarApi.get("/cancha");
       console.log({ data });
       
       if (data.canchas instanceof Array) {
@@ -32,7 +36,6 @@ export const  PrecioCancha = () => {
       }
     }
     useEffect(() => {
-      
       fetchData();
     }, []);
 
@@ -80,8 +83,7 @@ const senaClass = useMemo(() => {
       //  const promise = Swal.fire('Alta de Precios', "Precios y Señas registrados" , 'success');
       
   }
-
-
+  
   return (
     <>
       <Navbar />
