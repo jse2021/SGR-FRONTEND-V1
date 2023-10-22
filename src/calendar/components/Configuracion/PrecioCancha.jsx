@@ -10,9 +10,9 @@ import Swal from 'sweetalert2';
 
 
 const registrarMontos = {
-  registerNombre:'',
-  registerPrecio:'',
-  registerSena:''
+  registerNombre: '',
+  registerPrecio: '',
+  registerSena: ''
 }
 
 export const  PrecioCancha = () => {  
