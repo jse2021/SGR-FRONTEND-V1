@@ -21,14 +21,6 @@ export const useClienteStore = () => {
 
         }
 
-
-
-
-
-
-
-
-
   return {
 
     startRegister

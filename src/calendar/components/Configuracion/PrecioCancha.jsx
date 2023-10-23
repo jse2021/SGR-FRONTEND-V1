@@ -24,7 +24,7 @@ export const  PrecioCancha = () => {
   async function fetchData() {
    
     const {data} = await calendarApi.get("/cancha");
-      console.log({ data });
+      console.log( data.canchas );
       
       if (data.canchas instanceof Array) {
         setCancha(data.canchas.map((cancha) => {
@@ -60,28 +60,34 @@ const senaClass = useMemo(() => {
 }, [ registerSena, formSubmitted ]);  
 
   const registerSubmit = (event) => {
+    const obtener = event.target.value;
     event.preventDefault();
     setFormSubmitted(true);
+    console.log(obtener)
       if (registerPrecio.length <=0 || registerSena <= 0) return;
 
-      startRegister({nombre: registerNombre, monto_cancha: registerPrecio, monto_sena: registerSena});
-      const promise = Swal.fire({
-        position: 'top-center',
-        icon: 'success',
-        title: 'Precios registrados',
-        showConfirmButton: false,
-        timer: 1500
-      })
-        promise.then(() => {
-          document.getElementById('formAltaPrecio').submit();// para limpiar formulario
-      });
-
-      Swal.fire({
-        icon: 'error',
-        text: error,
-      })
-      //  const promise = Swal.fire('Alta de Precios', "Precios y Señas registrados" , 'success');
-      
+        startRegister({nombre: registerNombre, monto_cancha: registerPrecio, monto_sena: registerSena});
+        console.log(event.target.value,"paso")
+          if (error !== '') {
+            const promise = Swal.fire({
+              position: 'top-center',
+              icon: 'success',
+              title: 'Precios registrados',
+              showConfirmButton: false,
+              timer: 1500
+            })
+              promise.then(() => {
+                document.getElementById('formAltaPrecio');
+                // .submit();// para limpiar formulario
+            });          
+          }
+        
+          if (error) {
+            Swal.fire({
+              icon: 'error',
+              text: error,
+            })
+          }
   }
   
   return (
@@ -121,9 +127,9 @@ const senaClass = useMemo(() => {
                   value={registerNombre}
                   onChange={onInputChange}
                 >
-                  {cancha && cancha.length > 0 ? cancha.map((canchas) => (
-                    <option key={canchas.id} value={canchas.nombre}>
-                      {canchas.nombre}
+                  {cancha && cancha.length > 0 ? cancha.map((cancha) => (
+                    <option key={cancha.id} value={cancha.nombre}>
+                      {cancha.nombre}
                     </option>
                   )) : null}
                 </select>
