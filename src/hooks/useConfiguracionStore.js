@@ -18,8 +18,7 @@ export const useConfiguracionStore = () => {
             
         } catch (error) {
             setError(error.response.data.msg);
-            console.log({error});
-
+            console.log(error.response.data.msg);
         }
     }
     

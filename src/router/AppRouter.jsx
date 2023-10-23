@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { LoginPage } from '../auth';
 import { CalendarPage,AltaUsuario, AltaCliente, ConsultarUsuario, AltaCancha, ConsultarCancha, PrecioCancha, 
-    PrecioSena, PagosDeReserva, Recaudacion, FormaPago, ConsultarCliente, ReservaPorCliente } from '../calendar';
+PagosDeReserva, Recaudacion, FormaPago, ConsultarCliente, ReservaPorCliente } from '../calendar';
 import { useAuthStore } from '../hooks';
 
 
@@ -48,7 +48,6 @@ export const AppRouter = () => {
                             <Route path="/ConsultarCancha" element = {<ConsultarCancha />} />
 
                             <Route path="/PrecioCancha" element = {<PrecioCancha />} />
-                            <Route path="/PrecioSena" element = {<PrecioSena />} />
 
                             <Route path="/PagosDeReserva" element = {<PagosDeReserva />} />
                             <Route path="/Recaudacion" element = {<Recaudacion />} />

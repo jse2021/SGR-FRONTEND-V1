@@ -17,5 +17,4 @@ export const getUsuarioByApellido = (apellido = '') => {
     return{
         mostrarUsuarios
     }
-
 }

@@ -11,7 +11,7 @@ export const MenuItemConfig = () => {
           Configuración        </button>
         <ul className="dropdown-menu">
           <li><Link className="dropdown-item" to="/PrecioCancha">Precio de la Cancha</Link></li>
-          <li><Link className="dropdown-item" to="/PrecioSena">Precio de la Seña</Link></li>
+          {/* <li><Link className="dropdown-item" to="/PrecioSena">Precio de la Seña</Link></li> */}
         </ul>
       </li>
     </>

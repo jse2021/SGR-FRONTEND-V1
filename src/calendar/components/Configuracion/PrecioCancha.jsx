@@ -8,6 +8,14 @@ import { useConfiguracionStore } from '../../../hooks/useConfiguracionStore';
 import { useForm } from '../../../hooks';
 import Swal from 'sweetalert2';
 
+/**
+ * MOSTRAR EN PANTALLA LAS MODIFICACIONES - EN LA TABLA
+ * TERMINAR DE MANEJAR CONTROL DE ERRORES
+ * IMPLEMENTAR EL BOTON ACTUALIZAR
+ * AGREGAR LAS COLUMNAS TANTAS CANCHAS NUEVAS HAYA
+ * 
+ */
+
 
 const registrarMontos = {
   registerNombre: '',
@@ -15,7 +23,7 @@ const registrarMontos = {
   registerSena: ''
 }
 
-export const  PrecioCancha = () => {  
+export const  PrecioCancha = ({canchas}) => {  
 
   const [cancha, setCancha] = useState([]);
   
@@ -63,12 +71,12 @@ const senaClass = useMemo(() => {
     const obtener = event.target.value;
     event.preventDefault();
     setFormSubmitted(true);
-    console.log(obtener)
-      if (registerPrecio.length <=0 || registerSena <= 0) return;
+      
+    if (registerPrecio.length <=0 || registerSena <= 0) return;
 
         startRegister({nombre: registerNombre, monto_cancha: registerPrecio, monto_sena: registerSena});
-        console.log(event.target.value,"paso")
-          if (error !== '') {
+
+          if (error === undefined) {
             const promise = Swal.fire({
               position: 'top-center',
               icon: 'success',
@@ -77,12 +85,13 @@ const senaClass = useMemo(() => {
               timer: 1500
             })
               promise.then(() => {
-                document.getElementById('formAltaPrecio');
+                document.getElementById('formAltaPrecio')
                 // .submit();// para limpiar formulario
             });          
           }
         
           if (error) {
+            console.log('Paso por error')
             Swal.fire({
               icon: 'error',
               text: error,
@@ -126,7 +135,9 @@ const senaClass = useMemo(() => {
                   id="cancha"
                   value={registerNombre}
                   onChange={onInputChange}
+                  placeholder="Seleccione una cancha"
                 >
+                  <option key="0" value="" disabled>Seleccione una cancha</option>
                   {cancha && cancha.length > 0 ? cancha.map((cancha) => (
                     <option key={cancha.id} value={cancha.nombre}>
                       {cancha.nombre}
@@ -159,8 +170,13 @@ const senaClass = useMemo(() => {
             <div className="d-grid gap-2">
               <input
                 type="submit"
-                className="btnSubmit"
+                className="btnSubmitGuardar"
                 value="Guardar"
+              />
+                   <input
+                type="submit"
+                className="btnSubmitActualizar"
+                value="Actualizar"
               />
             </div>
           </div>

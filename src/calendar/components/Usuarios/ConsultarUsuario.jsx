@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Navbar } from '../Navbar';
 import TablaUsuarios from './TablaUsuarios';
+import InputSearch from './InputSearch';
 import { getUsuarioByApellido } from './getUsuarioByApellido';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string'
@@ -14,21 +15,22 @@ import { useForm } from '../../../hooks';
  * 4- LLAMARLO AL CONSULTAR USUARIO
  */
 export const ConsultarUsuario = () => {
-  
-    const {q = ''} = queryString.parse(location.search);
+  const [usuarios, setUsuarios] = useState([]);
+  const [value, setValue] = useState("");
 
-    const {searchText,onInputChange} = useForm({
-      searchText:q
-    });       
-    
-    const {mostrarUsuarios} = getUsuarioByApellido();
-    
-    mostrarUsuarios();  
-      
-    useEffect(()=>{    
-      
-        console.log(searchText);
-      },[searchText])
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const getUsuarioByApellido = (apellido) => {
+    return usuarios.filter((usuario) => usuario.apellido === apellido);
+    // const {mostrarUsuarios} = getUsuarioByApellido();  
+    // mostrarUsuarios();  
+  };
+
+  const handleSubmit = () => {
+    setUsuarios(getUsuarioByApellido(value));
+  };
 
   return (
     <>
@@ -36,21 +38,9 @@ export const ConsultarUsuario = () => {
     <h1 className='display-5'>Consultar Usuarios</h1>
     <div className="col-md-8 login-form-3">        
       <form>
-          <div className="form-group mb-2">
-              <input 
-                  id='btn-consultar'
-                  type="text"
-                  className="form-control"
-                  placeholder="Ingrese Usuario"
-                  name="searchText"
-                  autoComplete='off'
-                  value={searchText}
-                  onChange={onInputChange}
-              />
-          </div>
+        <InputSearch value={value} onChange={handleChange} />
           <hr />
           <TablaUsuarios/>
-
       </form>
     </div>
     </>
