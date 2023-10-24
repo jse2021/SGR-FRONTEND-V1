@@ -12,6 +12,7 @@ export const getUsuarioByApellido = (apellido = '') => {
         if (apellido.length === 0) return [];
         const {data} = await calendarApi.get(`/auth/${ apellido}`)
         console.log({data})
+        console.log("Paso");
     }
     
     return{

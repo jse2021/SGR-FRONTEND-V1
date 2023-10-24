@@ -22,14 +22,11 @@ export const ConsultarUsuario = () => {
     setValue(event.target.value);
   };
 
-  const getUsuarioByApellido = (apellido) => {
-    return usuarios.filter((usuario) => usuario.apellido === apellido);
-    // const {mostrarUsuarios} = getUsuarioByApellido();  
-    // mostrarUsuarios();  
-  };
-
-  const handleSubmit = () => {
-    setUsuarios(getUsuarioByApellido(value));
+  const handleSubmit  = async () => {
+    const {mostrarUsuarios} = getUsuarioByApellido();
+    const usuarios = await mostrarUsuarios(value);
+    setUsuarios(usuarios);
+    console.log("handleSubmit() called!");
   };
 
   return (
@@ -37,10 +34,13 @@ export const ConsultarUsuario = () => {
     <Navbar />
     <h1 className='display-5'>Consultar Usuarios</h1>
     <div className="col-md-8 login-form-3">        
-      <form>
+    <form onSubmit={(event) => {
+       event.preventDefault();
+       handleSubmit();
+    }}>
         <InputSearch value={value} onChange={handleChange} />
           <hr />
-          <TablaUsuarios/>
+          <TablaUsuarios usuarios = {usuarios}/>
       </form>
     </div>
     </>
