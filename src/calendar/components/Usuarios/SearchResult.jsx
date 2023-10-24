@@ -1,7 +1,9 @@
 import React, { createContext, useCallback, useContext, useState } from 'react'
 import './SearchResult.css'
 
-const SearchContext = React.createContext({});
+const SearchContext = React.createContext({
+    result: {},
+  });
 
 export const SearchResult = ({result}) => {
 
@@ -10,19 +12,16 @@ export const SearchResult = ({result}) => {
     const { setResult } = useContext(SearchContext);
 
     const onClickUsuario = (e) => {
-        
-        if (setResult) {
-          console.log(`Click en  ${data.nombre} ${data.apellido}`);
-          setResult({ nombre: data.nombre, apellido: data.apellido }); 
-        }
-        console.log(result)
+        console.log(`Click en  ${data.nombre} ${data.apellido}`);
+        setResult({ nombre: data.nombre, apellido: data.apellido });
       };
 
   return (
     <div 
         className='search-result' 
+        onClick={onClickUsuario}
         style={{cursor:"pointer"}}
-        onClick={onClickUsuario}>{result.nombre} {result.apellido}</div>
+        >{result.nombre} {result.apellido}</div>
   )
 }
 

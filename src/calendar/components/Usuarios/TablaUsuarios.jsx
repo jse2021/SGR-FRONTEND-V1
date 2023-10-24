@@ -5,7 +5,7 @@ const SearchContext = React.createContext({});
 export const  TablaUsuarios =()=> {
   const [usuarios, setUsuarios] = useState([]);
   const { result } = useContext(SearchContext);
-  
+
   return (
     <table className="table table-hover">
     <thead>
