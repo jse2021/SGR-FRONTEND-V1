@@ -27,7 +27,7 @@ export const ConsultarUsuario = () => {
         <InputSearch setResults = {setResults}/>
         <SearchResultsList  results = {results}/> 
           <hr />
-          <TablaUsuarios />
+          <TablaUsuarios/>
       </form>
     </div>
     </>

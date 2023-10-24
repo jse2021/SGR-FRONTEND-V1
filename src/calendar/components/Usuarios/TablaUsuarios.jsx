@@ -15,7 +15,10 @@ export const  TablaUsuarios =()=> {
     </thead>
     <tbody>
       <tr>
-        
+        <td></td>
+
+        {/* <td><a className="display-8" >Eliminar</a></td>
+        <td><a className="display-8" >Modificar</a></td> */}
       </tr>
     </tbody>
   </table>
