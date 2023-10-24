@@ -15,14 +15,7 @@ export const  TablaUsuarios =()=> {
     </thead>
     <tbody>
       <tr>
-        <td>Ariel</td>
-        <td>Mendez</td>
-        <td>2964473552</td>
-        <td>maldonadojose201422@gmail.com</td>
-        <td>jose2022</td>
-        <td>Estandar</td>
-        <td><a className="display-8" >Eliminar</a></td>
-        <td><a className="display-8" >Modificar</a></td>
+        
       </tr>
     </tbody>
   </table>

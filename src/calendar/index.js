@@ -21,6 +21,8 @@ export * from './components/Usuarios/AltaUsuario'
 export * from './components/Usuarios/ConsultarUsuario'
 export * from './components/Usuarios/TablaUsuarios'
 export * from './components/Usuarios/InputSearch'
+export * from './components/Usuarios/SearchResultsList'
+export * from './components/Usuarios/SearchResult'
 
 export * from './components/Canchas/AltaCancha'
 export * from './components/Canchas/ConsultarCancha'

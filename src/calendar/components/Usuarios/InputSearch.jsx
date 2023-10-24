@@ -1,20 +1,32 @@
 import React, { useState } from 'react'
+import { calendarApi } from '../../../api';
+import './usuarios.css'
 
-export const InputSearch = () => {
+export const InputSearch = ({setResults}) => {
     const [value, setValue] = useState("");
-    
-    const handleChange = (event) => {
-        setValue(event.target.value);
-        console.log(event.target.value)
-    };
+
+    const buscarUsuario = async(apellido) => {
+        if (apellido.length === 0) return [];
+        const {data} = await calendarApi.get(`/auth/${apellido}`)
+        const usuarios = Array.from(data.usuario);
+        console.log({usuarios})
+
+        setResults(usuarios)
+    }
+
+    const handleChange = (value) => {
+        setValue(value);
+        buscarUsuario(value);
+    }
     
     return (
         <div className="form-group mb-2">
             <input
+                className= 'form-control'
                 type="text"
-                placeholder="Buscar Usuario"
+                placeholder="Buscar Usuario..."
                 value={value}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e.target.value)}
             />
         </div>
   )
