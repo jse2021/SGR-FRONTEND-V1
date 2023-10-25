@@ -17,20 +17,19 @@ import { useForm } from '../../../hooks';
  */
 export const ConsultarUsuario = () => {
   const [results, setResults] = useState([]);
-  
 
   return (
     <>
     <Navbar />
-    <h1 className='display-5'>Consultar Usuarios</h1>
-    <div className="col-md-8 login-form-3">        
-    <form >
-        <InputSearch setResults = {setResults}/>
-        <SearchResultsList  results = {results}/> 
-          <hr />
-          <TablaUsuarios />
-      </form>
-    </div>
+      <h1 className='display-5'>Consultar Usuarios</h1>
+      <div className="col-md-8 login-form-3">        
+      <form >
+          <InputSearch setResults = {setResults}/>
+          <SearchResultsList  results = {results}/> 
+            <hr />
+            <TablaUsuarios  />
+        </form>
+      </div>
     </>
   )
 }

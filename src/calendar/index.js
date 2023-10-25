@@ -23,7 +23,7 @@ export * from './components/Usuarios/TablaUsuarios'
 export * from './components/Usuarios/InputSearch'
 export * from './components/Usuarios/SearchResultsList'
 export * from './components/Usuarios/SearchResult'
-export * from './components/Usuarios/SearchContext'
+
 
 export * from './components/Canchas/AltaCancha'
 export * from './components/Canchas/ConsultarCancha'
