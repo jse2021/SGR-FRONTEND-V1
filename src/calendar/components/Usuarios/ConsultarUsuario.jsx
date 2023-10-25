@@ -22,7 +22,7 @@ export const ConsultarUsuario = () => {
   return (
     <>
     <Navbar />
-    <SearchContext.Provider value={results}>
+
       <h1 className='display-5'>Consultar Usuarios</h1>
       <div className="col-md-8 login-form-3">        
       <form >
@@ -32,7 +32,7 @@ export const ConsultarUsuario = () => {
             <TablaUsuarios />
         </form>
       </div>
-    </SearchContext.Provider>
+
     </>
   )
 }

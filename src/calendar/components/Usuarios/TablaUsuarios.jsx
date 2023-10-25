@@ -4,7 +4,7 @@ import SearchContext from './SearchContext';
 
 export const TablaUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
-  const {results} = useContext(SearchContext)
+  
   
   return (
     <table className="table table-hover">
@@ -15,7 +15,7 @@ export const TablaUsuarios = () => {
         <th scope="col">Celular</th>
         <th scope="col">Email</th>
         <th scope="col">Usuario</th>
-        <th scope="col">{results}</th>
+        <th scope="col">T.Usuario</th>
       </tr>
     </thead>
     <tbody>
