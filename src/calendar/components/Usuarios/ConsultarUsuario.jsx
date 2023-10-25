@@ -17,6 +17,7 @@ import { useForm } from '../../../hooks';
  */
 export const ConsultarUsuario = () => {
   const [results, setResults] = useState([]);
+  const [result, setResult] = useState({});
 
   return (
     <>
@@ -27,7 +28,7 @@ export const ConsultarUsuario = () => {
           <InputSearch setResults = {setResults}/>
           <SearchResultsList  results = {results}/> 
             <hr />
-            <TablaUsuarios  />
+            <TablaUsuarios  result={result}/>
         </form>
       </div>
     </>

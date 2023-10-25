@@ -1,7 +1,11 @@
 import React, { useContext, useState } from 'react'
 
-export const  TablaUsuarios = ()=> {
+const SearchContext = React.createContext({});
+
+export const TablaUsuarios = ({ searchContext }) => {
   const [usuarios, setUsuarios] = useState([]);
+
+  const { result } = useContext(searchContext);
   
   return (
     <table className="table table-hover">
@@ -18,9 +22,9 @@ export const  TablaUsuarios = ()=> {
     <tbody>
 
     {usuarios.map((usuario) => (
-            <tr key={setResult.id}>
-              <td>{setResult.result.nombre}</td>
-              <td>{setResult.result.apellido}</td>
+            <tr key={usuario.id}>
+              <td>{usuario.result.nombre}</td>
+              <td>{usuario.result.apellido}</td>
             </tr>
           ))}
 

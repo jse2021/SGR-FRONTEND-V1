@@ -39,6 +39,7 @@ export * from './components/Clientes/AltaCliente'
 export * from './components/Clientes/ConsultarCliente'
 
 export * from './components/Reservas/ReservaPorCliente'
+export * from './components/Usuarios/SearchContext'
 
 
 
