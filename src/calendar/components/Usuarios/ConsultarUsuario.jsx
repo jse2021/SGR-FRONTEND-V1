@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Navbar } from '../Navbar';
 import TablaUsuarios from './TablaUsuarios';
 import InputSearch from './InputSearch';
@@ -7,6 +7,8 @@ import { getUsuarioByApellido } from './getUsuarioByApellido';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string'
 import { useForm } from '../../../hooks';
+
+import SearchResult from './SearchResult';
 
 
 /**
@@ -17,6 +19,7 @@ import { useForm } from '../../../hooks';
  */
 export const ConsultarUsuario = () => {
   const [results, setResults] = useState([]);
+  
 
   return (
     <>
@@ -27,7 +30,7 @@ export const ConsultarUsuario = () => {
         <InputSearch setResults = {setResults}/>
         <SearchResultsList  results = {results}/> 
           <hr />
-          <TablaUsuarios/>
+          <TablaUsuarios />
       </form>
     </div>
     </>

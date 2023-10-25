@@ -1,9 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react'
 import './SearchResult.css'
-
-const SearchContext = React.createContext({
-    result: {},
-  });
+import SearchContext from "./SearchContext";
 
 export const SearchResult = ({result}) => {
 

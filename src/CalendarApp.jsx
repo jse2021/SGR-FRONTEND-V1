@@ -2,6 +2,7 @@ import {BrowserRouter} from 'react-router-dom'
 import { AppRouter } from "./router/AppRouter"
 import { Provider } from 'react-redux'
 import {store} from './store'
+import SearchContext from "./SearchContext";
 
 export const CalendarApp =()=> {
     return(
@@ -10,6 +11,7 @@ export const CalendarApp =()=> {
             <BrowserRouter>
                 <AppRouter />
             </BrowserRouter>
+            
         </Provider>
         
         

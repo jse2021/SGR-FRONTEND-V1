@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
-
-const SearchContext = React.createContext({});
+import SearchContext from "./SearchContext";
 
 export const  TablaUsuarios =()=> {
   const [usuarios, setUsuarios] = useState([]);
@@ -19,12 +18,16 @@ export const  TablaUsuarios =()=> {
       </tr>
     </thead>
     <tbody>
-          {usuarios.map((usuario) => (
-            <tr key={usuario.id}>
-              <td>{usuario.result.nombre}</td>
-              <td>{usuario.result.apellido}</td>
-            </tr>
-          ))}
+    {usuarios && usuarios.map((usuario) => (
+          <tr key={usuario.id}>
+            <td>{usuario.nombre}</td>
+            <td>{usuario.apellido}</td>
+            <td>{usuario.celular}</td>
+            <td>{usuario.email}</td>
+            <td>{usuario.usuario}</td>
+            <td>{usuario.t_usuario}</td>
+          </tr>
+        ))}
         </tbody>
   </table>
   )
