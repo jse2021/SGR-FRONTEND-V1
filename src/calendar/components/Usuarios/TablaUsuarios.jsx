@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react'
+import SearchContext from './SearchContext';
 
-const SearchContext = React.createContext({});
 
-export const TablaUsuarios = ({ searchContext }) => {
+export const TablaUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
-
-  const { result } = useContext(searchContext);
+  const {results} = useContext(SearchContext)
   
   return (
     <table className="table table-hover">
@@ -16,7 +15,7 @@ export const TablaUsuarios = ({ searchContext }) => {
         <th scope="col">Celular</th>
         <th scope="col">Email</th>
         <th scope="col">Usuario</th>
-        <th scope="col">T.Usuario</th>
+        <th scope="col">{results}</th>
       </tr>
     </thead>
     <tbody>

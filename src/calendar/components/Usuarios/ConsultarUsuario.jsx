@@ -7,6 +7,7 @@ import { getUsuarioByApellido } from './getUsuarioByApellido';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string'
 import { useForm } from '../../../hooks';
+import SearchContext from './SearchContext';
 
 
 /**
@@ -17,20 +18,21 @@ import { useForm } from '../../../hooks';
  */
 export const ConsultarUsuario = () => {
   const [results, setResults] = useState([]);
-  const [result, setResult] = useState({});
 
   return (
     <>
     <Navbar />
+    <SearchContext.Provider value={results}>
       <h1 className='display-5'>Consultar Usuarios</h1>
       <div className="col-md-8 login-form-3">        
       <form >
           <InputSearch setResults = {setResults}/>
           <SearchResultsList  results = {results}/> 
             <hr />
-            <TablaUsuarios  result={result}/>
+            <TablaUsuarios />
         </form>
       </div>
+    </SearchContext.Provider>
     </>
   )
 }
