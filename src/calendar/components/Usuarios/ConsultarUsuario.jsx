@@ -8,8 +8,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string'
 import { useForm } from '../../../hooks';
 
-import SearchResult from './SearchResult';
-
 
 /**
  * 1 - SEPARAR LA TABLA EN OTRO COMPONENTE

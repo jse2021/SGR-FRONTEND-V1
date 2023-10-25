@@ -3,7 +3,7 @@ import SearchContext from "./SearchContext";
 
 export const  TablaUsuarios =()=> {
   const [usuarios, setUsuarios] = useState([]);
-  const { result } = useContext(SearchContext);
+  // const { result } = useContext(SearchContext);
 
   return (
     <table className="table table-hover">
@@ -18,6 +18,7 @@ export const  TablaUsuarios =()=> {
       </tr>
     </thead>
     <tbody>
+
     {usuarios && usuarios.map((usuario) => (
           <tr key={usuario.id}>
             <td>{usuario.nombre}</td>
@@ -25,9 +26,11 @@ export const  TablaUsuarios =()=> {
             <td>{usuario.celular}</td>
             <td>{usuario.email}</td>
             <td>{usuario.usuario}</td>
-            <td>{usuario.t_usuario}</td>
+            
+            
           </tr>
         ))}
+
         </tbody>
   </table>
   )
