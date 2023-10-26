@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import { calendarApi } from '../../../api';
-import './usuarios.css'
+import './canchas.css'
 
 export const InputSearch = ({setResults}) => {
     const [value, setValue] = useState("");
 
-    const buscarUsuario = async(apellido) => {
-        if (apellido.length === 0) return [];
-        const {data} = await calendarApi.get(`/auth/${apellido}`)
-        const usuarios = Array.from(data.usuario);
-        setResults(usuarios)
+    const buscarCancha = async(nombre) => {
+        if (nombre.length === 0) return [];
+        const {data} = await calendarApi.get(`/cancha/${nombre}`)
+        const canchas = Array.from(data.cancha);
+        setResults(canchas)
+        console.log({data})
     }
  
     const handleChange = (value) => {
         setValue(value);
-        buscarUsuario(value);
+        buscarCancha(value);
     }
     
     return (
@@ -22,7 +23,7 @@ export const InputSearch = ({setResults}) => {
             <input
                 className= 'form-control'
                 type="text"
-                placeholder="Buscar por Apellido"
+                placeholder="Buscar por Nombre"
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
             />

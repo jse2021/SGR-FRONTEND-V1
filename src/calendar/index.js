@@ -19,7 +19,7 @@ export * from './components/MenuItemCalendario';
 
 export * from './components/Usuarios/AltaUsuario'
 export * from './components/Usuarios/ConsultarUsuario'
-export * from './components/Usuarios/TablaUsuarios'
+// export * from './components/Usuarios/TablaUsuarios'
 export * from './components/Usuarios/InputSearch'
 export * from './components/Usuarios/SearchResultsList'
 export * from './components/Usuarios/SearchResult'
@@ -27,6 +27,9 @@ export * from './components/Usuarios/SearchResult'
 
 export * from './components/Canchas/AltaCancha'
 export * from './components/Canchas/ConsultarCancha'
+export * from './components/Canchas/InputSearch'
+export * from './components/Canchas/SearchResult'
+export * from './components/Canchas/SearchResultsList'
 
 export * from './components/Configuracion/PrecioCancha'
 // export * from './components/Configuracion/PrecioSena'
@@ -37,9 +40,12 @@ export * from './components/Reportes/FormaPago'
 
 export * from './components/Clientes/AltaCliente'
 export * from './components/Clientes/ConsultarCliente'
+export * from './components/Clientes/InputSearch'
+export * from './components/Clientes/SearchResultList'
+export * from './components/Clientes/SearchResult'
 
 export * from './components/Reservas/ReservaPorCliente'
-export * from './components/Usuarios/SearchContext'
+
 
 
 

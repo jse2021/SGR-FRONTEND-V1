@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import { calendarApi } from '../../../api';
-import './usuarios.css'
+import './clientes.css'
 
 export const InputSearch = ({setResults}) => {
     const [value, setValue] = useState("");
 
-    const buscarUsuario = async(apellido) => {
+    const buscarCliente = async(apellido) => {
         if (apellido.length === 0) return [];
-        const {data} = await calendarApi.get(`/auth/${apellido}`)
-        const usuarios = Array.from(data.usuario);
-        setResults(usuarios)
+        const {data} = await calendarApi.get(`/cliente/${apellido}`)
+        const clientes = Array.from(data.cliente);
+        console.log({clientes})
+        setResults(clientes)
     }
  
     const handleChange = (value) => {
         setValue(value);
-        buscarUsuario(value);
+        buscarCliente(value);
     }
     
     return (

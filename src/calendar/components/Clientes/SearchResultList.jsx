@@ -1,7 +1,6 @@
 import React from 'react'
-import "./SearchResultsList.css"
+import "./SearchResultList.css"
 import { SearchResult } from './SearchResult'
-
 
 export const SearchResultsList = ({results}) => {
 
@@ -19,12 +18,11 @@ export const SearchResultsList = ({results}) => {
       <table className="table table-hover">
     <thead>
       <tr>
+        <th scope="col">Dni</th>
         <th scope="col">Nombre</th>
         <th scope="col">Apellido</th>
-        <th scope="col">Celular</th>
         <th scope="col">Email</th>
-        <th scope="col">Usuario</th>
-        <th scope="col">T.Usuario</th>
+        <th scope="col">Celular</th>
       </tr>
     </thead>
     

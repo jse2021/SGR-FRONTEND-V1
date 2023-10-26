@@ -58,9 +58,6 @@ export const AppRouter = () => {
 
                             <Route path="/ReservaPorCliente" element = {<ReservaPorCliente />} />
 
-                            
-
-
                             <Route path="/*" element={ <Navigate to="/" /> } />
                         </>
                     )

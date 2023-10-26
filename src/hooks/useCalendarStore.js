@@ -15,7 +15,6 @@ export const useCalendarStore = () => {
 
     const startSavingEvent = async( calendarEvent ) => {
         // TODO: llegar al backend
-
         // Todo bien
         if( calendarEvent._id ) {
             // Actualizando
@@ -30,7 +29,6 @@ export const useCalendarStore = () => {
     const startDeletingEvent = () => {
         // Todo: Llegar al backend
 
-
         dispatch( onDeleteEvent() );
     }
 
@@ -41,16 +39,11 @@ export const useCalendarStore = () => {
             const events = convertEventsToDateEvents(data.reservas);
             dispatch(onLoadEvents());
             console.log({events})
-
-
-            
         } catch (error) {
             console.log('error cargando eventos')
             console.log({error})
-            
         }
     }
-
 
     return {
         //* Propiedades

@@ -1,5 +1,4 @@
-import React, {useState } from 'react'
-import './SearchResult.css'
+import React, {  useState } from 'react'
 
 export const SearchResult = ({result}) => {
    
@@ -14,9 +13,14 @@ export const SearchResult = ({result}) => {
   return (
     <>
     <tr style={{cursor:"pointer"}}>
+    <td 
+        className='search-result' 
+        // onClick={onClickUsuario}
+      >{result.dni}</td>
       <td 
         className='search-result' 
         // onClick={onClickUsuario}
+        // style={{cursor:"pointer"}}
       >{result.nombre}</td>
       <td 
         className='search-result' 
@@ -25,19 +29,11 @@ export const SearchResult = ({result}) => {
       <td 
         className='search-result' 
         // onClick={onClickUsuario}
-      >{result.celular}</td>
-      <td 
-        className='search-result' 
-        // onClick={onClickUsuario}
       >{result.email}</td>
       <td 
         className='search-result' 
         // onClick={onClickUsuario}
-      >{result.user}</td>
-      <td 
-        className='search-result' 
-        // onClick={onClickUsuario}
-      >{result.tipo_usuario}</td>
+      >{result.celular}</td>
     </tr>
       
     </>
