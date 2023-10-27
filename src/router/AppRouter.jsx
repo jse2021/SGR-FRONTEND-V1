@@ -13,18 +13,20 @@ import { useAuthStore } from '../hooks';
 export const AppRouter = () => {
 
     const { status, checkAuthToken } = useAuthStore();
-    // const authStatus = 'not-authenticated'; // 'authenticated'; // 'not-authenticated';
 
-    useEffect(() => {
-        checkAuthToken();
-    }, [])
-    
-    if ( status === 'checking' ) {
-        return (
-            <h3>Cargando...</h3>
-        )
-    }
-
+        useEffect(() => {
+            checkAuthToken();
+        }, [])
+        
+            if ( status === 'checking' ) {
+                return (
+                    <div className="d-flex justify-content-center">
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden"></span>
+                        </div>
+                    </div>
+                )  
+            }
     
     return (
         <Routes>
@@ -40,6 +42,7 @@ export const AppRouter = () => {
                         <>
                             <Route path="/" element={ <CalendarPage /> } />
                             <Route path="/pages/CalendarPage" element={<CalendarPage />} />
+
                             
                             <Route path="/AltaUsuario" element = {<AltaUsuario />} />
                             <Route path="/ConsultarUsuario" element = {<ConsultarUsuario />} />

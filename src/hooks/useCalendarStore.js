@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { onAddNewEvent, onDeleteEvent, onSetActiveEvent, onUpdateEvent, onLoadEvents } from '../store';
+import { onAddNewEvent, onDeleteEvent, onSetActiveEvent, onUpdateEvent, onLoadEvents, onLogin } from '../store';
 import { calendarApi } from '../api';
 import { convertEventsToDateEvents } from '../helpers';
 
 
 export const useCalendarStore = () => {
-  
+
     const dispatch = useDispatch();
     const { events, activeEvent } = useSelector( state => state.calendar );
     const {user} = useSelector(state => state.auth)
@@ -22,7 +22,7 @@ export const useCalendarStore = () => {
         } else {
             // Creando
             const {data} = await calendarApi.post('/reserva', calendarEvent)
-            dispatch( onAddNewEvent({ ...calendarEvent, id: data.evento.id, user }) );
+            dispatch( onAddNewEvent({ ...calendarEvent, id: data.evento.id, user }) );    
         }
     }
 
@@ -37,7 +37,7 @@ export const useCalendarStore = () => {
 
             const {data} = await calendarApi.get('/reserva');
             const events = convertEventsToDateEvents(data.reservas);
-            dispatch(onLoadEvents());
+            dispatch(onLoadEvents(events));
             console.log({events})
         } catch (error) {
             console.log('error cargando eventos')

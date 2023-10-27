@@ -11,6 +11,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import es from 'date-fns/locale/es';
 import { useCalendarStore, useUiStore } from '../../hooks';
+import { InputCancha } from './Components Modal/InputCancha';
+import { InputCliente } from './Components Modal/Cliente/InputCliente';
+import { ListaCliente } from './Components Modal/Cliente/ListaCliente';
 
 
 registerLocale( 'es', es );
@@ -94,15 +97,16 @@ export const CalendarModal = () => {
         
         console.log(formValues);
 
-        // TODO: 
-        await startSavingEvent( formValues );
+        
+        await startSavingEvent( formValues ); // mandamos toda la info del formulario
         closeDateModal();
         setFormSubmitted(false);
     }
 
 
-
+    const [results, setResults] = useState([]);
   return (
+    
     <Modal
         isOpen={ isDateModalOpen }
         onRequestClose={ onCloseModal }
@@ -114,8 +118,10 @@ export const CalendarModal = () => {
         <h1> Nuevo evento </h1>
         <hr />
         <form className="container" onSubmit={ onSubmit }>
-
             <div className="form-group mb-2">
+                <InputCliente setResults={setResults}/>
+                <ListaCliente results = {results}/>
+                <InputCancha />
                 <label>Fecha y hora inicio</label>
                 <DatePicker 
                     selected={ formValues.start }

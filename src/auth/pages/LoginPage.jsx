@@ -10,7 +10,7 @@ const loginFormFields = {
 
 export const LoginPage = () => {
 
-    const { startLogin, errorMessage, startRegister } = useAuthStore();
+    const { startLogin, errorMessage } = useAuthStore();
 
     const { loginUser, loginPassword, onInputChange:onLoginInputChange } = useForm( loginFormFields );
 
@@ -26,7 +26,6 @@ export const LoginPage = () => {
     }, [errorMessage])
 
     return (
-        
         <div className="container login-container">
             <div className="row">
             <h1 className='display-1'>Sistema de Gestión de Reservas</h1>

@@ -1,10 +1,14 @@
-import { parseISO } from "date-fns"
+import { parse, parseISO } from "date-fns"
 
+
+/**
+ * PARSEA LAS FECHAS DE STRING A DATE PARA QUE LO TOME EL CALENDARIO
+ */
 export const convertEventsToDateEvents = (events = []) =>{
 
     return events.map(event => {
         event.fecha = parseISO(event.fecha);
-        return event;
+        return event; 
     })
 
 

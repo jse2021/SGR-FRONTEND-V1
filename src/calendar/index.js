@@ -7,6 +7,11 @@ export * from './components/FabAddNew';
 export * from './components/FabDelete';
 export * from './components/Navbar';
 
+export * from './components/Components Modal/Cliente/InputCliente'
+export * from './components/Components Modal/Cliente/ListaCliente'
+export * from './components/Components Modal/Cliente/ResultadoPorCliente'
+export * from './components/Components Modal/InputCancha'
+
 export * from './pages/CalendarPage';
 
 export * from './components/MenuItemUser';
