@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { LoginPage } from '../auth';
 import { CalendarPage,AltaUsuario, AltaCliente, ConsultarUsuario, AltaCancha, ConsultarCancha, PrecioCancha, 
-PagosDeReserva, Recaudacion, FormaPago, ConsultarCliente, ReservaPorCliente } from '../calendar';
+PagosDeReserva, Recaudacion, FormaPago, ConsultarCliente, ReservaPorCliente, ReservasFecha } from '../calendar';
 import { useAuthStore } from '../hooks';
 import './AppRouter.css'
 
@@ -58,6 +58,8 @@ export const AppRouter = () => {
                             <Route path="/ConsultarCliente" element = {<ConsultarCliente />} />
 
                             <Route path="/ReservaPorCliente" element = {<ReservaPorCliente />} />
+                            <Route path="/ReservasFecha" element = {<ReservasFecha />} />
+                            
 
                             <Route path="/*" element={ <Navigate to="/" /> } />
                         </>

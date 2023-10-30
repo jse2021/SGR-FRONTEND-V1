@@ -4,3 +4,34 @@
 .navbar {
     justify-content: center;
   }
+  #select-cancha{
+    margin-left: 1%;
+    margin-top: -3%;
+  }
+  #select-ePago{
+    margin-left: 1%;
+  }
+  #select-hora{
+    margin-left: 1%;
+  }
+
+  #input-monto{
+    width: 50%;
+  }
+  #select-fPago{
+    width: 45%;
+    margin-top: -8%;
+  }
+  #ta-observaciones{
+    margin-left: 1%;
+  }
+  .navbar .nav-link {
+    color: white;
+  }
+
+  .navbar .nav-link::link {
+    color: white;
+  }
+  .navbar .nav-link:hover {
+    color: bisque
+  }
