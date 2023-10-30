@@ -5,9 +5,7 @@ import { LoginPage } from '../auth';
 import { CalendarPage,AltaUsuario, AltaCliente, ConsultarUsuario, AltaCancha, ConsultarCancha, PrecioCancha, 
 PagosDeReserva, Recaudacion, FormaPago, ConsultarCliente, ReservaPorCliente } from '../calendar';
 import { useAuthStore } from '../hooks';
-
-
-
+import './AppRouter.css'
 
 
 export const AppRouter = () => {
