@@ -28,25 +28,20 @@ export const CalendarPage = () => {
       style
     }
   }
-
-  const onDoubleClick = ( event ) => {
-    // console.log({ doubleClick: event });
+  
+   const handleSelectSlot = (event) =>{
+    console.log(event.start)
     openDateModal();
-  }
-
-  const onSelect = ( event ) => {
-    // console.log({ click: event });
-    setActiveEvent( event );
-  }
-
+   }
+  
   const onViewChanged = ( event ) => {
     localStorage.setItem('lastView', event );
     setLastView( event )
   }
 
-useEffect(() => {
-  startLoadingEvents()
-}, [])
+  useEffect(() => {
+    startLoadingEvents()
+  }, [])
 
   return (
     <>
@@ -65,9 +60,11 @@ useEffect(() => {
         components={{
           event: CalendarEvent
         }}
-        onDoubleClickEvent={ onDoubleClick }
-        onSelectEvent={ onSelect }
+        // onDoubleClickEvent={ onDoubleClick }
+        onSelectSlot={handleSelectSlot}
+        selectable
         onView={ onViewChanged }
+
       />
 
 

@@ -9,7 +9,7 @@ export const FabAddNew = () => {
 
     const handleClickNew = () => {
         setActiveEvent({
-            title: '',
+            cliente: '',
             notes: '',
             start: new Date(),
             end: addHours( new Date(), 2 ),
@@ -18,6 +18,7 @@ export const FabAddNew = () => {
         
             }
         });
+        
         openDateModal();
     }
 
