@@ -14,6 +14,8 @@ export const CalendarPage = () => {
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent,startLoadingEvents } = useCalendarStore();
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'month' );
+  const [date, setDate] = useState('');
+
 
   const eventStyleGetter = ( event, start, end, isSelected ) => {
 
@@ -28,9 +30,10 @@ export const CalendarPage = () => {
       style
     }
   }
-  
+
    const handleSelectSlot = (event) =>{
     console.log(event.start)
+    setDate(event.start)
     openDateModal();
    }
   
@@ -66,11 +69,8 @@ export const CalendarPage = () => {
         onView={ onViewChanged }
 
       />
-
-
-      <CalendarModal />
-      
-      <FabAddNew />
+      <CalendarModal date={date} />
+      {/* <FabAddNew /> */}
       <FabDelete />
 
 

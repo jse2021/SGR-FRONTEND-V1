@@ -36,12 +36,16 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = () => {
+export const CalendarModal = ({date}) => {
     
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
     const [cancha, setCancha] = useState([]);
+    const [results, setResults] = useState([]);
+
+
+      
         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
@@ -105,15 +109,22 @@ export const CalendarModal = () => {
         event.preventDefault();
         setFormSubmitted(true);
         
-        if ( formValues.title.length <= 0 ) return;
+        // if ( formValues.title.length <= 0 ) return;
         console.log(formValues);
 
         await startSavingEvent( formValues ); // mandamos toda la info del formulario
         closeDateModal();
         setFormSubmitted(false);
     }
-
-    const [results, setResults] = useState([]);
+    
+    const fechaReserva = new Date(date).toLocaleDateString(
+        'es-AR',
+        {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }
+      );
 
   return (
     
@@ -125,10 +136,13 @@ export const CalendarModal = () => {
         overlayClassName="modal-fondo"
         closeTimeoutMS={ 200 }
     >
-        <h1 className='display-6'> Gestión de la Reserva </h1>
+        <h1 className="display-6">Gestión de la Reserva</h1>
         <NavbarReserva />
         <hr />
         <form className="container" onSubmit={ onSubmit }>
+            <div className="form-group mb-2">
+            <h5 style={{ textAlign: 'center' }}>{fechaReserva}</h5>
+            </div>
             <div className="form-group mb-2">
                 <InputCliente setResults={setResults}/>
                 <ListaCliente results = {results}/>
