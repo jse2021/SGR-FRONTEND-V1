@@ -12,8 +12,8 @@ export const useClienteStore = () => {
 
                 dispatch(onCheckingCliente());
                 const {data} = await calendarApi.post('cliente/crearCliente',{dni, nombre, apellido, email, celular});
-                localStorage.setItem('token', data.token );
-                localStorage.setItem('token-init-date', new Date().getTime() ); 
+                // localStorage.setItem('token', data.token );
+                // localStorage.setItem('token-init-date', new Date().getTime() ); 
             } catch (error) {
                 console.log({error});
                 

@@ -230,7 +230,6 @@ export const CalendarModal = () => {
             >
                 </textarea>
             </div>
-            
         <hr />
             <div className="d-grid gap-2">
                 <input 
@@ -238,7 +237,6 @@ export const CalendarModal = () => {
                     className="btnSubmit" 
                     value="Guardar" />
             </div>
-
         </form>
     </Modal>
   )

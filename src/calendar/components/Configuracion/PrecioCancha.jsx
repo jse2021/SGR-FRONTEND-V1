@@ -76,7 +76,7 @@ const senaClass = useMemo(() => {
 
         startRegister({nombre: registerNombre, monto_cancha: registerPrecio, monto_sena: registerSena});
 
-          if (error === undefined) {
+          if (error !== undefined) {
             const promise = Swal.fire({
               position: 'top-center',
               icon: 'success',
@@ -85,8 +85,7 @@ const senaClass = useMemo(() => {
               timer: 1500
             })
               promise.then(() => {
-                document.getElementById('formAltaPrecio')
-                // .submit();// para limpiar formulario
+                document.getElementById('formAltaPrecio').submit();
             });          
           }
         
