@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { Navbar, CalendarEvent, CalendarModal, FabAddNew, FabDelete} from '../';
+import { Navbar, CalendarEvent, CalendarModal, FabDelete} from '../';
 
 import { localizer, getMessagesES } from '../../helpers';
 import { useUiStore, useCalendarStore } from '../../hooks';
@@ -63,14 +63,12 @@ export const CalendarPage = () => {
         components={{
           event: CalendarEvent
         }}
-        // onDoubleClickEvent={ onDoubleClick }
         onSelectSlot={handleSelectSlot}
         selectable
         onView={ onViewChanged }
 
       />
       <CalendarModal date={date} />
-      {/* <FabAddNew /> */}
       <FabDelete />
 
 

@@ -31,18 +31,21 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = ({date}) => {
+export const CalendarModal = ({date,clienteSeleccionado }) => {
+
+    
     
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
     const [cancha, setCancha] = useState([]);
     const [results, setResults] = useState([]);   
+
         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
         console.log( data.canchas );
-            
+        
             if (data.canchas instanceof Array) {
                 setCancha(data.canchas.map((cancha) => {
             return {
@@ -84,27 +87,26 @@ export const CalendarModal = ({date}) => {
     }
 
     const onSubmit = async( event ) => {
-        console.log(data)
+        console.log(clienteSeleccionado)
         event.preventDefault();
-        setActiveEvent({
-            cliente:'',
-            cancha: '',
-            fecha: new Date( date),
-            hora: '',
-            forma_pago:'',
-            estado_pago:'',
-            observacion:''
-        });
+            setActiveEvent({
+                cliente:'',
+                cancha: '',
+                fecha: new Date( date),
+                hora: '',
+                forma_pago:'',
+                estado_pago:'',
+                observacion:''
+            });
+
+            console.log(event)
         setFormSubmitted(true);
         
-        // if ( formValues.title.length <= 0 ) return;
+        // if ( formValues.cliente.length <= 0 ) return;
      
         console.log(formValues);
-     
         await startSavingEvent( formValues ); // mandamos toda la info del formulario
-     
         closeDateModal();
-     
         setFormSubmitted(false);
     }
     
@@ -116,6 +118,8 @@ export const CalendarModal = ({date}) => {
           year: 'numeric',
         }
       );
+      
+  
 
   return (
     
@@ -155,7 +159,7 @@ export const CalendarModal = ({date}) => {
                         )) : null}
                 </select>
             </div>
-
+            
             <div className="form-group mb-2">
                 <select
                     className="form-select"
