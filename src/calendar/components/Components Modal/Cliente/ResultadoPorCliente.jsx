@@ -14,6 +14,10 @@ export const ResultadoPorCliente = ({result}) => {
  
   return (
     <>
+
+      <div>
+        <CalendarModal data={data}/>
+      </div>
       <div
         className='search-result'
         style={{cursor:"pointer"}}
@@ -24,3 +28,5 @@ export const ResultadoPorCliente = ({result}) => {
     </>    
   )
 }
+
+export default ResultadoPorCliente;

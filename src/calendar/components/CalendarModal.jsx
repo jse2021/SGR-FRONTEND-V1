@@ -31,7 +31,7 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = ({date }) => {
+export const CalendarModal = ({date,data }) => {
 
     
     
