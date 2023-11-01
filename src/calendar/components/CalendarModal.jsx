@@ -31,7 +31,7 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = ({date,clienteSeleccionado }) => {
+export const CalendarModal = ({date }) => {
 
     
     
@@ -87,7 +87,7 @@ export const CalendarModal = ({date,clienteSeleccionado }) => {
     }
 
     const onSubmit = async( event ) => {
-        console.log(clienteSeleccionado)
+
         event.preventDefault();
             setActiveEvent({
                 cliente:'',
@@ -117,9 +117,7 @@ export const CalendarModal = ({date,clienteSeleccionado }) => {
           month: 'long',
           year: 'numeric',
         }
-      );
-      
-  
+      ); 
 
   return (
     
@@ -139,7 +137,7 @@ export const CalendarModal = ({date,clienteSeleccionado }) => {
             <h5 style={{ textAlign: 'center' }}>{fechaReserva}</h5>
             </div>
             <div className="form-group mb-2">
-                <InputCliente setResults={setResults}/>
+                <InputCliente setResults = {setResults}/>
                 <ListaCliente results = {results}/>
             </div>
             <div className="form-group mb-2">
