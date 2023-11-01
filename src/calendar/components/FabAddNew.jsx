@@ -9,13 +9,14 @@ export const FabAddNew = () => {
 
     const handleClickNew = () => {
         setActiveEvent({
-            cliente: '',
-            notes: '',
-            start: new Date(),
-            end: addHours( new Date(), 2 ),
-            bgColor: '#fafafa',
+            registerCliente:'',
+            registerCancha: '',
+            registerFecha:'',
+            registerHorario: '',
+            registerForma_Pago:'',
+            registerEstado_Pago:'',
+            registerObservacion:'',
             user: {
-        
             }
         });
         

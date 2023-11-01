@@ -16,12 +16,7 @@ import { ListaCliente } from './Components Modal/Cliente/ListaCliente';
 import { calendarApi } from '../../api';
 import { NavbarReserva } from './NavBarReserva';
 
-
 registerLocale( 'es', es );
-
-const registrarReserva = {
-    registerCancha:''
-  }
 
 const customStyles = {
     content: {
@@ -39,13 +34,10 @@ Modal.setAppElement('#root');
 export const CalendarModal = ({date}) => {
     
     const { isDateModalOpen, closeDateModal } = useUiStore();
-    const { activeEvent, startSavingEvent } = useCalendarStore();
+    const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
     const [cancha, setCancha] = useState([]);
-    const [results, setResults] = useState([]);
-
-
-      
+    const [results, setResults] = useState([]);   
         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
@@ -65,27 +57,20 @@ export const CalendarModal = ({date}) => {
         }, []);  
 
         const [formValues, setFormValues] = useState({
-            registerCancha: '',
-            registerHorario: '',
-
+            cliente:'',
+            cancha: '',
+            fecha: new Date( date),
+            hora: '',
+            forma_pago:'',
+            estado_pago:'',
+            observacion:''
         });
-    
-
-    const titleClass = useMemo(() => {
-        if ( !formSubmitted ) return '';
-
-        return ( formValues.title.length > 0 )
-            ? ''
-            : 'is-invalid';
-
-    }, [ formValues.title, formSubmitted ])
 
     useEffect(() => {
       if ( activeEvent !== null ) {
           setFormValues({ ...activeEvent });
       }    
     }, [ activeEvent ])
-    
 
     const onInputChanged = ({ target }) => {
         setFormValues({
@@ -94,26 +79,32 @@ export const CalendarModal = ({date}) => {
         })
     }
 
-    const onDateChanged = ( event, changing ) => {
-        setFormValues({
-            ...formValues,
-            [changing]: event
-        })
-    }
-
     const onCloseModal = () => {
         closeDateModal();
     }
 
     const onSubmit = async( event ) => {
+        console.log(data)
         event.preventDefault();
+        setActiveEvent({
+            cliente:'',
+            cancha: '',
+            fecha: new Date( date),
+            hora: '',
+            forma_pago:'',
+            estado_pago:'',
+            observacion:''
+        });
         setFormSubmitted(true);
         
         // if ( formValues.title.length <= 0 ) return;
+     
         console.log(formValues);
-
+     
         await startSavingEvent( formValues ); // mandamos toda la info del formulario
+     
         closeDateModal();
+     
         setFormSubmitted(false);
     }
     
@@ -150,9 +141,9 @@ export const CalendarModal = ({date}) => {
             <div className="form-group mb-2">
                 <select
                     className="form-select"
-                    name="registerCancha"
+                    name="cancha"
                     id="select-cancha"
-                    value={formValues.registerCancha}
+                    value={formValues.cancha}
                     onChange={onInputChanged}
                     placeholder="Seleccione una cancha"
                     >
@@ -168,9 +159,9 @@ export const CalendarModal = ({date}) => {
             <div className="form-group mb-2">
                 <select
                     className="form-select"
-                    name="registerHora"
+                    name="hora"
                     id="select-hora"
-                    value={formValues.registerCancha}
+                    value={formValues.hora}
                     onChange={onInputChanged}
                     >
                     <option key="0" value="" disabled>Seleccione horario</option>
@@ -196,9 +187,9 @@ export const CalendarModal = ({date}) => {
             <div className="form-group mb-2">
                 <select
                     className="form-select"
-                    name="registerEPago"
+                    name="estado_pago"
                     id="select-ePago"
-                    value={formValues.registerCancha}
+                    value={formValues.estado_pago}
                     onChange={onInputChanged}
                     >
                     <option key="0" value="" disabled>Seleccione estado de pago</option>
@@ -218,9 +209,9 @@ export const CalendarModal = ({date}) => {
                />
                 <select
                     className="form-select"
-                    name="registerFPago"
+                    name="forma_pago"
                     id="select-fPago"
-                    value={formValues.registerCancha}
+                    value={formValues.forma_pago}
                     onChange={onInputChanged}
                     >
                     <option key="0" value="" disabled>Forma de pago</option>
@@ -238,8 +229,8 @@ export const CalendarModal = ({date}) => {
                     placeholder="Observaciones"
                     id='ta-observaciones'
                     rows="5"
-                    name="notes"
-                    // value={formValues.notes}
+                    name="observacion"
+                    value={formValues.observacion}
                     onChange={onInputChanged}
             >
                 </textarea>
