@@ -71,12 +71,12 @@ export const CalendarModal = ({date,cliente }) => {
             const [day, month, year] = new Date(date).toLocaleDateString('es-AR').split('/');
             return `${year}-${month}-${day}`;
           };
-
-        console.log(stringifyDate(date))
+          console.log("xxx: ",date)
+        
         const [formValues, setFormValues] = useState({
             cliente:'',
             cancha: '',
-            fecha: stringifyDate(date),
+            fecha:  date,
             hora: '',
             forma_pago:'',
             estado_pago:'',
@@ -101,12 +101,12 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
-
+        console.log(date)
         event.preventDefault();
             setActiveEvent({
                 cliente:'',
                 cancha: '',
-                fecha: stringifyDate(date),
+                fecha: date,
                 hora: '',
                 forma_pago:'',
                 estado_pago:'',
