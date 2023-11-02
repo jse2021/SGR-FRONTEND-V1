@@ -14,7 +14,7 @@ import { useCalendarStore, useUiStore } from '../../hooks';
 import { InputCliente } from './Components Modal/Cliente/InputCliente';
 import { ListaCliente } from './Components Modal/Cliente/ListaCliente';
 import { calendarApi } from '../../api';
-import { NavbarReserva } from './NavBarReserva';
+import '../../calendar/components/CalendarModal.css'
 
 registerLocale( 'es', es );
 
@@ -145,8 +145,7 @@ export const CalendarModal = ({date,cliente }) => {
         overlayClassName="modal-fondo"
         closeTimeoutMS={ 200 }
     >
-        <h1 className="display-6">Gestión de la Reserva</h1>
-        <NavbarReserva />
+        <h1 className="display-6"id='titulo' >Gestión de la Reserva</h1>
         <hr />
         <form className="container" onSubmit={ onSubmit }>
             <div className="form-group mb-2">

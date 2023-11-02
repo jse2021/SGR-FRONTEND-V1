@@ -12,6 +12,7 @@ export const MenuItemReserva = () => {
           Gestión Reserva        </button>
         <ul className="dropdown-menu">
           <li><Link className="dropdown-item" to="/ReservaPorCliente">Consultar Reserva por Cliente</Link></li>
+          <li><Link className="dropdown-item" to="/ReservaDelaFecha">Consultar Reserva de la fecha</Link></li>
         </ul>
       </li>
     </>

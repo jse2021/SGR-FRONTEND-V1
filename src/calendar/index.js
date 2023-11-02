@@ -5,7 +5,7 @@ export * from './components/CalendarEvent';
 export * from './components/CalendarModal';
 export * from './components/FabDelete';
 export * from './components/Navbar';
-export * from './components/NavBarReserva';
+
 
 export * from './components/Components Modal/Cliente/InputCliente'
 export * from './components/Components Modal/Cliente/ListaCliente'
@@ -21,12 +21,10 @@ export * from './components/MenuItemCancha';
 export * from './components/MenuItemCliente';
 export * from './components/MenuItemReserva';
 export * from './components/MenuItemCalendario';
-export * from './components/ItemReservasFecha';
-export * from './components/ReservasFecha';
+export * from './components/Reservas/ReservasFecha';
 
 export * from './components/Usuarios/AltaUsuario'
 export * from './components/Usuarios/ConsultarUsuario'
-// export * from './components/Usuarios/TablaUsuarios'
 export * from './components/Usuarios/InputSearch'
 export * from './components/Usuarios/SearchResultsList'
 export * from './components/Usuarios/SearchResult'
@@ -39,7 +37,6 @@ export * from './components/Canchas/SearchResult'
 export * from './components/Canchas/SearchResultsList'
 
 export * from './components/Configuracion/PrecioCancha'
-// export * from './components/Configuracion/PrecioSena'
 
 export * from './components/Reportes/PagosDeReserva'
 export * from './components/Reportes/Recaudacion'

@@ -58,7 +58,7 @@ export const AppRouter = () => {
                             <Route path="/ConsultarCliente" element = {<ConsultarCliente />} />
 
                             <Route path="/ReservaPorCliente" element = {<ReservaPorCliente />} />
-                            <Route path="/ReservasFecha" element = {<ReservasFecha />} />
+                            <Route path="/ReservaDelaFecha" element = {<ReservasFecha />} />
                             
 
                             <Route path="/*" element={ <Navigate to="/" /> } />

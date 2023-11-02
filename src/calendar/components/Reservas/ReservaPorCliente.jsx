@@ -51,16 +51,6 @@ export const ReservaPorCliente = () => {
               </div>
           </div>
 
- 
-
-
-
-
-
-
-
-
-
             <div className="d-grid gap-2">
               <input 
                 type="submit" 
@@ -76,21 +66,11 @@ export const ReservaPorCliente = () => {
                 <th scope="col">Cancha</th>
                 <th scope="col">E.Pago</th>
                 <th scope="col">Observaciones</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><a class="display-8" href="#">Eliminar</a></td>
-                <td><a class="display-8" href="#">Modificar</a></td>
+
               </tr>
             </tbody>
           </table>
