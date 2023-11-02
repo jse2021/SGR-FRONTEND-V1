@@ -31,9 +31,7 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = ({date,data }) => {
-
-    
+export const CalendarModal = ({date,cliente }) => {
     
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore();
@@ -58,11 +56,27 @@ export const CalendarModal = ({date,data }) => {
         useEffect(() => {
             fetchData();
         }, []);  
+        
+        useEffect(() => {
+            if (cliente) {
+                // Guardamos el cliente en el estado local
+                setFormValues({
+                    ...formValues,
+                    cliente,
+                });
+            }
+        }, [cliente]);
 
+        const stringifyDate = (date) => {
+            const [day, month, year] = new Date(date).toLocaleDateString('es-AR').split('/');
+            return `${year}-${month}-${day}`;
+          };
+
+        console.log(stringifyDate(date))
         const [formValues, setFormValues] = useState({
             cliente:'',
             cancha: '',
-            fecha: new Date( date),
+            fecha: stringifyDate(date),
             hora: '',
             forma_pago:'',
             estado_pago:'',
@@ -92,20 +106,22 @@ export const CalendarModal = ({date,data }) => {
             setActiveEvent({
                 cliente:'',
                 cancha: '',
-                fecha: new Date( date),
+                fecha: stringifyDate(date),
                 hora: '',
                 forma_pago:'',
                 estado_pago:'',
                 observacion:''
             });
 
-            console.log(event)
+        console.log(event)
         setFormSubmitted(true);
+        console.log(cliente)
         
         // if ( formValues.cliente.length <= 0 ) return;
      
         console.log(formValues);
-        await startSavingEvent( formValues ); // mandamos toda la info del formulario
+        await startSavingEvent({ ...formValues,
+            cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
         closeDateModal();
         setFormSubmitted(false);
     }

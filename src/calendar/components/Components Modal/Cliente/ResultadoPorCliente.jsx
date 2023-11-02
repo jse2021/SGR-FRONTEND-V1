@@ -8,16 +8,13 @@ export const ResultadoPorCliente = ({result}) => {
      
   const onClickCliente = () => {
         setData({ nombre: data.nombre, apellido: data.apellido });
+        window.dispatchEvent(new CustomEvent("clienteSeleccionado", { detail: data }));
         console.log(result.dni);
         console.log({ nombre: data.nombre, apellido: data.apellido });
     };
  
   return (
     <>
-
-      <div>
-        <CalendarModal data={data}/>
-      </div>
       <div
         className='search-result'
         style={{cursor:"pointer"}}

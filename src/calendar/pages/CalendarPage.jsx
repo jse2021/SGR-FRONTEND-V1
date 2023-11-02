@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -8,7 +8,6 @@ import { localizer, getMessagesES } from '../../helpers';
 import { useUiStore, useCalendarStore } from '../../hooks';
 
 
-
 export const CalendarPage = () => {
 
   const { openDateModal } = useUiStore();
@@ -16,6 +15,13 @@ export const CalendarPage = () => {
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'month' );
   const [date, setDate] = useState('');
 
+  const [cliente, setCliente] = useState(null);
+
+  useEffect(() => {
+      window.addEventListener("clienteSeleccionado", (event) => {
+          setCliente(event.detail);
+      });
+  }, []);
 
   const eventStyleGetter = ( event, start, end, isSelected ) => {
 
@@ -49,7 +55,7 @@ export const CalendarPage = () => {
   return (
     <>
       <Navbar />
-
+      
       <Calendar
         culture='es'
         localizer={ localizer }
@@ -68,10 +74,8 @@ export const CalendarPage = () => {
         onView={ onViewChanged }
 
       />
-      <CalendarModal date={date} />
-      <FabDelete />
-
-
+        <CalendarModal date={date} cliente={cliente}/>
+        <FabDelete />
     </>
   )
 }
