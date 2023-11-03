@@ -39,7 +39,7 @@ export const useCalendarStore = () => {
             const {data} = await calendarApi.get('/reserva');
             const events = convertEventsToDateEvents(data.reservas);
             dispatch(onLoadEvents(events));
-            console.log({events})
+            // console.log({events})
         } catch (error) {
             console.log('error cargando eventos')
             console.log({error})

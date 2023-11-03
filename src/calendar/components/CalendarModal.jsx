@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { addHours, differenceInSeconds } from 'date-fns';
-
+import moment from 'moment';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -32,7 +32,7 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 export const CalendarModal = ({date,cliente }) => {
-    
+    // date = '2023-11-25T00:00:00.000Z'    
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
@@ -42,7 +42,7 @@ export const CalendarModal = ({date,cliente }) => {
         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
-        console.log( data.canchas );
+        // console.log( data.canchas );
         
             if (data.canchas instanceof Array) {
                 setCancha(data.canchas.map((cancha) => {
@@ -67,37 +67,30 @@ export const CalendarModal = ({date,cliente }) => {
             }
         }, [cliente]);
 
-        const fechaReserva = new Date(date).toLocaleDateString(
-            'es-AR',
-            {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            }
-          ); 
 
-          const stringifyDate = (date) => {
-            // Convertir la fecha a un formato de fecha UTC
-            const utcDate = new Date(date);
-          
-            // Formatear la fecha con el formato `YYYY-MM-DD`
-            const formattedDate = `${utcDate.getFullYear()}-${utcDate.getMonth() + 1}-${utcDate.getDate()}`;
-          
-            return formattedDate;
-          };
+        //   const stringifyDate = (date) => {
+        //     // Convertir la fecha a un formato de fecha UTC
+        //     const utcDate = moment(date).utc();
         
-          console.log(date)
-          console.log(stringifyDate(date))
-
+        //     if (!date || !utcDate.isValid()) {
+        //         throw new Error("La fecha es obligatoria o no tiene un formato válido");
+        //     }
+        
+        //     // Formatear la fecha con el formato `YYYY-MM-DDT00:00:00.000Z`
+        //     const formattedDate = utcDate.format('YYYY-MM-DDT00:00:00.000Z');
+        
+        //     return formattedDate;
+        // };
         
         const [formValues, setFormValues] = useState({
             cliente:'',
             cancha: '',
-            fecha: stringifyDate(date),
+            fecha: date,
             hora: '',
             forma_pago:'',
             estado_pago:'',
-            observacion:''
+            observacion:'',
+
         });
 
     useEffect(() => {
@@ -122,7 +115,7 @@ export const CalendarModal = ({date,cliente }) => {
             setActiveEvent({
                 cliente:'',
                 cancha: '',
-                fecha: stringifyDate(date),
+                fecha: date,
                 hora: '',
                 forma_pago:'',
                 estado_pago:'',
@@ -130,8 +123,6 @@ export const CalendarModal = ({date,cliente }) => {
             });
 
         setFormSubmitted(true);
-        console.log(new Date(date))
-        
         // if ( formValues.cliente.length <= 0 ) return;
      
         console.log(formValues);
@@ -140,9 +131,15 @@ export const CalendarModal = ({date,cliente }) => {
             closeDateModal();
             setFormSubmitted(false);
     }
-    
-    
-
+    const fechaReserva = new Date(date).toLocaleDateString(
+        'es-AR',
+        {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }
+      );
+      console.log('MODAL: ', date)
   return (
     
     <Modal
