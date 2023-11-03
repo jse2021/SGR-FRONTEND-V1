@@ -67,16 +67,33 @@ export const CalendarModal = ({date,cliente }) => {
             }
         }, [cliente]);
 
-        const stringifyDate = (date) => {
-            const [day, month, year] = new Date(date).toLocaleDateString('es-AR').split('/');
-            return `${year}-${month}-${day}`;
+        const fechaReserva = new Date(date).toLocaleDateString(
+            'es-AR',
+            {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            }
+          ); 
+
+          const stringifyDate = (date) => {
+            // Convertir la fecha a un formato de fecha UTC
+            const utcDate = new Date(date);
+          
+            // Formatear la fecha con el formato `YYYY-MM-DD`
+            const formattedDate = `${utcDate.getFullYear()}-${utcDate.getMonth() + 1}-${utcDate.getDate()}`;
+          
+            return formattedDate;
           };
-          console.log("xxx: ",date)
+        
+          console.log(date)
+          console.log(stringifyDate(date))
+
         
         const [formValues, setFormValues] = useState({
             cliente:'',
             cancha: '',
-            fecha:  date,
+            fecha: stringifyDate(date),
             hora: '',
             forma_pago:'',
             estado_pago:'',
@@ -101,39 +118,30 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
-        console.log(date)
         event.preventDefault();
             setActiveEvent({
                 cliente:'',
                 cancha: '',
-                fecha: date,
+                fecha: stringifyDate(date),
                 hora: '',
                 forma_pago:'',
                 estado_pago:'',
                 observacion:''
             });
 
-        console.log(event)
         setFormSubmitted(true);
-        console.log(cliente)
+        console.log(new Date(date))
         
         // if ( formValues.cliente.length <= 0 ) return;
      
         console.log(formValues);
         await startSavingEvent({ ...formValues,
             cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
-        closeDateModal();
-        setFormSubmitted(false);
+            closeDateModal();
+            setFormSubmitted(false);
     }
     
-    const fechaReserva = new Date(date).toLocaleDateString(
-        'es-AR',
-        {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }
-      ); 
+    
 
   return (
     

@@ -18,7 +18,7 @@ export const CalendarPage = () => {
   const [cliente, setCliente] = useState(null);
 
   useEffect(() => {
-      window.addEventListener("clienteSeleccionado", (event) => {
+          window.addEventListener("clienteSeleccionado", (event) => {
           setCliente(event.detail);
       });
   }, []);
@@ -38,7 +38,7 @@ export const CalendarPage = () => {
   }
 
    const handleSelectSlot = (event) =>{
-    console.log(event.start)
+    // console.log(event.start)
     setDate(event.start)
     openDateModal();
    }
