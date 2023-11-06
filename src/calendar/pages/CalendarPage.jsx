@@ -37,7 +37,16 @@ export const CalendarPage = () => {
     }
   }
   
-  const stringifyDate = (date) => {
+  const handleSelectSlot = (event) =>{
+    const fecha = event.start.toISOString()
+    setDate(stringifyDate(fecha))
+    console.log('ANTES DE FORMATEAR: ',fecha)
+    openDateModal();
+    
+   }
+
+   const stringifyDate = (date) => {
+    console.log('xxxxxxxxx',date)
     // Obtener la fecha recibida en el parámetro `date`
     const dateObj = new Date(date);
   
@@ -53,13 +62,8 @@ export const CalendarPage = () => {
     return formattedDate;
   };
   
-  const handleSelectSlot = (event) =>{
-    
-    setDate(stringifyDate(event.start))
-    openDateModal();
-    console.log('ANTES DE FORMATEAR: ',event.start)
-   }
-   console.log('Calendario: ', date)
+
+  console.log('Calendario: ', date)
   const onViewChanged = ( event ) => {
     localStorage.setItem('lastView', event );
     setLastView( event )
