@@ -67,21 +67,6 @@ export const CalendarModal = ({date,cliente }) => {
             }
         }, [cliente]);
 
-
-        //   const stringifyDate = (date) => {
-        //     // Convertir la fecha a un formato de fecha UTC
-        //     const utcDate = moment(date).utc();
-        
-        //     if (!date || !utcDate.isValid()) {
-        //         throw new Error("La fecha es obligatoria o no tiene un formato válido");
-        //     }
-        
-        //     // Formatear la fecha con el formato `YYYY-MM-DDT00:00:00.000Z`
-        //     const formattedDate = utcDate.format('YYYY-MM-DDT00:00:00.000Z');
-        
-        //     return formattedDate;
-        // };
-        
         const [formValues, setFormValues] = useState({
             cliente:'',
             cancha: '',
@@ -140,6 +125,7 @@ export const CalendarModal = ({date,cliente }) => {
         }
       );
       console.log('MODAL: ', date)
+      
   return (
     
     <Modal

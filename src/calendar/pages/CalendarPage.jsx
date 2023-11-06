@@ -38,26 +38,22 @@ export const CalendarPage = () => {
   }
   
   const stringifyDate = (date) => {
-    // Convertir la fecha a un objeto Date
+    // Obtener la fecha recibida en el parámetro `date`
     const dateObj = new Date(date);
   
-    // Obtener la hora de la fecha
-    const hours = dateObj.getHours();
+    // Obtener la hora actual en la zona horaria UTC
+    const now = Date.now();
   
-    // Convertir la fecha a un formato de fecha UTC
-    const utcDate = dateObj.toUTCString();
-  
-    // Crear una nueva constante con la hora establecida en 00:00:00
-    const newDateObj = new Date(utcDate).setHours(0, 0, 0, 0);
+    // Crear una nueva fecha con la hora establecida en 00:00:00
+    const newDateObj = new Date(dateObj.getTime());
   
     // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss.SSSZ`
     const formattedDate = new Date(newDateObj).toISOString();
-  
+    console.log('infuncion: '+formattedDate)
     return formattedDate;
   };
-
   
-   const handleSelectSlot = (event) =>{
+  const handleSelectSlot = (event) =>{
     
     setDate(stringifyDate(event.start))
     openDateModal();
