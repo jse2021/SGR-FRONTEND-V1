@@ -38,14 +38,23 @@ export const CalendarPage = () => {
   }
   
   const handleSelectSlot = (event) =>{
-    const fecha = event.start.toISOString()
-    setDate(stringifyDate(fecha))
-    console.log('ANTES DE FORMATEAR: ',fecha)
+
+    setDate(stringifyDate(event.start))
     openDateModal();
     
    }
 
-   const stringifyDate = (date) => {
+  console.log('Calendario: ', date)
+  const onViewChanged = ( event ) => {
+    localStorage.setItem('lastView', event );
+    setLastView( event )
+  }
+  // 2023-11-25T00:00:00.000Z
+  useEffect(() => {
+    startLoadingEvents()
+  }, [])
+
+  const stringifyDate = (date) => {
     console.log('xxxxxxxxx',date)
     // Obtener la fecha recibida en el parámetro `date`
     const dateObj = new Date(date);
@@ -59,20 +68,10 @@ export const CalendarPage = () => {
     // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss.SSSZ`
     const formattedDate = new Date(newDateObj).toISOString();
     console.log('infuncion: '+formattedDate)
+ 
     return formattedDate;
   };
   
-
-  console.log('Calendario: ', date)
-  const onViewChanged = ( event ) => {
-    localStorage.setItem('lastView', event );
-    setLastView( event )
-  }
-  // 2023-11-25T00:00:00.000Z
-  useEffect(() => {
-    startLoadingEvents()
-  }, [])
-
   return (
     <>
       <Navbar />

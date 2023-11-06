@@ -96,7 +96,8 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
-        event.preventDefault();
+        console.log('EN SUBMIT: ', date);
+        
             setActiveEvent({
                 cliente:'',
                 cancha: '',
@@ -106,7 +107,7 @@ export const CalendarModal = ({date,cliente }) => {
                 estado_pago:'',
                 observacion:''
             });
-
+            event.preventDefault();
         setFormSubmitted(true);
         // if ( formValues.cliente.length <= 0 ) return;
      
