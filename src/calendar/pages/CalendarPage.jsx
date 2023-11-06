@@ -5,11 +5,12 @@ import moment from 'moment';
 import { Navbar, CalendarEvent, CalendarModal, FabDelete} from '../';
 
 import { localizer, getMessagesES } from '../../helpers';
-import { useUiStore, useCalendarStore } from '../../hooks';
+import { useUiStore, useCalendarStore, useAuthStore } from '../../hooks';
 
 
 export const CalendarPage = () => {
 
+  const {user} = useAuthStore();
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent,startLoadingEvents } = useCalendarStore();
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'month' );
@@ -25,8 +26,10 @@ export const CalendarPage = () => {
 
   const eventStyleGetter = ( event, start, end, isSelected ) => {
 
+    const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid)
+
     const style = {
-      backgroundColor: '#347CF7',
+      backgroundColor: isMyEvent ? '#347CF7':'#347CE5',
       borderRadius: '0px',
       opacity: 0.8,
       color: 'white'
@@ -44,7 +47,7 @@ export const CalendarPage = () => {
     
    }
 
-  console.log('Calendario: ', date)
+ 
   const onViewChanged = ( event ) => {
     localStorage.setItem('lastView', event );
     setLastView( event )
@@ -55,7 +58,7 @@ export const CalendarPage = () => {
   }, [])
 
   const stringifyDate = (date) => {
-    console.log('xxxxxxxxx',date)
+  
     // Obtener la fecha recibida en el parámetro `date`
     const dateObj = new Date(date);
   
@@ -67,7 +70,7 @@ export const CalendarPage = () => {
   
     // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss.SSSZ`
     const formattedDate = new Date(newDateObj).toISOString();
-    console.log('infuncion: '+formattedDate)
+   
  
     return formattedDate;
   };

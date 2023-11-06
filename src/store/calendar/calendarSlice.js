@@ -34,16 +34,21 @@ export const calendarSlice = createSlice({
             }
         },
 
-        onLoadEvents : (state, {payload = []}) => {
-            state.isLoadingEvents = false;
+        onLoadEvents: (state, {payload = []})=>{
+            state.isLoadingEvents= false;
+
+            /**
+             * VERIFICO SI ESISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE, 
+             * LO INSERTO
+             */
             payload.forEach(event => {
-                const exist = state.events.some(dbEvent => dbEvent.id === event.id)
-                //si no existe
-                if(!exist){
-                    state.events.push(event);
+                const exists = state.events.some(dbEvent => dbEvent.id === event.id);
+                if (!exists) {
+                    state.events.push(event)
+                    
                 }
             })
-        }
+        },
     }
 });
 

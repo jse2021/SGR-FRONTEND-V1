@@ -42,7 +42,7 @@ export const CalendarModal = ({date,cliente }) => {
         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
-        // console.log( data.canchas );
+      
         
             if (data.canchas instanceof Array) {
                 setCancha(data.canchas.map((cancha) => {
@@ -96,7 +96,7 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
-        console.log('EN SUBMIT: ', date);
+     
         
             setActiveEvent({
                 cliente:'',
@@ -110,13 +110,14 @@ export const CalendarModal = ({date,cliente }) => {
             event.preventDefault();
         setFormSubmitted(true);
         // if ( formValues.cliente.length <= 0 ) return;
-     
-        console.log(formValues);
+        
         await startSavingEvent({ ...formValues,
+            fecha: date,
             cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
             closeDateModal();
             setFormSubmitted(false);
     }
+    
     const fechaReserva = new Date(date).toLocaleDateString(
         'es-AR',
         {
@@ -125,7 +126,7 @@ export const CalendarModal = ({date,cliente }) => {
           year: 'numeric',
         }
       );
-      console.log('MODAL: ', date)
+     
       
   return (
     

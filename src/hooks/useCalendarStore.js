@@ -23,7 +23,7 @@ export const useCalendarStore = () => {
             // Creando
             const {data} = await calendarApi.post('/reserva', calendarEvent)
             console.log({data})
-            dispatch( onAddNewEvent({ ...calendarEvent, id: data.evento.id, user }) );    
+            dispatch( onAddNewEvent({ ...calendarEvent, user }) );    
         }
     }
 
@@ -37,10 +37,10 @@ export const useCalendarStore = () => {
         try {
 
             const {data} = await calendarApi.get('/reserva');
-            const events = convertEventsToDateEvents(data.reservas);
-            dispatch(onLoadEvents(events));
-            // console.log({events})
-        } catch (error) {
+            const reservas = convertEventsToDateEvents(data.reservas);
+            dispatch(onLoadEvents(reservas));
+            console.log({reservas})
+        } catch (error) { 
             console.log('error cargando eventos')
             console.log({error})
         }
