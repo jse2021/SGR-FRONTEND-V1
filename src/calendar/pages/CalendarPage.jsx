@@ -101,6 +101,7 @@ export const CalendarPage = () => {
         components={{
           event : CalendarEvent
         }}
+        format="YYYY-MM-DDTHH:mm:ss.SSSZ"
         onSelectEvent={onSelect}
         onDoubleClickEvent={onDoubleClick}
         onSelectSlot={handleSelectSlot}
