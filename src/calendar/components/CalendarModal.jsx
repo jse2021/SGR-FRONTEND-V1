@@ -68,6 +68,9 @@ export const CalendarModal = ({date,cliente }) => {
         }, [cliente]);
 
         const [formValues, setFormValues] = useState({
+            title:'',
+            start:'',
+            end:'',
             cliente:'',
             cancha: '',
             fecha: date,
@@ -100,13 +103,16 @@ export const CalendarModal = ({date,cliente }) => {
         event.preventDefault();     
         
             setActiveEvent({
+                title:'',
+                start:'',
+                end:'',
                 cliente:'',
                 cancha: '',
                 fecha: date,
                 hora: '',
                 forma_pago:'',
                 estado_pago:'',
-                observacion:''
+                observacion:'',
             });
 
 
@@ -114,6 +120,7 @@ export const CalendarModal = ({date,cliente }) => {
         // if ( formValues.cliente.length <= 0 ) return;
         
         await startSavingEvent({ ...formValues,
+   
             fecha: date,
             cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
             closeDateModal();

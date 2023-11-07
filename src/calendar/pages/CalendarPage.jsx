@@ -29,18 +29,19 @@ export const CalendarPage = () => {
     /**
      * DISEÑO DE LOS EVENTOS, "BOTON"
      */
-    const eventStyleGetter = (fecha, fechaCopia,event, start, end,isSelected) =>{    
+    const eventStyleGetter = (event, start, end,isSelected) =>{    
 
       //*Verifico que el evento sea el que creo el usuario
       // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
 
-      console.log({fecha, fechaCopia,event, start, end,isSelected})
+      console.log({event, start, end,isSelected})
       const style = {
-          backgroundColor:'#347cf7',
+          backgroundColor: '#000000',
           // backgroundColor: isMyEvent? '#347cf7': '#465660',
           borderRadius: '5px',
           opacity:0.8,
-          color: 'white'
+          color: 'white',
+          fontSize: '12px'
       }
 
       return {

@@ -28,29 +28,35 @@ export const useCalendarStore = () => {
     const startSavingEvent = async( calendarEvent ) => {
 
         try {
-        // TODO: llegar al backend
-        // Todo bien
-        if( calendarEvent._id ) {
+
+        if( calendarEvent.id ) {
             // Actualizando
-            dispatch( onUpdateEvent({ ...calendarEvent }) );
-        } else {
+            const {data} = await calendarApi.put(`/reserva/${calendarEvent.id}`, calendarEvent)
+            dispatch( onUpdateEvent({ ...calendarEvent, user }) );
+        }  
             // Creando
-            const {data} = await calendarApi.post('/reserva', calendarEvent)
+            await calendarApi.post('/reserva', calendarEvent)
             console.log({data})
             // de lo que viene del calendarEvent, le agrego el usuario y el id
             dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );    
-        }
+
         } catch (error) {
             // Swal.fire('Error al guardar',error.response.data.msg,'error');
             console.log(error)
         }
-   
-    }
+       }
 
-    const startDeletingEvent = () => {
-        // Todo: Llegar al backend
+    const startDeletingEvent = async() => {
 
-        dispatch( onDeleteEvent() );
+        try {
+            await calendarApi.delete(`/reserva/${activeEvent.id}`)
+            // Todo: Llegar al backend
+            dispatch( onDeleteEvent() );
+
+        } catch (error) {
+            console.log(error)
+        }
+ 
     }
 
     /**

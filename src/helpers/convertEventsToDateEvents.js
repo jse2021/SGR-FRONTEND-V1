@@ -10,6 +10,8 @@ export const convertEventsToDateEvents = (event = []) =>{
     return event.map(event => {
         event.fecha = parseISO(event.fecha);
         event.fechaCopia = parseISO(event.fechaCopia);
+        event.start = parseISO(event.start);
+        event.end = parseISO(event.end);
 
         return event;
 

@@ -7,11 +7,9 @@ export const CalendarEvent = ({ event }) => {
 
     return (
         <>
-            <strong>{ cliente }</strong>
-            <span> - { cancha }</span>
+            <strong>{ cancha }</strong>
             <span> - { hora }</span>
-            <span> - { fecha }</span>
-            <span> - { fechaCopia }</span>
+
         </>
     )
 }
