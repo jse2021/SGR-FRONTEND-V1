@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 export const useCalendarStore = () => {
 
     const { events, activeEvent } = useSelector( state => state.calendar );
+    const {user} =useSelector(state=> state.auth)
     const dispatch = useDispatch();
     /**
      * TOMO LA INFO DEL STORE, Y DISPARO PARA TOMAR DEL CALENDAR PAGE

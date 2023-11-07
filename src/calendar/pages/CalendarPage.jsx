@@ -2,13 +2,16 @@ import { createContext, useEffect, useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import { Navbar, CalendarEvent, CalendarModal, FabDelete} from '../';
+import { Navbar,  CalendarModal, FabDelete} from '../';
+import CalendarEvent from '../components/CalendarEvent';
 
 import { localizer, getMessagesES } from '../../helpers';
 import { useUiStore, useCalendarStore, useAuthStore } from '../../hooks';
 
 
 export const CalendarPage = () => {
+
+  console.log(CalendarEvent)
 
   const {user} = useAuthStore();
   const { openDateModal } = useUiStore();
@@ -24,26 +27,29 @@ export const CalendarPage = () => {
         });
     }, []);
 
+    
     /**
      * DISEÑO DE LOS EVENTOS, "BOTON"
      */
-    const eventStyleGetter = (event, start, end,isSelected) =>{
+    const eventStyleGetter = (fecha, fechaCopia,event, start, end,isSelected) =>{    
 
-        //*Verifico que el evento sea el que creo el usuario
-        // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
+      //*Verifico que el evento sea el que creo el usuario
+      // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
 
-        console.log({event, start, end,isSelected})
-        const style = {
-            backgroundColor: isMyEvent? '#347cf7': '#465660',
-            borderRadius: '5px',
-            opacity:0.8,
-            color: 'white'
-        }
+      console.log({fecha, fechaCopia,event, start, end,isSelected})
+      const style = {
+          backgroundColor:'#347cf7',
+          // backgroundColor: isMyEvent? '#347cf7': '#465660',
+          borderRadius: '5px',
+          opacity:0.8,
+          color: 'white'
+      }
 
-        return {
-            style
-        }
-    }
+      return {
+        
+          style
+      }
+  }
   
     const handleSelectSlot = (event) =>{
 
@@ -72,10 +78,6 @@ export const CalendarPage = () => {
   
   }
 
-   useEffect(()=>{
-        startLoadingEvents();
-    },[])
-
     const stringifyDate = (date) => {
     
       // Obtener la fecha recibida en el parámetro `date`
@@ -93,6 +95,10 @@ export const CalendarPage = () => {
   
       return formattedDate;
     };
+
+    useEffect(()=>{
+      startLoadingEvents();
+  },[])
   
   return (
     <>
@@ -100,22 +106,22 @@ export const CalendarPage = () => {
       
       <Calendar
         culture='es'
-        localizer={ localizer }
+        defaultView={lastView}
+        localizer={localizer}
         events={ events }
-        defaultView={ lastView }
         startAccessor="start"
         endAccessor="end"
         style={{ height: 'calc( 100vh - 80px )' }}
         messages={ getMessagesES() }
-        eventPropGetter={ eventStyleGetter }
+        eventPropGetter = {eventStyleGetter}
         components={{
-          event : CalendarEvent
+          event:CalendarEvent
         }}
-        onSelectEvent={onSelect}
         onDoubleClickEvent={onDoubleClick}
+        onSelectEvent={onSelect}
+        onView={onViewChanged}
         onSelectSlot={handleSelectSlot}
         selectable
-        onView={ onViewChanged }
 
       />
         <CalendarModal date={date} cliente={cliente}/>
