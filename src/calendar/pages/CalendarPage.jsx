@@ -11,8 +11,6 @@ import { useUiStore, useCalendarStore, useAuthStore } from '../../hooks';
 
 export const CalendarPage = () => {
 
-  console.log(CalendarEvent)
-
   const {user} = useAuthStore();
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent,startLoadingEvents } = useCalendarStore();
@@ -53,7 +51,9 @@ export const CalendarPage = () => {
   
     const handleSelectSlot = (event) =>{
 
-      setDate(stringifyDate(event.start))
+      // setDate(stringifyDate(event.start))
+      setDate(event.start)
+      console.log(event.start)
       openDateModal();
       
     }
@@ -78,27 +78,47 @@ export const CalendarPage = () => {
   
   }
 
-    const stringifyDate = (date) => {
+    // const stringifyDate = (date) => {
     
-      // Obtener la fecha recibida en el parámetro `date`
-      const dateObj = new Date(date);
+    //   // Obtener la fecha recibida en el parámetro `date`
+    //   const dateObj = new Date(date);
     
-      // Obtener la hora actual en la zona horaria UTC
-      const now = Date.now();
+    //   // Obtener la hora actual en la zona horaria UTC
+    //   const now = Date.now();
     
-      // Crear una nueva fecha con la hora establecida en 00:00:00
-      const newDateObj = new Date(dateObj.getTime());
+    //   // Crear una nueva fecha con la hora establecida en 00:00:00
+    //   const newDateObj = new Date(dateObj.getTime());
     
-      // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss.SSSZ`
-      const formattedDate = new Date(newDateObj).toISOString();
+    //   // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss.SSSZ`
+    //   const formattedDate = new Date(newDateObj).toISOString();
     
   
-      return formattedDate;
-    };
+    //   return formattedDate;
+    // };
+
+    // const stringifyDate = (date) => {
+    //   // Obtener la fecha recibida en el parámetro `date`
+    //   const dateObj = new Date(date);
+    
+    //   // Obtener la hora original de la fecha
+    //   const originalHour = dateObj.getHours();
+    
+    //   // Obtener la hora actual en la zona horaria UTC
+    //   const now = Date.now();
+    
+    //   // Crear una nueva fecha con la hora original
+    //   const newDateObj = new Date(dateObj.getTime() + (originalHour * 60 * 60 * 1000));
+    
+    //   // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss`
+    //   const formattedDate = new Date(newDateObj).toISOString();
+    
+    //   return formattedDate;
+    // };
 
     useEffect(()=>{
       startLoadingEvents();
   },[])
+  
   
   return (
     <>
