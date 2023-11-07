@@ -2,19 +2,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import { onAddNewEvent, onDeleteEvent, onSetActiveEvent, onUpdateEvent, onLoadEvents, onLogin } from '../store';
 import { calendarApi } from '../api';
 import { convertEventsToDateEvents } from '../helpers';
+import Swal from 'sweetalert2';
 
 
+/**
+ * DE ACA LLEGAMOS AL BACKEN Y RELIZAMOS LOS PROCESOS
+ */
 export const useCalendarStore = () => {
 
-    const dispatch = useDispatch();
     const { events, activeEvent } = useSelector( state => state.calendar );
-    const {user} = useSelector(state => state.auth)
+    const dispatch = useDispatch();
+    /**
+     * TOMO LA INFO DEL STORE, Y DISPARO PARA TOMAR DEL CALENDAR PAGE
+     */
 
-    const setActiveEvent = ( calendarEvent ) => {
-        dispatch( onSetActiveEvent( calendarEvent ) )
+    const setActiveEvent = (calendarEvent)=>{
+        dispatch(onSetActiveEvent(calendarEvent))
     }
 
+    /**
+     *  PROCESO DE GRABACION DEL EVENTO
+     */
+
     const startSavingEvent = async( calendarEvent ) => {
+
+        try {
         // TODO: llegar al backend
         // Todo bien
         if( calendarEvent._id ) {
@@ -27,6 +39,10 @@ export const useCalendarStore = () => {
             // de lo que viene del calendarEvent, le agrego el usuario y el id
             dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );    
         }
+        } catch (error) {
+            Swal.fire('Error al guardar',error.response.data.msg,'error');
+        }
+   
     }
 
     const startDeletingEvent = () => {
@@ -35,13 +51,17 @@ export const useCalendarStore = () => {
         dispatch( onDeleteEvent() );
     }
 
+    /**
+     * TRAIGO LOS EVENTOS DEL BACKEND PARA MOSTRAR EN PANTALLA
+     * tiene que ser llamado en calendarPage
+     */
     const startLoadingEvents = async() => {
         try {
 
             const {data} = await calendarApi.get('/reserva');
-            console.log({data})
-            const reservas = convertEventsToDateEvents(data.reservas);
-            dispatch(onLoadEvents(reservas));
+            const events = convertEventsToDateEvents(data.reservas);
+            dispatch(onLoadEvents(events));
+            console.log(events)
             
         } catch (error) { 
             console.log('error cargando eventos')

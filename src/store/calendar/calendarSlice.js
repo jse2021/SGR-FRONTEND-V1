@@ -2,42 +2,41 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const calendarSlice = createSlice({
     name: 'calendar',
-    initialState: {
+    initialState:{
         isLoadingEvents: true,
-        events: [ 
-            
-        ],
-        activeEvent: null
+    events: [],
+    activeEvent:null
     },
     reducers: {
-        onSetActiveEvent: ( state, { payload }) => {
-            state.activeEvent = payload;
+          //**ACTIVAR NOTA PARA MOSTRAR EN EL MODAL */
+          onSetActiveEvent:(state,{payload})=>{
+            state.activeEvent  = payload;
         },
-
-        onAddNewEvent: ( state, { payload }) => {
-            state.events.push( payload );
+        onAddNewEvent:(state,{payload})=>{
+            state.events.push(payload);
+            /**LIMPIO EL EVENTO ACTIVO */
             state.activeEvent = null;
         },
 
-        onUpdateEvent: ( state, { payload } ) => {
-            state.events = state.events.map( event => {
-                if ( event._id === payload._id ) {
-                    return payload;
+        onUpdateEvent:(state,{payload})=>{
+            state.events = state.events.map(event=>{
+                if (event.id === payload.id) {
+                    return payload;                    
                 }
-
                 return event;
-            });
+            })
         },
 
-        onDeleteEvent: ( state ) => {
-            if ( state.activeEvent ) {
-                state.events = state.events.filter( event => event._id !== state.activeEvent._id );
-                state.activeEvent = null;
+        onDeleteEvent: (state)=>{
+            if (state.activeEvent) {
+                state.events = state.events.filter(event => event.id !== state.activeEvent.id);
+                state.activeEvent = null;    
             }
         },
 
         onLoadEvents: (state, {payload = []})=>{
             state.isLoadingEvents= false;
+
             /**
              * VERIFICO SI ESISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE, 
              * LO INSERTO
@@ -50,8 +49,16 @@ export const calendarSlice = createSlice({
                 }
             })
         },
+               /**
+         * PARA LIMPIAR EL STORE UNA VEZ QUE CERRAMOS SESION
+         */
+               onLogoutCalendar: (state) => {
+                state.isLoadingEvents= true,
+                state.events= [],
+                state.activeEvent=null
+            }
     }
 });
 
 
-export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent, onDeleteEvent, onLoadEvents } = calendarSlice.actions;
+export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent, onDeleteEvent, onLoadEvents, onLogoutCalendar } = calendarSlice.actions;

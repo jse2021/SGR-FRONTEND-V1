@@ -13,6 +13,7 @@ export const CalendarPage = () => {
   const {user} = useAuthStore();
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent,startLoadingEvents } = useCalendarStore();
+  // PARA ALMACENAR LA VISTA EN EL STORAGE
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'month' );
   const [date, setDate] = useState('');
   const [cliente, setCliente] = useState(null);
@@ -23,26 +24,26 @@ export const CalendarPage = () => {
         });
     }, []);
 
-    useEffect(() => {
-      startLoadingEvents()
-    }, [])
+    /**
+     * DISEÑO DE LOS EVENTOS, "BOTON"
+     */
+    const eventStyleGetter = (event, start, end,isSelected) =>{
 
-    const eventStyleGetter = ( event, start, end, isSelected ) => {
-    console.log( {event, start, end, isSelected} );
+        //*Verifico que el evento sea el que creo el usuario
+        // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
 
-    const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid)
+        console.log({event, start, end,isSelected})
+        const style = {
+            backgroundColor: isMyEvent? '#347cf7': '#465660',
+            borderRadius: '5px',
+            opacity:0.8,
+            color: 'white'
+        }
 
-    const style = {
-      backgroundColor: isMyEvent ? '#347CF7':'#347CE5',
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white'
+        return {
+            style
+        }
     }
-
-    return {
-      style
-    }
-  }
   
     const handleSelectSlot = (event) =>{
 
@@ -51,20 +52,29 @@ export const CalendarPage = () => {
       
     }
 
-    const onDoubleClick = ( event )=> {
-      console.log({onDoubleClick: event})
-    }
+    const onDoubleClick = (event)=> {
+      // console.log({dooubleClick:event})
+      openDateModal();
+  
+  }
 
     //para activar la reserva seleccioanda
     const onSelect = (event) => {
       setActiveEvent(event)
     }
 
-    const onViewChanged = ( event ) => {
-      localStorage.setItem('lastView', event );
-      setLastView( event )
-    }
-    
+    /**
+     * CUANDO CAMBIA LA VISTA
+     */
+    const onViewChanged = (event) => { 
+      console.log({viewChange:event})
+      localStorage.setItem('lastView',event);
+  
+  }
+
+   useEffect(()=>{
+        startLoadingEvents();
+    },[])
 
     const stringifyDate = (date) => {
     
@@ -95,13 +105,12 @@ export const CalendarPage = () => {
         defaultView={ lastView }
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 'calc( 100vh - 90px )' }}
+        style={{ height: 'calc( 100vh - 80px )' }}
         messages={ getMessagesES() }
         eventPropGetter={ eventStyleGetter }
         components={{
           event : CalendarEvent
         }}
-        format="YYYY-MM-DDTHH:mm:ss.SSSZ"
         onSelectEvent={onSelect}
         onDoubleClickEvent={onDoubleClick}
         onSelectSlot={handleSelectSlot}
