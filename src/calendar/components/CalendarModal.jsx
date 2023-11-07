@@ -78,6 +78,7 @@ export const CalendarModal = ({date,cliente }) => {
 
         });
 
+    // para mostrar los datos del modal(reserva)
     useEffect(() => {
       if ( activeEvent !== null ) {
           setFormValues({ ...activeEvent });
@@ -96,7 +97,7 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
-     
+        event.preventDefault();     
         
             setActiveEvent({
                 cliente:'',
@@ -107,8 +108,9 @@ export const CalendarModal = ({date,cliente }) => {
                 estado_pago:'',
                 observacion:''
             });
-            event.preventDefault();
-        setFormSubmitted(true);
+
+
+            setFormSubmitted(true);
         // if ( formValues.cliente.length <= 0 ) return;
         
         await startSavingEvent({ ...formValues,

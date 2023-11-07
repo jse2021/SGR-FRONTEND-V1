@@ -9,6 +9,7 @@ export const useCalendarStore = () => {
     const dispatch = useDispatch();
     const { events, activeEvent } = useSelector( state => state.calendar );
     const {user} = useSelector(state => state.auth)
+
     const setActiveEvent = ( calendarEvent ) => {
         dispatch( onSetActiveEvent( calendarEvent ) )
     }
@@ -23,7 +24,8 @@ export const useCalendarStore = () => {
             // Creando
             const {data} = await calendarApi.post('/reserva', calendarEvent)
             console.log({data})
-            dispatch( onAddNewEvent({ ...calendarEvent, user }) );    
+            // de lo que viene del calendarEvent, le agrego el usuario y el id
+            dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );    
         }
     }
 
@@ -37,9 +39,10 @@ export const useCalendarStore = () => {
         try {
 
             const {data} = await calendarApi.get('/reserva');
+            console.log({data})
             const reservas = convertEventsToDateEvents(data.reservas);
             dispatch(onLoadEvents(reservas));
-            console.log({reservas})
+            
         } catch (error) { 
             console.log('error cargando eventos')
             console.log({error})

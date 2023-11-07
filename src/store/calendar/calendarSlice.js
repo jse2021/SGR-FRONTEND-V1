@@ -4,7 +4,9 @@ export const calendarSlice = createSlice({
     name: 'calendar',
     initialState: {
         isLoadingEvents: true,
-        events: [ ],
+        events: [ 
+            
+        ],
         activeEvent: null
     },
     reducers: {
@@ -36,7 +38,6 @@ export const calendarSlice = createSlice({
 
         onLoadEvents: (state, {payload = []})=>{
             state.isLoadingEvents= false;
-
             /**
              * VERIFICO SI ESISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE, 
              * LO INSERTO

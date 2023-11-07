@@ -23,6 +23,10 @@ export const CalendarPage = () => {
         });
     }, []);
 
+    useEffect(() => {
+      startLoadingEvents()
+    }, [])
+
     const eventStyleGetter = ( event, start, end, isSelected ) => {
     console.log( {event, start, end, isSelected} );
 
@@ -51,14 +55,16 @@ export const CalendarPage = () => {
       console.log({onDoubleClick: event})
     }
 
+    //para activar la reserva seleccioanda
+    const onSelect = (event) => {
+      setActiveEvent(event)
+    }
+
     const onViewChanged = ( event ) => {
       localStorage.setItem('lastView', event );
       setLastView( event )
     }
-    // 2023-11-25T00:00:00.000Z
-    useEffect(() => {
-      startLoadingEvents()
-    }, [])
+    
 
     const stringifyDate = (date) => {
     
@@ -95,6 +101,7 @@ export const CalendarPage = () => {
         components={{
           event : CalendarEvent
         }}
+        onSelectEvent={onSelect}
         onDoubleClickEvent={onDoubleClick}
         onSelectSlot={handleSelectSlot}
         selectable
