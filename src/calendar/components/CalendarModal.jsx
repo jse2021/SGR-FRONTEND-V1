@@ -31,8 +31,7 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = ({date,cliente }) => {
-    // date = '2023-11-25T00:00:00.000Z'    
+export const CalendarModal = ({date,cliente,selectedClient }) => {
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
@@ -118,7 +117,6 @@ export const CalendarModal = ({date,cliente }) => {
                 observacion:'',
             });
 
-
             setFormSubmitted(true);
         // if ( formValues.cliente.length <= 0 ) return;
         
@@ -138,7 +136,7 @@ export const CalendarModal = ({date,cliente }) => {
         }
       );
      
-      
+
   return (
     
     <Modal
@@ -156,9 +154,8 @@ export const CalendarModal = ({date,cliente }) => {
             <h5 style={{ textAlign: 'center' }}>{fechaReserva}</h5>
             </div>
             <div className="form-group mb-2">
-                <InputCliente 
-                    setResults = {setResults}
-                    />
+
+                <InputCliente  clienteSeleccionado={selectedClient} setResults = {setResults}/>
                 <ListaCliente results = {results}/>
             </div>
             <div className="form-group mb-2">

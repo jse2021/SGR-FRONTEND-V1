@@ -33,15 +33,13 @@ export const CalendarPage = () => {
 
       //*Verifico que el evento sea el que creo el usuario
       // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
-
-      console.log({event})
       const style = {
           backgroundColor: '#000000',
           // backgroundColor: isMyEvent? '#347cf7': '#465660',
           borderRadius: '5px',
-          opacity:0.8,
+          opacity:0.9,
           color: 'white',
-          fontSize: '12px'
+          fontSize: '10px'
       }
 
       return {
@@ -52,9 +50,7 @@ export const CalendarPage = () => {
   
     const handleSelectSlot = (event) =>{
 
-      // setDate(stringifyDate(event.start))
       setDate(event.start)
-      console.log(event.start)
       openDateModal();
       
     }

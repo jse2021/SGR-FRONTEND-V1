@@ -8,10 +8,12 @@ export const calendarSlice = createSlice({
     activeEvent:null
     },
     reducers: {
+
           //**ACTIVAR NOTA PARA MOSTRAR EN EL MODAL */
-          onSetActiveEvent:(state,{payload})=>{
+        onSetActiveEvent:(state,{payload})=>{
             state.activeEvent  = payload;
         },
+        
         onAddNewEvent:(state,{payload})=>{
             state.events.push(payload);
             /**LIMPIO EL EVENTO ACTIVO */
@@ -49,7 +51,8 @@ export const calendarSlice = createSlice({
                 }
             })
         },
-               /**
+        
+        /**
          * PARA LIMPIAR EL STORE UNA VEZ QUE CERRAMOS SESION
          */
                onLogoutCalendar: (state) => {

@@ -1,14 +1,15 @@
 import React from 'react';
 
 export const CalendarEvent = ({ event }) => {
-    console.log('Paso por aca')
 
-    const { cliente, cancha, hora, fecha,fechaCopia } = event;
+    const { apellidoCliente, nombreCliente, cancha, hora, fecha,fechaCopia } = event;
 
     return (
         <>
             <strong>{ cancha }</strong>
-            <span> - { hora }</span>
+            <span> - { hora  }</span>
+            <span>  { apellidoCliente }</span>
+            <span>  { nombreCliente }</span>
 
         </>
     )

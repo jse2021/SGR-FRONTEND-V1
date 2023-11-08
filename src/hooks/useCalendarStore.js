@@ -36,7 +36,6 @@ export const useCalendarStore = () => {
         }  
             // Creando
             await calendarApi.post('/reserva', calendarEvent)
-            console.log({data})
             // de lo que viene del calendarEvent, le agrego el usuario y el id
             dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );    
 

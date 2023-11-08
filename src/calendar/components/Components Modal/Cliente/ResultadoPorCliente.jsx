@@ -5,12 +5,11 @@ import { CalendarModal, InputCliente } from '../../..';
 
 export const ResultadoPorCliente = ({result}) => {
   const [data, setData] = useState(result);
-  const [selectedClient, setSelectedClient] = useState(null);
-     
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);  
   const onClickCliente = () => {
+        setClienteSeleccionado(result);
         setData({ nombre: data.nombre, apellido: data.apellido });
         window.dispatchEvent(new CustomEvent("clienteSeleccionado", { detail: data }));
-        setSelectedClient(data);
         console.log(result.dni);
         console.log({ nombre: data.nombre, apellido: data.apellido });
     };
