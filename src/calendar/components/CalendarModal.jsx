@@ -135,7 +135,6 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
           year: 'numeric',
         }
       );
-     
 
   return (
     
@@ -155,8 +154,9 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
             </div>
             <div className="form-group mb-2">
 
-                <InputCliente  clienteSeleccionado={selectedClient} setResults = {setResults}/>
+                <InputCliente setResults = {setResults} cliente={cliente}/>
                 <ListaCliente results = {results}/>
+
             </div>
             <div className="form-group mb-2">
                 <select
@@ -183,7 +183,7 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
                     id="select-hora"
                     value={formValues.hora}
                     onChange={onInputChanged}
-                    >
+                >
                     <option key="0" value="" disabled>Seleccione horario</option>
                     <option value="10:00">10:00</option>
                     <option value="11:00">11:00</option>

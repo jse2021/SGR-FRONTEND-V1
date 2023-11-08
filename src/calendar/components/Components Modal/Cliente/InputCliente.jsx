@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { calendarApi } from '../../../../api';
 
-export const InputCliente = ({setResults,selectedClient}) => {
+export const InputCliente = ({setResults }) => {
     const [value, setValue] = useState("");
 
     const buscarCliente = async(apellido) => {
@@ -11,12 +11,7 @@ export const InputCliente = ({setResults,selectedClient}) => {
         setResults(clientes)
         console.log({clientes})
     }
-    useEffect(() => {
-        if (selectedClient) {
-          setValue(`${selectedClient.nombre} ${selectedClient.apellido}`);
-        }
-      }, [selectedClient]);
- 
+
     const handleChange = (value) => {
         setValue([value]);
         buscarCliente(value);
