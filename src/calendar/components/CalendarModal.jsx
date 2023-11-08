@@ -84,11 +84,13 @@ export const CalendarModal = ({date,cliente }) => {
     // para mostrar los datos del modal(reserva)
     useEffect(() => {
       if ( activeEvent !== null ) {
-          setFormValues({ ...activeEvent });
+        console.log('ACTIVE: ',activeEvent)
+          setFormValues({ ...activeEvent});
       }    
     }, [ activeEvent ])
 
     const onInputChanged = ({ target }) => {
+        console.log(target)
         setFormValues({
             ...formValues,
             [target.name]: target.value
@@ -100,8 +102,9 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
+
         event.preventDefault();     
-        
+
             setActiveEvent({
                 title:'',
                 start:'',
@@ -119,8 +122,7 @@ export const CalendarModal = ({date,cliente }) => {
             setFormSubmitted(true);
         // if ( formValues.cliente.length <= 0 ) return;
         
-        await startSavingEvent({ ...formValues,
-   
+        await startSavingEvent({ ...formValues, 
             fecha: date,
             cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
             closeDateModal();
@@ -154,7 +156,9 @@ export const CalendarModal = ({date,cliente }) => {
             <h5 style={{ textAlign: 'center' }}>{fechaReserva}</h5>
             </div>
             <div className="form-group mb-2">
-                <InputCliente setResults = {setResults}/>
+                <InputCliente 
+                    setResults = {setResults}
+                    />
                 <ListaCliente results = {results}/>
             </div>
             <div className="form-group mb-2">

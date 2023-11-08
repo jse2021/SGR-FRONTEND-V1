@@ -34,7 +34,7 @@ export const CalendarPage = () => {
       //*Verifico que el evento sea el que creo el usuario
       // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
 
-      console.log({event, start, end,isSelected})
+      console.log({event})
       const style = {
           backgroundColor: '#000000',
           // backgroundColor: isMyEvent? '#347cf7': '#465660',
@@ -60,7 +60,7 @@ export const CalendarPage = () => {
     }
 
     const onDoubleClick = (event)=> {
-      // console.log({dooubleClick:event})
+      console.log({dooubleClick:event})
       openDateModal();
   
   }

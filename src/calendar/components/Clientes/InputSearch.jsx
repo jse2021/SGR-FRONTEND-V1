@@ -13,9 +13,11 @@ export const InputSearch = ({setResults}) => {
         setResults(clientes)
     }
  
-    const handleChange = (value) => {
+    const handleChange = (value,{target}) => {
+
         setValue(value);
         buscarCliente(value);
+        
     }
     
     return (
@@ -24,6 +26,7 @@ export const InputSearch = ({setResults}) => {
                 className= 'form-control'
                 type="text"
                 placeholder="Buscar por Apellido"
+                name='apellidoCliente'
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}
             />
