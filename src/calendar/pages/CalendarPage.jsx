@@ -116,7 +116,10 @@ export const CalendarPage = () => {
       startLoadingEvents();
   },[])
   
-  
+  const disabledDates = {
+    before: new Date()
+  };
+
   return (
     <>
       <Navbar />
@@ -139,6 +142,7 @@ export const CalendarPage = () => {
         onView={onViewChanged}
         onSelectSlot={handleSelectSlot}
         selectable
+        disabledDates={disabledDates}
 
       />
         <CalendarModal date={date} cliente={cliente}/>
