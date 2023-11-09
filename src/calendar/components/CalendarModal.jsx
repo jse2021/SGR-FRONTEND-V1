@@ -33,11 +33,12 @@ Modal.setAppElement('#root');
 
 export const CalendarModal = ({date,cliente,selectedClient }) => {
     const { isDateModalOpen, closeDateModal } = useUiStore();
-    const { activeEvent, startSavingEvent, setActiveEvent, error } = useCalendarStore();
+    const { activeEvent, startSavingEvent, setActiveEvent, startLoadingEvents } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
     const [cancha, setCancha] = useState([]);
     const [results, setResults] = useState([]);   
-        
+
+         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
       
@@ -89,7 +90,6 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
     }, [ activeEvent ])
 
     const onInputChanged = ({ target }) => {
-        console.log(target)
         setFormValues({
             ...formValues,
             [target.name]: target.value
@@ -121,11 +121,13 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
         
         await startSavingEvent({ ...formValues, 
             fecha: date,
-            cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
+            cliente : formValues.cliente.dni
+        } ); // mandamos toda la info del formulario
+
 
             closeDateModal();
             setFormSubmitted(false);
-    }     
+    } 
     
     const fechaReserva = new Date(date).toLocaleDateString(
         'es-AR',
@@ -226,7 +228,8 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
                     placeholder='Ingrese Monto'
                     id='input-monto'
                     name="registerMonto"
-               />
+               /> 
+
                 <select
                     className="form-select"
                     name="forma_pago"

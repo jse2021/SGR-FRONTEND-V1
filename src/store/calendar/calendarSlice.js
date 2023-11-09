@@ -38,7 +38,6 @@ export const calendarSlice = createSlice({
 
         onLoadEvents: (state, {payload = []})=>{
             state.isLoadingEvents= false;
-
             /**
              * VERIFICO SI ESISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE, 
              * LO INSERTO
@@ -47,7 +46,6 @@ export const calendarSlice = createSlice({
                 const exists = state.events.some(dbEvent => dbEvent.id === event.id);
                 if (!exists) {
                     state.events.push(event)
-                    
                 }
             })
         },

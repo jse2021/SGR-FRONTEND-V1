@@ -40,9 +40,7 @@ export const useCalendarStore = () => {
             const {data} = await calendarApi.post('/reserva', calendarEvent)
             // de lo que viene del calendarEvent, le agrego el usuario y el id
             dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );   
-
             Swal.fire({
-                position: 'top-center',
                 icon: 'success',
                 title: 'Reserva registrada',
                 showConfirmButton: false,
@@ -65,7 +63,6 @@ export const useCalendarStore = () => {
         } catch (error) {
             console.log(error)
         }
- 
     }
 
     /**
@@ -98,3 +95,4 @@ export const useCalendarStore = () => {
         startLoadingEvents
     }
 }
+export default useCalendarStore;

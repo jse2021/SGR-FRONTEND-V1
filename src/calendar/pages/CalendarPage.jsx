@@ -75,12 +75,9 @@ export const CalendarPage = () => {
   }
 
   useEffect(()=>{
-      startLoadingEvents();
-  }, [])
-  
-  const disabledDates = {
-    before: new Date()
-  };
+    startLoadingEvents();
+    console.log('PASO POR EL STAR: ',startLoadingEvents())
+}, [startLoadingEvents()])// ES ASI ?
 
   return (
     <>
@@ -99,12 +96,12 @@ export const CalendarPage = () => {
         components={{
           event:CalendarEvent
         }}
+        views={[ 'month', 'agenda' ]}
         onDoubleClickEvent={onDoubleClick}
         onSelectEvent={onSelect}
         onView={onViewChanged}
         onSelectSlot={handleSelectSlot}
         selectable
-        disabledDates={disabledDates}
 
       />
         <CalendarModal date={date} cliente={cliente}/>

@@ -15,11 +15,11 @@ export const SearchResult = ({result}) => {
 <tr style={{cursor:"pointer"}}>
       <td 
         className='search-result' 
-        // onClick={onClickUsuario}
+
         >{result.nombre}</td>
       <td 
         className='search-result' 
-        // onClick={onClickUsuario}
+
         >{result.medidas}</td>
     </tr>
       
