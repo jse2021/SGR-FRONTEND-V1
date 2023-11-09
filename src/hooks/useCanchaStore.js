@@ -12,9 +12,7 @@ export const useCanchaStore = () => {
         
         try {
             dispatch( onCheckingCancha());    
-            const { data } = await calendarApi.post('/cancha/crearCancha',{ nombre, medidas});
-            localStorage.setItem('token', data.token );
-            localStorage.setItem('token-init-date', new Date().getTime() ); 
+            const { data } = await calendarApi.post('/cancha/crearCancha',{ nombre, medidas}); 
             
         } catch (error) {
             console.log({error})

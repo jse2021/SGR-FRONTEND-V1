@@ -33,11 +33,10 @@ Modal.setAppElement('#root');
 
 export const CalendarModal = ({date,cliente,selectedClient }) => {
     const { isDateModalOpen, closeDateModal } = useUiStore();
-    const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore();
+    const { activeEvent, startSavingEvent, setActiveEvent, error } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
     const [cancha, setCancha] = useState([]);
     const [results, setResults] = useState([]);   
-
         
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
@@ -52,33 +51,34 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
             }));
         }
     }
-        useEffect(() => {
-            fetchData();
-        }, []);  
+
+    useEffect(() => {
+        fetchData();
+    }, []);  
         
-        useEffect(() => {
-            if (cliente) {
-                // Guardamos el cliente en el estado local
-                setFormValues({
-                    ...formValues,
-                    cliente,
-                });
-            }
-        }, [cliente]);
+    useEffect(() => {
+        if (cliente) {
+            // Guardamos el cliente en el estado local
+            setFormValues({
+                ...formValues,
+                cliente,
+            });
+        }
+    }, [cliente]);
 
-        const [formValues, setFormValues] = useState({
-            title:'',
-            start:'',
-            end:'',
-            cliente:'',
-            cancha: '',
-            fecha: date,
-            hora: '',
-            forma_pago:'',
-            estado_pago:'',
-            observacion:'',
+    const [formValues, setFormValues] = useState({
+        title:'',
+        start:'',
+        end:'',
+        cliente:'',
+        cancha: '',
+        fecha: date,
+        hora: '',
+        forma_pago:'',
+        estado_pago:'',
+        observacion:'',
 
-        });
+    });
 
     // para mostrar los datos del modal(reserva)
     useEffect(() => {
@@ -116,16 +116,16 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
                 estado_pago:'',
                 observacion:'',
             });
-
+            
             setFormSubmitted(true);
-        // if ( formValues.cliente.length <= 0 ) return;
         
         await startSavingEvent({ ...formValues, 
             fecha: date,
             cliente : formValues.cliente.dni} ); // mandamos toda la info del formulario
+
             closeDateModal();
             setFormSubmitted(false);
-    }
+    }     
     
     const fechaReserva = new Date(date).toLocaleDateString(
         'es-AR',
@@ -134,7 +134,7 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
           month: 'long',
           year: 'numeric',
         }
-      );
+    );
 
   return (
     
@@ -160,7 +160,7 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
             </div>
             <div className="form-group mb-2">
                 <select
-                    className="form-select"
+                   className="form-select"
                     name="cancha"
                     id="select-cancha"
                     value={formValues.cancha}

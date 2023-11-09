@@ -131,7 +131,7 @@ const senaClass = useMemo(() => {
                 <select
                   class="form-select"
                   name="registerNombre"
-                  id="cancha"
+                  id="cancha_precio"
                   value={registerNombre}
                   onChange={onInputChange}
                   placeholder="Seleccione una cancha"

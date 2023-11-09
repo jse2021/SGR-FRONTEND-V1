@@ -13,8 +13,6 @@ export const useConfiguracionStore = () => {
         try {
             // useDispatch(onCheckingConfiguracion());
             const {data} = await calendarApi.post('/configuracion/crearMonto',{nombre, monto_cancha, monto_sena});
-            // localStorage.setItem('token', data.token );
-            // localStorage.setItem('token-init-date', new Date().getTime() ); 
             
         } catch (error) {
             setError(error.response.data.msg);

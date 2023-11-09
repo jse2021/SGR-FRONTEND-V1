@@ -19,13 +19,12 @@ export const CalendarPage = () => {
   const [date, setDate] = useState('');
   const [cliente, setCliente] = useState(null);
 
-    useEffect(() => {
-            window.addEventListener("clienteSeleccionado", (event) => {
-            setCliente(event.detail);
-        });
-    }, []);
+  useEffect(() => {
+        window.addEventListener("clienteSeleccionado", (event) => {
+        setCliente(event.detail);
+    });
+  }, []);
 
-    
     /**
      * DISEÑO DE LOS EVENTOS, "BOTON"
      */
@@ -62,59 +61,22 @@ export const CalendarPage = () => {
   }
 
     //para activar la reserva seleccioanda
-    const onSelect = (event) => {
-      setActiveEvent(event)
-    }
+  const onSelect = (event) => {
+    setActiveEvent(event)
+  }
 
     /**
      * CUANDO CAMBIA LA VISTA
      */
-    const onViewChanged = (event) => { 
-      console.log({viewChange:event})
-      localStorage.setItem('lastView',event);
+  const onViewChanged = (event) => { 
+    console.log({viewChange:event})
+    localStorage.setItem('lastView',event);
   
   }
 
-    // const stringifyDate = (date) => {
-    
-    //   // Obtener la fecha recibida en el parámetro `date`
-    //   const dateObj = new Date(date);
-    
-    //   // Obtener la hora actual en la zona horaria UTC
-    //   const now = Date.now();
-    
-    //   // Crear una nueva fecha con la hora establecida en 00:00:00
-    //   const newDateObj = new Date(dateObj.getTime());
-    
-    //   // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss.SSSZ`
-    //   const formattedDate = new Date(newDateObj).toISOString();
-    
-  
-    //   return formattedDate;
-    // };
-
-    // const stringifyDate = (date) => {
-    //   // Obtener la fecha recibida en el parámetro `date`
-    //   const dateObj = new Date(date);
-    
-    //   // Obtener la hora original de la fecha
-    //   const originalHour = dateObj.getHours();
-    
-    //   // Obtener la hora actual en la zona horaria UTC
-    //   const now = Date.now();
-    
-    //   // Crear una nueva fecha con la hora original
-    //   const newDateObj = new Date(dateObj.getTime() + (originalHour * 60 * 60 * 1000));
-    
-    //   // Formatear la fecha con el formato `YYYY-MM-DDTHH:mm:ss`
-    //   const formattedDate = new Date(newDateObj).toISOString();
-    
-    //   return formattedDate;
-    // };
-
-    useEffect(()=>{
+  useEffect(()=>{
       startLoadingEvents();
-  },[])
+  }, [])
   
   const disabledDates = {
     before: new Date()

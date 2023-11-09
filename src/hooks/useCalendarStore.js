@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { onAddNewEvent, onDeleteEvent, onSetActiveEvent, onUpdateEvent, onLoadEvents, onLogin } from '../store';
 import { calendarApi } from '../api';
 import { convertEventsToDateEvents } from '../helpers';
+import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 
@@ -13,6 +14,7 @@ export const useCalendarStore = () => {
     const { events, activeEvent } = useSelector( state => state.calendar );
     const {user} =useSelector(state=> state.auth)
     const dispatch = useDispatch();
+    
     /**
      * TOMO LA INFO DEL STORE, Y DISPARO PARA TOMAR DEL CALENDAR PAGE
      */
@@ -35,13 +37,21 @@ export const useCalendarStore = () => {
             dispatch( onUpdateEvent({ ...calendarEvent, user }) );
         }  
             // Creando
-            await calendarApi.post('/reserva', calendarEvent)
+            const {data} = await calendarApi.post('/reserva', calendarEvent)
             // de lo que viene del calendarEvent, le agrego el usuario y el id
-            dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );    
+            dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );   
+
+            Swal.fire({
+                position: 'top-center',
+                icon: 'success',
+                title: 'Reserva registrada',
+                showConfirmButton: false,
+                timer: 1200
+         })          
 
         } catch (error) {
-            // Swal.fire('Error al guardar',error.response.data.msg,'error');
-            console.log(error)
+            Swal.fire('Error al guardar',error.response.data.msg,'error');
+            console.log(error.response.data.msg);
         }
        }
 
