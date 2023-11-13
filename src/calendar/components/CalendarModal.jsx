@@ -225,9 +225,10 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
                 <input 
                     type="Number"
                     className='form-control'           
-                    placeholder='Ingrese Monto'
+                    placeholder='Monto'
                     id='input-monto'
                     name="registerMonto"
+                    disabled
                /> 
 
                 <select

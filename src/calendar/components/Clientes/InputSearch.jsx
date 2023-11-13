@@ -13,7 +13,7 @@ export const InputSearch = ({setResults}) => {
         setResults(clientes)
     }
  
-    const handleChange = (value,{target}) => {
+    const handleChange = (value) => {
 
         setValue(value);
         buscarCliente(value);
