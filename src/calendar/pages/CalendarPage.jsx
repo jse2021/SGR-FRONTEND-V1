@@ -76,7 +76,6 @@ export const CalendarPage = () => {
 
   useEffect(()=>{
     startLoadingEvents();
-    console.log('PASO POR EL STAR: ',startLoadingEvents())
 }, [startLoadingEvents()])// ES ASI ?
 
   return (

@@ -3,7 +3,7 @@ import { addHours, differenceInSeconds } from 'date-fns';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-
+import AsyncSelect from 'react-select/async'
 import Modal from 'react-modal';
 
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -15,6 +15,8 @@ import { InputCliente } from './Components Modal/Cliente/InputCliente';
 import { ListaCliente } from './Components Modal/Cliente/ListaCliente';
 import { calendarApi } from '../../api';
 import '../../calendar/components/CalendarModal.css'
+
+
 
 registerLocale( 'es', es );
 
@@ -31,7 +33,7 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export const CalendarModal = ({date,cliente,selectedClient }) => {
+export const CalendarModal = ({date,cliente }) => {
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent, setActiveEvent, startLoadingEvents } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
@@ -137,7 +139,29 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
           year: 'numeric',
         }
     );
+    
+    
+    const options = [
+        {value: 'jose', label:'Jose'},
+        {value: 'ariel', label:'Ariel'},
+        {value: 'pedro', label:'Pedro'},
+        {value: 'jose', label:'Jose'},
+    
+    ];
+    
+    const handleChange = (selectedOption)=> {
 
+    }
+
+    const loadOptions = (searchValue, callback) => {
+        setTimeout(()=> {
+            const filteredOptions = options.filter((option)=>
+                option.value.toLowerCase().includes(searchValue.toLowerCase())
+            );
+            callback(filteredOptions);
+        },1000)
+    }
+   
   return (
     
     <Modal
@@ -156,9 +180,16 @@ export const CalendarModal = ({date,cliente,selectedClient }) => {
             </div>
             <div className="form-group mb-2">
 
-                <InputCliente setResults = {setResults} cliente={cliente}/>
-                <ListaCliente results = {results}/>
+                <AsyncSelect
+                    placeholder='Ingresar apellido del cliente'
+                    loadOptions={loadOptions}
+                    defaultOptions
+                    onChange={handleChange}
 
+                />
+
+                {/* <InputCliente setResults = {setResults} cliente={cliente}/>
+                <ListaCliente results = {results}/> */}
             </div>
             <div className="form-group mb-2">
                 <select

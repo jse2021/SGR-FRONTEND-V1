@@ -6,11 +6,10 @@ export const InputCliente = ({setResults }) => {
 
     const buscarCliente = async(apellido) => {
         if (apellido.length === 0) return [];
-        const {data} = await calendarApi.get(`/cliente/${apellido}`)
-        const clientes = Array.from(data.cliente);
-        setResults(clientes)
-        console.log({clientes})
-    }
+            const {data} = await calendarApi.get(`/cliente/${apellido}`)
+            const clientes = Array.from(data.cliente);
+            setResults(clientes)
+        }
 
     const handleChange = (value) => {
         setValue([value]);
