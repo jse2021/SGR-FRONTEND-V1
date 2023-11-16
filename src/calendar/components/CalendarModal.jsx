@@ -90,14 +90,13 @@ export const CalendarModal = ({date,cliente }) => {
           setFormValues({ ...activeEvent});
       }    
     }, [ activeEvent ])
-
-    const onInputChanged = ({ target},selectedOption) => {
+    
+    const onInputChanged = ({target}) => {
+  
         setFormValues({
             ...formValues,
-            selectedOption,
             [target.name]: target.value
         })
-        console.log(selectedOption)
     }
 
     const onCloseModal = () => {
@@ -194,6 +193,7 @@ export const CalendarModal = ({date,cliente }) => {
                     defaultOptions
                     value={formValues.cliente}
                     onChange={onInputChanged}
+                    label="Cliente"
                 />
 
                  {/* <InputCliente setResults = {setResults} cliente={cliente}/> */}
