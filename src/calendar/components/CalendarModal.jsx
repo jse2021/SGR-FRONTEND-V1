@@ -34,12 +34,12 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 export const CalendarModal = ({date,cliente }) => {
+    
     const { isDateModalOpen, closeDateModal } = useUiStore();
     const { activeEvent, startSavingEvent, setActiveEvent, startLoadingEvents } = useCalendarStore();
     const [ formSubmitted, setFormSubmitted ] = useState(false);
     const [cancha, setCancha] = useState([]);
     const [results, setResults] = useState([]);   
-
          
     async function fetchData() {
         const {data} = await calendarApi.get("/cancha");
@@ -61,6 +61,7 @@ export const CalendarModal = ({date,cliente }) => {
         
     useEffect(() => {
         if (cliente) {
+
             // Guardamos el cliente en el estado local
             setFormValues({
                 ...formValues,
@@ -80,7 +81,6 @@ export const CalendarModal = ({date,cliente }) => {
         forma_pago:'',
         estado_pago:'',
         observacion:'',
-
     });
 
     // para mostrar los datos del modal(reserva)
@@ -91,11 +91,13 @@ export const CalendarModal = ({date,cliente }) => {
       }    
     }, [ activeEvent ])
 
-    const onInputChanged = ({ target }) => {
+    const onInputChanged = ({ target},selectedOption) => {
         setFormValues({
             ...formValues,
+            selectedOption,
             [target.name]: target.value
         })
+        console.log(selectedOption)
     }
 
     const onCloseModal = () => {
@@ -103,9 +105,7 @@ export const CalendarModal = ({date,cliente }) => {
     }
 
     const onSubmit = async( event ) => {
-
         event.preventDefault();     
-
             setActiveEvent({
                 title:'',
                 start:'',
@@ -140,26 +140,33 @@ export const CalendarModal = ({date,cliente }) => {
         }
     );
     
-    
-    const options = [
-        {value: 'jose', label:'Jose'},
-        {value: 'ariel', label:'Ariel'},
-        {value: 'pedro', label:'Pedro'},
-        {value: 'jose', label:'Jose'},
-    
-    ];
-    
+    const [opciones, setOpciones] = useState([]);
+
+    useEffect(() => {
+    const buscarCliente = async() => {
+        const {data} = await calendarApi.get('/cliente')       
+         cliente = Array.from(data.clientes);
+        const opciones  = cliente.map((clientes) => ({
+            value: clientes.dni,
+            label: `${clientes.dni} - ${clientes.apellido} ${clientes.nombre}`,
+        }));
+        setOpciones(opciones);
+    };
+        buscarCliente();
+    }, []);
+
+    const loadOptions =  (searchValue, callback) => {
+
+        const opcionesFiltradas = opciones.filter((opcion) =>
+            opcion.label.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
+        );
+        console.log(opcionesFiltradas)
+        callback(opcionesFiltradas);
+
+    };
+
     const handleChange = (selectedOption)=> {
-
-    }
-
-    const loadOptions = (searchValue, callback) => {
-        setTimeout(()=> {
-            const filteredOptions = options.filter((option)=>
-                option.value.toLowerCase().includes(searchValue.toLowerCase())
-            );
-            callback(filteredOptions);
-        },1000)
+        console.log(selectedOption)
     }
    
   return (
@@ -181,15 +188,16 @@ export const CalendarModal = ({date,cliente }) => {
             <div className="form-group mb-2">
 
                 <AsyncSelect
+                    name='cliente'
                     placeholder='Ingresar apellido del cliente'
                     loadOptions={loadOptions}
                     defaultOptions
-                    onChange={handleChange}
-
+                    value={formValues.cliente}
+                    onChange={onInputChanged}
                 />
 
-                {/* <InputCliente setResults = {setResults} cliente={cliente}/>
-                <ListaCliente results = {results}/> */}
+                 {/* <InputCliente setResults = {setResults} cliente={cliente}/> */}
+                {/* <ListaCliente results = {results}/>  */}
             </div>
             <div className="form-group mb-2">
                 <select

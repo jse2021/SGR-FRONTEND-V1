@@ -49,7 +49,7 @@ export const useCalendarStore = () => {
 
         } catch (error) {
             Swal.fire('Error al guardar',error.response.data.msg,'error');
-            console.log(error.response.data.msg);
+            console.log({error});
         }
        }
 
