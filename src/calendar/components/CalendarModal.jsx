@@ -90,13 +90,16 @@ export const CalendarModal = ({date,cliente }) => {
           setFormValues({ ...activeEvent});
       }    
     }, [ activeEvent ])
-    
-    const onInputChanged = ({target}) => {
-  
+
+    const onInputChanged = ({target}, event) => {
+
         setFormValues({
             ...formValues,
-            [target.name]: target.value
-        })
+            [target.name]: target.value,
+            [AsyncSelect.name]: AsyncSelect.value,
+          })
+        
+        
     }
 
     const onCloseModal = () => {
@@ -152,6 +155,7 @@ export const CalendarModal = ({date,cliente }) => {
         setOpciones(opciones);
     };
         buscarCliente();
+
     }, []);
 
     const loadOptions =  (searchValue, callback) => {
@@ -187,13 +191,13 @@ export const CalendarModal = ({date,cliente }) => {
             <div className="form-group mb-2">
 
                 <AsyncSelect
-                    name='cliente'
+                    className="form select-option"
+                    name="cliente"
                     placeholder='Ingresar apellido del cliente'
                     loadOptions={loadOptions}
                     defaultOptions
                     value={formValues.cliente}
                     onChange={onInputChanged}
-                    label="Cliente"
                 />
 
                  {/* <InputCliente setResults = {setResults} cliente={cliente}/> */}
@@ -205,7 +209,7 @@ export const CalendarModal = ({date,cliente }) => {
                     name="cancha"
                     id="select-cancha"
                     value={formValues.cancha}
-                    onChange={onInputChanged}
+                    onChange={(event) => onInputChanged(event)}
                     placeholder="Seleccione una cancha"
                     >
                     <option key="0" value="" disabled>Selecciona una cancha</option>
