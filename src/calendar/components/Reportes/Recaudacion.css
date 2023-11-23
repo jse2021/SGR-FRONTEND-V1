@@ -1,10 +1,21 @@
-#select-cancha{
-    width: 40%;
+#cancha-reca{
+    width: 30%;
     margin-left: 50%;
-    margin-top: -5%;
+    margin-top: -5.2%;
 }
 
 #DatePickerFecha{
     width: 80%;
     margin-left: 60%;
 }
+.btnBuscarReca {
+    border-radius: 1rem;
+    padding: 0.5%;
+    border: none;
+    cursor: pointer;
+    margin: 2%;
+    background-color: #333;
+    color: #fcf9f9;
+    width: 40%;
+    margin-left: 30%;
+  }
