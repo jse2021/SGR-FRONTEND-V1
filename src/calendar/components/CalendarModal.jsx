@@ -39,7 +39,7 @@ export const CalendarModal = ({date,cliente }) => {
     const [cancha, setCancha] = useState([]);
     const [results, setResults] = useState([]);   
     const [opciones, setOpciones] = useState([]);
-    
+    const [dni, setDni] = useState('');
 
     // Obtengo Clientes
     useEffect(() => {
@@ -55,7 +55,8 @@ export const CalendarModal = ({date,cliente }) => {
         buscarCliente();
 
     }, []);
-
+    
+    // Cargo Clientes
     const loadOptions =  (searchValue, callback) => {
 
         const opcionesFiltradas = opciones.filter((opcion) =>
@@ -82,16 +83,6 @@ export const CalendarModal = ({date,cliente }) => {
     useEffect(() => {
         fetchData();
     }, []);  
-        
-    // Guardamos el cliente en el estado local
-    useEffect(() => {
-        if (cliente) {
-            setFormValues({
-                ...formValues,
-                cliente,
-            });
-        }
-    }, [cliente]);
 
     const [formValues, setFormValues] = useState({
         title:'',
@@ -108,18 +99,19 @@ export const CalendarModal = ({date,cliente }) => {
 
     // para mostrar los datos del modal(reserva)
     useEffect(() => {
-      if ( activeEvent !== null ) {
-        console.log('ACTIVE: ',activeEvent)
-          setFormValues({ ...activeEvent});
-      }    
-    }, [ activeEvent ])
+        if (activeEvent !== null) {
+           console.log('ACTIVE: ', activeEvent);
+           setFormValues({ ...activeEvent });
+        }    
+       }, [activeEvent]);
 
-      const onInputChanged = ({target}) => {
-        // const value = target.value;
-
-        setFormValues({
+      const onInputChanged = ({target}, value) => {
+        if (value && value.value) {
+            setDni(value.value);
+            console.log(value.value)
+        }
+          setFormValues({
             ...formValues,
-            // cliente: value,
             [target.name]: target.value
         });
     }
@@ -145,11 +137,12 @@ export const CalendarModal = ({date,cliente }) => {
             });
             
             setFormSubmitted(true);
-        
-        await startSavingEvent({ ...formValues, 
+          
+        await startSavingEvent({ ...formValues,
             fecha: date,
-            cliente : formValues.cliente.dni
-        } ); // mandamos toda la info del formulario
+            cliente: dni,
+        });
+   
 
             closeDateModal();
             setFormSubmitted(false);
@@ -185,15 +178,16 @@ export const CalendarModal = ({date,cliente }) => {
                 <AsyncSelect
                     className="select-option"
                     name="cliente"
-                    placeholder='Ingresar apellido del cliente'
+                    placeholder='Ingresar Cliente'
                     loadOptions={loadOptions}
                     defaultOptions
                     value={formValues.cliente}
-                    onChange={onInputChanged}
+                    onChange={(value) => onInputChanged({ target: { name: 'cliente', value: value } }, value)}
                 />
 
                  {/* <InputCliente setResults = {setResults} cliente={cliente}/>  */}
                 {/* <ListaCliente results = {results}/>   */}
+
             </div>
             <div className="form-group mb-2">
                 <select
