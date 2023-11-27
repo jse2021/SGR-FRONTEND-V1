@@ -101,7 +101,7 @@ export const CalendarModal = ({date,cliente }) => {
     useEffect(() => {
         if (activeEvent !== null) {
            console.log('ACTIVE: ', activeEvent);
-           setFormValues({ ...activeEvent });
+           setFormValues({...activeEvent });
         }    
        }, [activeEvent]);
 
@@ -143,7 +143,6 @@ export const CalendarModal = ({date,cliente }) => {
             cliente: dni,
         });
    
-
             closeDateModal();
             setFormSubmitted(false);
     } 
