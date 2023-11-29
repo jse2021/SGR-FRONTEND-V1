@@ -100,9 +100,10 @@ export const CalendarModal = ({date,cliente }) => {
     // para mostrar los datos del modal(reserva)
     useEffect(() => {
         if (activeEvent !== null) {
-           console.log('ACTIVE: ', activeEvent);
-           setFormValues({...activeEvent });
-        }    
+            console.log(activeEvent)
+            const cliente = activeEvent.cliente;
+            setFormValues({...activeEvent, cliente });
+          }    
        }, [activeEvent]);
 
       const onInputChanged = ({target}, value) => {
@@ -110,6 +111,7 @@ export const CalendarModal = ({date,cliente }) => {
             setDni(value.value);
             console.log(value.value)
         }
+        console.log(formValues.cliente);
           setFormValues({
             ...formValues,
             [target.name]: target.value
@@ -159,13 +161,14 @@ export const CalendarModal = ({date,cliente }) => {
   return (
     
     <Modal
+   
         isOpen={ isDateModalOpen }
         onRequestClose={ onCloseModal }
         style={ customStyles }
         className="modal"
         overlayClassName="modal-fondo"
         closeTimeoutMS={ 200 }
-    >
+    > 
         <h1 className="display-6"id='titulo' >Gestión de la Reserva</h1>
         <hr />
         <form className="container" onSubmit={ onSubmit }>
@@ -180,10 +183,9 @@ export const CalendarModal = ({date,cliente }) => {
                     placeholder='Ingresar Cliente'
                     loadOptions={loadOptions}
                     defaultOptions
-                    value={formValues.cliente}
+                    value={activeEvent && activeEvent.cliente}
                     onChange={(value) => onInputChanged({ target: { name: 'cliente', value: value } }, value)}
                 />
-
                  {/* <InputCliente setResults = {setResults} cliente={cliente}/>  */}
                 {/* <ListaCliente results = {results}/>   */}
 
