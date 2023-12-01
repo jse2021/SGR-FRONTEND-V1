@@ -24,6 +24,7 @@ export const CalendarPage = () => {
         setCliente(event.detail);
     });
   }, []);
+  console.log(events)
 
     /**
      * DISEÑO DE LOS EVENTOS, "BOTON"

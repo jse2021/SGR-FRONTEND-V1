@@ -157,6 +157,14 @@ export const CalendarModal = ({date,cliente }) => {
           year: 'numeric',
         }
     );
+
+    const obtengoHorarios= () =>{
+        // Al seleccionar canchas obtengo los horarios registrados en un array.
+        // const {data} = await calendarApi.get(`/reserva/${date}${cancha}`)
+        // Crear un array con todos los horarios, y cruzarlos con el array anterior.
+        // crear un nuevo array que solo contendra los ressultados distinto del cruce de los anteriores
+        //ese aarray deberá mostrarse en el select. 
+    }
    
   return (
     
@@ -183,7 +191,7 @@ export const CalendarModal = ({date,cliente }) => {
                     placeholder='Ingresar Cliente'
                     loadOptions={loadOptions}
                     defaultOptions
-                    value={activeEvent && activeEvent.cliente}
+                    value={formValues.cliente}
                     onChange={(value) => onInputChanged({ target: { name: 'cliente', value: value } }, value)}
                 />
                  {/* <InputCliente setResults = {setResults} cliente={cliente}/>  */}
