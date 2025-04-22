@@ -2,37 +2,55 @@ import {BrowserRouter} from 'react-router-dom'
 import { AppRouter } from "./router/AppRouter"
 import { Provider } from 'react-redux'
 import {store} from './store'
-import React from 'react'
-import Tarjeta from "./components/Tarjeta";
-
+import React, { useState } from 'react'
 
 
 export const CalendarApp =()=> {
     
     const [result, setResult] = React.useState({});
-    
+    /**/ 
+    const [tarea, setTarea] = useState("");
+    const [tareas, setTareas] = useState([]);
+  
+    const manejarCambio = (e) => {
+      setTarea(e.target.value);
+    };
+    const agregarTarea = (e) => {
+      e.preventDefault();
+  
+      if (tarea.trim() === "") return;
+  
+      setTareas([...tareas, tarea]);
+      setTarea("");
+    };
+
+
     return(
-<div style={{ padding: "2rem" }}>
-      <h1>Componentes con Props y Estado</h1>
-
-      <Tarjeta
-        titulo="React JS"
-        descripcion="Una librería para construir interfaces."
-        imagen="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"
-      />
-
-      <Tarjeta
-        titulo="Vite"
-        descripcion="Un bundler súper rápido para proyectos modernos."
-        imagen="https://vitejs.dev/logo.svg"
-      />
-    </div>
-        // <Provider store={store}>
+       // <Provider store={store}>
         //     <BrowserRouter>
         //         <AppRouter />
         //     </BrowserRouter>
         // </Provider>
-        
+      
+        <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+        <h2>Lista de Tareas 📝</h2>
+  
+        <form onSubmit={agregarTarea}>
+          <input
+            type="text"
+            value={tarea}
+            onChange={manejarCambio}
+            placeholder="Escribí una tarea"
+          />
+          <button type="submit">Agregar</button>
+        </form>
+  
+        <ul>
+          {tareas.map((t, index) => (
+            <li key={index}>✅ {t}</li>
+          ))}
+        </ul>
+      </div>
         
         
     )

@@ -6,6 +6,7 @@ function Tarjeta({ titulo, descripcion, imagen }) {
   const manejarLike = () => {
     setLikes(likes + 1);
   };
+  
 
   return (
     <div style={estilos.card}>
@@ -13,6 +14,7 @@ function Tarjeta({ titulo, descripcion, imagen }) {
       <h2>{titulo}</h2>
       <p>{descripcion}</p>
       <button onClick={manejarLike}>❤️ Me gusta ({likes})</button>
+
     </div>
   );
 }
