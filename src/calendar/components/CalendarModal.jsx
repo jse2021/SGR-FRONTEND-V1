@@ -29,6 +29,7 @@ const customStyles = {
     },
 };
 
+
 Modal.setAppElement('#root');
 
 export const CalendarModal = ({date,cliente }) => {
@@ -41,7 +42,11 @@ export const CalendarModal = ({date,cliente }) => {
     const [opciones, setOpciones] = useState([]);
     const [dni, setDni] = useState('');
 
-    // Obtengo Clientes
+    /**
+     * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
+     */
+
+    // Obtengo los clientes para mostrarlo en el select.
     useEffect(() => {
     const buscarCliente = async() => {
         const {data} = await calendarApi.get('/cliente')       
@@ -50,21 +55,25 @@ export const CalendarModal = ({date,cliente }) => {
             value: clientes.dni,
             label: `${clientes.dni} - ${clientes.apellido} ${clientes.nombre}`,
         }));
+        //almacena los clientes
         setOpciones(opciones);
-    };
+    };            
         buscarCliente();
-
     }, []);
     
-    // Cargo Clientes
+    // Cargo Clientes por filtro - para pasarle al asyncSelect.
     const loadOptions =  (searchValue, callback) => {
 
         const opcionesFiltradas = opciones.filter((opcion) =>
             opcion.label.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
         );
-        console.log(opcionesFiltradas)
+
         callback(opcionesFiltradas);
     };
+
+    /**
+     * TRABAJO CANCHAS
+     */
 
     //obtengo Canchas
     async function fetchData() {

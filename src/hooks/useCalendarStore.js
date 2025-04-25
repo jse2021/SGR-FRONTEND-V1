@@ -35,6 +35,7 @@ export const useCalendarStore = () => {
             // Actualizando
             const {data} = await calendarApi.put(`/reserva/${calendarEvent.id}`, calendarEvent)
             dispatch( onUpdateEvent({ ...calendarEvent, user }) );
+            
         }  
             // Creando
             const {data} = await calendarApi.post('/reserva', calendarEvent)
