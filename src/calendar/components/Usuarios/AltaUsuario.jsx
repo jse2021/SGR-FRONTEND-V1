@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Navbar } from '../Navbar';
 import Swal from 'sweetalert2';
 import { useAuthStore, useForm } from '../../../hooks';
@@ -21,7 +21,7 @@ const registrarUsuario = {
 export const AltaUsuario = () => {
 
 const {startRegister, errorMessage} = useAuthStore();
-const [ formSubmitted, setFormSubmitted ] = useState(false);
+const [ formSubmitted, setFormSubmitted ] = useState(false);// estado local, para saber si se envio el formulario
 const { registerNombre, registerApellido, registerCelular, registerUsuario, registerPassword, registerTipoUsuario, registerEmail,
     onInputChange:onRegisterInputChange } = useForm( registrarUsuario );
 
@@ -87,11 +87,11 @@ const { registerNombre, registerApellido, registerCelular, registerUsuario, regi
 
         if ( registerNombre.length <= 0 || registerApellido.length <= 0 || registerCelular.length <= 0 || registerUsuario.length <= 0 ||
              registerPassword.length <= 0 || registerEmail.length <= 0 || registerTipoUsuario.length <= 0 ) return;
-
+        
+        // Mando al hook.    
         startRegister({ nombre: registerNombre, apellido: registerApellido, celular:registerCelular, user: registerUsuario, tipo_usuario: registerTipoUsuario,
             email: registerEmail, password: registerPassword });
-
-            Swal.fire('Alta de usuario', "Cliente registrado" , 'success');
+            Swal.fire('Alta de usuario', "Usuario registrado" , 'success');
     }
 
   return (

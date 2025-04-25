@@ -40,10 +40,10 @@ export const useAuthStore = () => {
                                                     tipo_usuario, email, password});
             localStorage.setItem('token', data.token );
             localStorage.setItem('token-init-date', new Date().getTime() ); 
+            //Esto actualiza el estado global para reflejar que el usuario ya está registrado y logueado.
             dispatch( onLogin({ user: data.user, id: data.token}) );
             
         } catch (error) {
-            console.log({error})
             //dispatch(onLogout(error.response.data?.errors.msg || 'Error al registrarse'))
             setTimeout(() => {
                 dispatch( clearErrorMessage() );

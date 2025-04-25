@@ -5,7 +5,7 @@ export const authSlice = createSlice({
     isLoadingUser: true,
     initialState: {
         status: 'checking', // 'authenticated','not-authenticated',
-        user: {},
+        user: {},// Info del usuario logueado (nombre, email, tipo, etc)
         errorMessage: undefined,
     },
     reducers: {
@@ -16,8 +16,9 @@ export const authSlice = createSlice({
         },
         onLogin: ( state, { payload } ) => {
             state.status = 'authenticated';
-            state.user = payload;
+            state.user = payload;// <- datos como nombre, tipo, email
             state.errorMessage = undefined;
+            console.log({state})
         },
         onLogout: ( state, { payload } ) => {
             state.status = 'not-authenticated';
