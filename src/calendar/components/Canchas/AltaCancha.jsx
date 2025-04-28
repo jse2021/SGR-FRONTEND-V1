@@ -39,13 +39,15 @@ const { registerNombre, registerMedidas, onInputChange } = useForm( registrarCan
         event.preventDefault();
         setFormSubmitted(true);
 
-            if (registerNombre.length <= 0 || registerMedidas <= 0) return;
-                startRegister({nombre: registerNombre, medidas: registerMedidas})
-                // El cartel se mantiene hasta dar ok y dispara formulario
-                const promise = Swal.fire('Alta de cancha', "Cancha registrada" , 'success');
-                promise.then(() => {
-                    document.getElementById('formAltaCancha').submit();
-                });
+        if (registerNombre.length <= 0 || registerMedidas <= 0) return;
+
+            startRegister({nombre: registerNombre, medidas: registerMedidas})
+
+            // El cartel se mantiene hasta dar ok y dispara formulario
+            const promise = Swal.fire('Alta de cancha', "Cancha registrada" , 'success');
+            promise.then(() => {
+                document.getElementById('formAltaCancha').submit();
+            });
     }
   return (
    <>
@@ -77,7 +79,8 @@ const { registerNombre, registerMedidas, onInputChange } = useForm( registrarCan
                         <input 
                             type="submit" 
                             className="btnSubmit" 
-                            value="Guardar" />
+                            value="Guardar"
+                        />
                     </div>
                 </form>
            </div>

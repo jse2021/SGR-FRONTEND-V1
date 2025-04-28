@@ -38,6 +38,11 @@ export const useAuthStore = () => {
         try {
             const { data } = await calendarApi.post('/auth/new',{ nombre, apellido, celular, user, 
                                                     tipo_usuario, email, password});
+
+            /**
+             * Lo comento porque cuando registraba, intentaba loguear al usuario, pero no quiero eso
+             */
+            
             localStorage.setItem('token', data.token );
             localStorage.setItem('token-init-date', new Date().getTime() ); 
             //Esto actualiza el estado global para reflejar que el usuario ya está registrado y logueado.

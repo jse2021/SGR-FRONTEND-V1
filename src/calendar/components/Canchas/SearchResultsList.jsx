@@ -1,34 +1,31 @@
 import React from 'react'
-// import "./SearchResultsList.css"
 import { SearchResult } from './SearchResult'
 
 
 export const SearchResultsList = ({results}) => {
 
-    // if (!Array.isArray(results)) {
-    //     return <div className="results-list">No hay resultados</div>;
-    //   }
-
-      
   const searchResult = results.map((result, id) =>{
-                      return <SearchResult result={result} key={id}/>
+    return <SearchResult result={result} key={id}/>
   })
         
   return (
     <>
+    <div className="table-responsive">
       <table className="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Nombre</th>
-        <th scope="col">Medidas</th>
-      </tr>
-    </thead>
-    <tbody>
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Medidas</th>
+          </tr>
+        </thead>
 
-      {searchResult}
+        <tbody>
+          {searchResult}
+        </tbody>
+      </table>
 
-    </tbody>
-  </table>
+    </div>
+      
     </>
     
   )

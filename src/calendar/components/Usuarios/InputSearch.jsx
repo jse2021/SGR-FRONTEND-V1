@@ -6,10 +6,15 @@ export const InputSearch = ({setResults}) => {
     const [value, setValue] = useState("");
 
     const buscarUsuario = async(apellido) => {
-        if (apellido.length === 0) return [];
-        const {data} = await calendarApi.get(`/auth/${apellido}`)
-        const usuarios = Array.from(data.usuario);
-        setResults(usuarios)
+        try {
+            if (apellido.length === 0) return [];
+            const {data} = await calendarApi.get(`/auth/${apellido}`)
+            const usuarios = Array.from(data.usuario);
+            setResults(usuarios)    
+        } catch (error) {
+            setError(error.response.data.msg);
+        }
+        
     }
  
     const handleChange = (value) => {

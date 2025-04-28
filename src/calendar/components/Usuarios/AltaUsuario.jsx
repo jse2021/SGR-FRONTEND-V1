@@ -100,7 +100,7 @@ const { registerNombre, registerApellido, registerCelular, registerUsuario, regi
     <h1 className='display-5'>Gestión Usuarios</h1>
     <div className="col-md-6 login-form-2">
         
-                    <form  onSubmit={registerSubmit}>
+                    <form  onSubmit={registerSubmit}id="formAltaCUsuario">
                         <div className="form-group mb-2">
                             <input
                                 type="text"

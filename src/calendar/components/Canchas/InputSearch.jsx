@@ -7,11 +7,10 @@ export const InputSearch = ({setResults}) => {
 
     const buscarCancha = async(nombre) => {
         if (nombre.length === 0) return [];
-        const {data} = await calendarApi.get(`/cancha/${nombre}`)
-        const canchas = Array.from(data.cancha);
-        setResults(canchas)
-        console.log({data})
-    }
+            const {data} = await calendarApi.get(`/cancha/${nombre}`)
+            const canchas = Array.from(data.cancha);
+            setResults(canchas)
+        }
  
     const handleChange = (value) => {
         setValue(value);

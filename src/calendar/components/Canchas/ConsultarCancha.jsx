@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Navbar } from '../Navbar';
-import SearchResult from './SearchResult';
 import InputSearch from './InputSearch';
 import SearchResultsList from './SearchResultsList';
 
@@ -9,14 +8,14 @@ export const ConsultarCancha = () => {
 
   return (
     <>
-    <Navbar />
-      <h1 className='display-5'>Consultar Cancha</h1>
-        <div className="col-md-8 login-form-3">        
-          <form>
-              <InputSearch setResults = {setResults}/>
-              <SearchResultsList results = {results} />
-          </form>
-        </div>
+      <Navbar />
+        <h1 className='display-5'>Consultar Cancha</h1>
+          <div className="col-md-8 login-form-3">        
+            <form>
+                <InputSearch setResults = {setResults}/>
+                <SearchResultsList results = {results} />
+            </form>
+          </div>
     </>
     
   );

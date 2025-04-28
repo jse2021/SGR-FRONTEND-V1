@@ -64,15 +64,19 @@ export const AltaCliente = () => {
     }, [ registerCelular, formSubmitted ]);
 
     const registerSubmit = (event) => {
+
         event.preventDefault();
         setFormSubmitted(true);
+        
+        // Mando al hook.  
         if (registerDni.length <= 0 || registerNombre <= 0 || registerApellido <= 0 || registerEmail <= 0 || registerCelular <= 0)  return;
             startRegister({dni:registerDni,nombre: registerNombre, apellido:registerApellido,email: registerEmail, celular:registerCelular});
-                // El cartel se mantiene hasta dar ok y dispara formulario
-                const promise = Swal.fire('Alta de cliente', "Cliente registrado" , 'success');
-                    promise.then(() => {
-                        document.getElementById('formAltaCliente').submit();// para limpiar formulario
-                    });
+                
+            // El cartel se mantiene hasta dar ok y dispara formulario
+            const promise = Swal.fire('Alta de cliente', "Cliente registrado" , 'success');
+                promise.then(() => {
+                document.getElementById('formAltaCliente').submit();// para limpiar formulario
+            });
     }
 
   return (
@@ -81,67 +85,66 @@ export const AltaCliente = () => {
             <h1 className='display-5'>Gestión Clientes</h1>
                 <div className="col-md-6 login-form-2">
                     <form onSubmit={registerSubmit} id="formAltaCliente">
-                            <div className="form-group mb-2">
-                                <input
-                                    type="text"
-                                    className={ `form-control ${ dniClass }`}
-                                    placeholder="Dni"
-                                    name="registerDni"
-                                    value={ registerDni }
-                                    onChange={ onInputChange }
-                                />
-                            </div>
-                            <div className="form-group mb-2">
-                                <input
-                                    type="text"
-                                    className={ `form-control ${ nombreClass }`}
-                                    placeholder="Nombre"
-                                    name="registerNombre"
-                                    value={ registerNombre }
-                                    onChange={ onInputChange }
-                                />
-                            </div>
-                            <div className="form-group mb-2">
-                                <input
-                                    type="text"
-                                    className={ `form-control ${ apellidoClass}`}
-                                    placeholder="Apellido"
-                                    name="registerApellido"
-                                    value={ registerApellido }
-                                    onChange={ onInputChange }
-                                />
-                            </div>
-                            <div className="form-group mb-2">
-                                <input
-                                    type="Email"
-                                    className={ `form-control ${ emailClass }`}
-                                    placeholder="Email"
-                                    name="registerEmail"
-                                    value={ registerEmail }
-                                    onChange={ onInputChange }
-                                />
-                            </div>
-                            <div className="form-group mb-2">
-                                <input
-                                    type="number"
-                                    className={ `form-control ${ celularClass}`}
-                                    placeholder="Celular"
-                                    name="registerCelular"
-                                    value={ registerCelular }
-                                    onChange={ onInputChange }
-                                />
-                            </div>
-                            <div className="d-grid gap-2">
-                                <input 
-                                    type="submit" 
-                                    className="btnSubmit" 
-                                    value="Guardar" />
-                            </div>
-                        </form>
+                        <div className="form-group mb-2">
+                            <input
+                                type="text"
+                                className={ `form-control ${ dniClass }`}
+                                placeholder="Dni"
+                                name="registerDni"
+                                value={ registerDni }
+                                onChange={ onInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
+                                type="text"
+                                className={ `form-control ${ nombreClass }`}
+                                placeholder="Nombre"
+                                name="registerNombre"
+                                value={ registerNombre }
+                                onChange={ onInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
+                                type="text"
+                                className={ `form-control ${ apellidoClass}`}
+                                placeholder="Apellido"
+                                name="registerApellido"
+                                value={ registerApellido }
+                                onChange={ onInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
+                                type="Email"
+                                className={ `form-control ${ emailClass }`}
+                                placeholder="Email"
+                                name="registerEmail"
+                                value={ registerEmail }
+                                onChange={ onInputChange }
+                            />
+                        </div>
+                        <div className="form-group mb-2">
+                            <input
+                                type="number"
+                                className={ `form-control ${ celularClass}`}
+                                placeholder="Celular"
+                                name="registerCelular"
+                                value={ registerCelular }
+                                onChange={ onInputChange }
+                            />
+                        </div>
+                        <div className="d-grid gap-2">
+                            <input 
+                                type="submit" 
+                                className="btnSubmit" 
+                                value="Guardar"
+                            />
+                        </div>
+                    </form>
                 </div>
     </>
-
-    
   );
 }
 export default AltaCliente;
