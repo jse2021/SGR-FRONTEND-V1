@@ -14,69 +14,73 @@ export const CalendarPage = () => {
   const {user} = useAuthStore();
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent,startLoadingEvents } = useCalendarStore();
+
   // PARA ALMACENAR LA VISTA EN EL STORAGE
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'month' );
   const [date, setDate] = useState('');
   const [cliente, setCliente] = useState(null);
 
   useEffect(() => {
-        window.addEventListener("clienteSeleccionado", (event) => {
-        setCliente(event.detail);
+  window.addEventListener("clienteSeleccionado", (event) => {
+  setCliente(event.detail);
     });
   }, []);
-  console.log(events)
 
-    /**
-     * DISEÑO DE LOS EVENTOS, "BOTON"
-     */
-    const eventStyleGetter = (event, start, end,isSelected) =>{    
+/**
+ * DISEÑO DE LOS EVENTOS, "BOTON" DEL CALENDARIO
+ */
+const eventStyleGetter = (event, start, end,isSelected) =>{    
 
-      //*Verifico que el evento sea el que creo el usuario
-      // const isMyEvent = (user.uid === event.user._id) || (user.uid === event.user.uid);
-      const style = {
-          backgroundColor: '#000000',
-          // backgroundColor: isMyEvent? '#347cf7': '#465660',
-          borderRadius: '5px',
-          opacity:0.9,
-          color: 'white',
-          fontSize: '10px'
-      }
-
-      return {
-        
-          style
-      }
+  const style = {
+      backgroundColor: '#000000',
+      borderRadius: '8px',
+      opacity:0.9,
+      color: 'white',
+      fontSize: '10px'
   }
+  return { 
+      style
+  }
+}
+
+/**
+ * DIA SELECCIONADO
+ */  
+const handleSelectSlot = (event) =>{
+
+  setDate(event.start)
+  openDateModal();
   
-    const handleSelectSlot = (event) =>{
+}
 
-      setDate(event.start)
-      openDateModal();
-      
-    }
+/**
+ * ABRE MODAL DE UNA RESERVA EN EL CALENDARIO
+ */
+  const onDoubleClick = (event)=> {
+    openDateModal();
+}
 
-    const onDoubleClick = (event)=> {
-      openDateModal();
-  
-  }
+/**
+ * PARA ACTIVAR LA RESERVA SELECCIONADA
+ */
+const onSelect = (event) => {
+  setActiveEvent(event)
+}
 
-    //para activar la reserva seleccioanda
-  const onSelect = (event) => {
-    setActiveEvent(event)
-  }
+/**
+ * CUANDO CAMBIA LA VISTA, SE ALMACENA EN EL STORAGE
+ */
+const onViewChanged = (event) => { 
+  console.log({viewChange:event})
+  localStorage.setItem('lastView',event);
+}
 
-    /**
-     * CUANDO CAMBIA LA VISTA
-     */
-  const onViewChanged = (event) => { 
-    console.log({viewChange:event})
-    localStorage.setItem('lastView',event);
-  
-  }
-
-  useEffect(()=>{
-    startLoadingEvents();
-}, [startLoadingEvents()])// ES ASI ?
+/**
+ * LEVANTA TODOS LOS EVENTOS HACIA EL CALENDARIO
+ */
+useEffect(()=>{
+  startLoadingEvents();
+}, [startLoadingEvents()])
 
   return (
     <>
@@ -101,7 +105,6 @@ export const CalendarPage = () => {
         onView={onViewChanged}
         onSelectSlot={handleSelectSlot}
         selectable
-
       />
         <CalendarModal date={date} cliente={cliente}/>
         <FabDelete />

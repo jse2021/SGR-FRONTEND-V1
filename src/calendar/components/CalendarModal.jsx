@@ -76,7 +76,7 @@ export const CalendarModal = ({date,cliente }) => {
      */
 
     //obtengo Canchas
-    async function fetchData() {
+    async function fetchData() { 
         const {data} = await calendarApi.get("/cancha");
               
             if (data.canchas instanceof Array) {

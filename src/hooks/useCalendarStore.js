@@ -43,7 +43,7 @@ export const useCalendarStore = () => {
             dispatch( onAddNewEvent({ ...calendarEvent, user, id: data._id }) );   
             Swal.fire({
                 icon: 'success',
-                title: 'Reserva registrada',
+                title: 'Reserva registrada',    
                 showConfirmButton: false,
                 timer: 1200
          })          
