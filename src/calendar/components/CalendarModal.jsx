@@ -29,7 +29,6 @@ const customStyles = {
     },
 };
 
-
 Modal.setAppElement('#root');
 
 export const CalendarModal = ({date,cliente }) => {
@@ -166,14 +165,6 @@ export const CalendarModal = ({date,cliente }) => {
           year: 'numeric',
         }
     );
-
-    const obtengoHorarios= () =>{
-        // Al seleccionar canchas obtengo los horarios registrados en un array.
-        // const {data} = await calendarApi.get(`/reserva/${date}${cancha}`)
-        // Crear un array con todos los horarios, y cruzarlos con el array anterior.
-        // crear un nuevo array que solo contendra los ressultados distinto del cruce de los anteriores
-        //ese aarray deberá mostrarse en el select. 
-    }
    
   return (
     
@@ -197,15 +188,12 @@ export const CalendarModal = ({date,cliente }) => {
                 <AsyncSelect
                     className="select-option"
                     name="cliente"
-                    placeholder='Ingresar Cliente'
+                    placeholder='Buscar Cliente'
                     loadOptions={loadOptions}
                     defaultOptions
                     value={formValues.cliente}
                     onChange={(value) => onInputChanged({ target: { name: 'cliente', value: value } }, value)}
                 />
-                 {/* <InputCliente setResults = {setResults} cliente={cliente}/>  */}
-                {/* <ListaCliente results = {results}/>   */}
-
             </div>
             <div className="form-group mb-2">
                 <select
