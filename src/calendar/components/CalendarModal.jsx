@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
+import { useReservaStore } from '../../hooks'; 
 import { addHours, differenceInSeconds } from 'date-fns';
 import moment from 'moment';
 import Swal from 'sweetalert2';
@@ -40,6 +41,10 @@ export const CalendarModal = ({date,cliente }) => {
     const [results, setResults] = useState([]);   
     const [opciones, setOpciones] = useState([]);
     const [dni, setDni] = useState('');
+
+    const { startObtenerHorariosDisponibles } = useReservaStore();
+    const [horariosDisponibles, setHorariosDisponibles] = useState([]);
+
 
     /**
      * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
@@ -125,6 +130,32 @@ export const CalendarModal = ({date,cliente }) => {
             [target.name]: target.value
         });
     }
+
+
+    /**
+     * SOLO CONSULTO HORA DE LA CANCHA SELECCIONADA
+     */
+    // useEffect(() => {
+    //     const fetchHorariosDisponibles = async () => {
+    //         if (formValues.cancha && date) {
+    //             const canchaSeleccionada = cancha.find(c => c.nombre === formValues.cancha);
+    //             if (canchaSeleccionada) {
+    //                 const response = await calendarApi.get('/reserva/horarios-disponibles', {
+    //                     params: {
+    //                         fecha: moment(date).format('YYYY-MM-DD'),
+    //                         cancha: canchaSeleccionada.id
+    //                     }
+    //                 });
+    //                 setHorariosDisponibles(response.data);
+    //             }
+    //         }
+    //     };
+    
+    //     fetchHorariosDisponibles();
+    // }, [formValues.cancha, date]);
+    
+ 
+      
 
     const onCloseModal = () => {
         closeDateModal();
