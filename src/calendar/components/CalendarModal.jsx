@@ -17,6 +17,7 @@ import { ListaCliente } from './Components Modal/Cliente/ListaCliente';
 import { calendarApi } from '../../api';
 import '../../calendar/components/CalendarModal.css'
 
+
 registerLocale( 'es', es );
 
 const customStyles = {
@@ -42,8 +43,8 @@ export const CalendarModal = ({date,cliente }) => {
     const [opciones, setOpciones] = useState([]);
     const [dni, setDni] = useState('');
 
-    const { startObtenerHorariosDisponibles } = useReservaStore();
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);// manejo de spiner
 
 
     /**
@@ -113,7 +114,7 @@ export const CalendarModal = ({date,cliente }) => {
     // para mostrar los datos del modal(reserva)
     useEffect(() => {
         if (activeEvent !== null) {
-            console.log(activeEvent)
+            console.log("RESERVA: ",activeEvent)
             const cliente = activeEvent.cliente;
             setFormValues({...activeEvent, cliente });
           }    
@@ -124,39 +125,40 @@ export const CalendarModal = ({date,cliente }) => {
             setDni(value.value);
             console.log(value.value)
         }
-        console.log(formValues.cliente);
           setFormValues({
             ...formValues,
             [target.name]: target.value
         });
     }
 
-
     /**
      * SOLO CONSULTO HORA DE LA CANCHA SELECCIONADA
      */
-    // useEffect(() => {
-    //     const fetchHorariosDisponibles = async () => {
-    //         if (formValues.cancha && date) {
-    //             const canchaSeleccionada = cancha.find(c => c.nombre === formValues.cancha);
-    //             if (canchaSeleccionada) {
-    //                 const response = await calendarApi.get('/reserva/horarios-disponibles', {
-    //                     params: {
-    //                         fecha: moment(date).format('YYYY-MM-DD'),
-    //                         cancha: canchaSeleccionada.id
-    //                     }
-    //                 });
-    //                 setHorariosDisponibles(response.data);
-    //             }
-    //         }
-    //     };
-    
-    //     fetchHorariosDisponibles();
-    // }, [formValues.cancha, date]);
-    
- 
+    const obtenerHorarios = async (canchaSeleccionada) => {
+        try {
+          if (!date) {
+            console.warn('Fecha no proporcionada al modal');
+            return;
+          }
       
-
+          const fechaISO = new Date(date).toISOString(); // Usa la prop `date` directamente
+          const { data } = await calendarApi.post('/reserva/horarios-disponibles', {
+            fecha: fechaISO,
+            cancha: canchaSeleccionada,
+          });
+        
+          if (data.ok) {
+            setHorariosDisponibles(data.horasDisponibles);// guardo las horas
+          } else {
+            Swal.fire('Error', 'No se pudieron obtener los horarios disponibles', 'error');
+          }
+        } catch (error) {
+          console.error('Error al obtener horarios:', error);
+          Swal.fire('Error', 'Error al obtener horarios disponibles', 'error');
+        }
+      };
+      
+          
     const onCloseModal = () => {
         closeDateModal();
     }
@@ -176,8 +178,9 @@ export const CalendarModal = ({date,cliente }) => {
                 estado_pago:'',
                 observacion:'',
             });
-            
+            setIsSubmitting(true); // comienza la carga
             setFormSubmitted(true);
+
           
         await startSavingEvent({ ...formValues,
             fecha: date,
@@ -228,12 +231,25 @@ export const CalendarModal = ({date,cliente }) => {
             </div>
             <div className="form-group mb-2">
                 <select
-                   className="form-select"
+                    className="form-select"
                     name="cancha"
                     id="select-cancha"
                     value={formValues.cancha}
-                    onChange={(event) => onInputChanged(event)}
-                    placeholder="Seleccione una cancha"
+                    onChange={(event) => {
+                      const nuevaCancha = event.target.value;
+                      setFormValues(prev => ({
+                        ...prev,
+                        cancha: nuevaCancha
+                      }));
+                      
+                      // 🔍 En este punto ya detectás el cambio de cancha.
+                      console.log('Cancha seleccionada:', nuevaCancha);
+
+                      setHorariosDisponibles([]); //Limpia los horarios anteriores
+                      
+                      //Llamada al backend.
+                      obtenerHorarios(nuevaCancha); 
+                    }}
                     >
                     <option key="0" value="" disabled>Selecciona una cancha</option>
                         {cancha && cancha.length > 0 ? cancha.map((cancha) => (
@@ -250,27 +266,23 @@ export const CalendarModal = ({date,cliente }) => {
                     name="hora"
                     id="select-hora"
                     value={formValues.hora}
-                    onChange={onInputChanged}
+                    onChange={(e) =>
+                    setFormValues(prev => ({
+                        ...prev,
+                        hora: e.target.value
+                    }))
+                    }
                 >
                     <option key="0" value="" disabled>Seleccione horario</option>
-                    <option value="10:00">10:00</option>
-                    <option value="11:00">11:00</option>
-                    <option value="12:00">12:00</option>
-                    <option value="13:00">13:00</option>
-                    <option value="14:00">14:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="16:00">16:00</option>
-                    <option value="17:00">17:00</option>
-                    <option value="18:00">18:00</option>
-                    <option value="19:00">19:00</option>
-                    <option value="20:00">20:00</option>
-                    <option value="21:00">21:00</option>
-                    <option value="22:00">22:00</option>
-                    <option value="23:00">23:00</option>
-                    <option value="00:00">00:00</option>
-                    <option value="01:00">01:00</option>
+
+                    {horariosDisponibles.map((hora, index) => (
+                    <option key={index} value={hora}>
+                        {hora}
+                    </option>
+                    ))}
                 </select>
             </div>
+
 
             <div className="form-group mb-2">
                 <select
@@ -327,10 +339,17 @@ export const CalendarModal = ({date,cliente }) => {
             </div>
         <hr />
             <div className="d-grid gap-2">
-                <input 
-                    type="submit" 
-                    className="btnSubmit" 
-                    value="Guardar" />
+                {/* <input  */}
+                    {/* // type="submit"  */}
+                    {/* // className="btnSubmit"  */}
+                    {/* // value="Guardar" /> */}
+                    <button
+                        type="submit"
+                        className="btn btn-secondary"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Guardando...' : 'Guardar Reserva'}
+                    </button>
             </div>
         </form>
     </Modal>
