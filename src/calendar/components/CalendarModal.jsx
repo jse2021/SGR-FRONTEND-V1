@@ -44,7 +44,7 @@ export const CalendarModal = ({date,cliente }) => {
     const [dni, setDni] = useState('');
 
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);// manejo de spiner
+    const [isSubmitting, setIsSubmitting] = useState(false);// manejo de boton guardar
 
 
     /**
@@ -109,7 +109,8 @@ export const CalendarModal = ({date,cliente }) => {
         estado_pago:'',
         observacion:'',
         cliente:''
-    });
+        }
+    );
 
     // para mostrar los datos del modal(reserva)
     useEffect(() => {
@@ -128,6 +129,7 @@ export const CalendarModal = ({date,cliente }) => {
           setFormValues({
             ...formValues,
             [target.name]: target.value
+            
         });
     }
 
@@ -158,7 +160,14 @@ export const CalendarModal = ({date,cliente }) => {
         }
       };
       
+      /**
+       * REINICIO BOTON GUARDAR
+       */
+        useEffect(() => {
+            setIsSubmitting(false); // se reinicia cuando cambia la fecha
+        }, [date]);
           
+
     const onCloseModal = () => {
         closeDateModal();
     }
@@ -339,10 +348,6 @@ export const CalendarModal = ({date,cliente }) => {
             </div>
         <hr />
             <div className="d-grid gap-2">
-                {/* <input  */}
-                    {/* // type="submit"  */}
-                    {/* // className="btnSubmit"  */}
-                    {/* // value="Guardar" /> */}
                     <button
                         type="submit"
                         className="btn btn-secondary"
