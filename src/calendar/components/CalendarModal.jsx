@@ -75,14 +75,14 @@ const loadOptions =  (searchValue, callback) => {
     callback(opcionesFiltradas);
 };
 //_-------------------------------------------------------------------------------------
+
 /**
- * TRABAJO CANCHAS PARA TRAERLAS DESDE EL BACKEND
+ * TRAIGO LAS CANCHAS QUE TIENEN PRECIO ASIGNADO, DIRECTAMENTE DESDE TABLA CONFIGURACION Y NO DE CANCHAS
  */
 async function fetchData() { 
-    const {data} = await calendarApi.get("/cancha");
-            
-        if (data.canchas instanceof Array) {
-            setCancha(data.canchas.map((cancha) => {
+    const {data} = await calendarApi.get("/configuracion");         
+        if (data.canchasPrecio instanceof Array) {
+            setCancha(data.canchasPrecio.map((cancha) => {
         return {
             id: cancha.id,
             nombre: cancha.nombre,
@@ -95,8 +95,6 @@ useEffect(() => {
     fetchData();
 }, []);  
 //---------------------------------------------------------------------------------------
-
-
 /**
  * MANEJO DE INICIO DE FORMULARIO: RESETEA LOS CAMPOS CADA VEZ QUE ABRO MODAL
  */
@@ -113,36 +111,54 @@ const [formValues, setFormValues] = useState({
     cliente:''
     }
 );
+
+//---------------------------------------------------------------------------------------
 /**
- * MANEJO DE INICIO DE FORMULARIO: LEVANTO TODOS LOS DATOS DE UNA RESERVE ESPECIFICA.
- * SIRVE PARA LA MODIFICACION
+ * PASO PARAMETROS A LA FUNCION OBTENERHORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA, 
+ * EL MODAL MUESTRE EL HORARIO EXACTO DE LA RESERVA 
  */
 useEffect(() => {
-    if (activeEvent !== null) {
-        const cliente = activeEvent.cliente;
-        setFormValues({...activeEvent, cliente });
-        }    
-    }, [activeEvent]);
-//---------------------------------------------------------------------------------------
+    if (activeEvent && activeEvent.cancha) {
+        obtenerHorarios(activeEvent.cancha,activeEvent.hora);
+    }
+}, [activeEvent]);
        
 /**
- * TRABAJO LOS HORARIOS: SOLO CONSULTO TRAIGO LAS HORAS SIN RESERVAS
+ * TRABAJO LOS HORARIOS:
+ * PARA CREAR RESERVA: TRAIGO LOS HORARIOS DISPONIBLES
+ * PARA LA MODIFCACION: TRAIGO LOS HORARIOS DISPONIBLES, INCLUSO LA HORA DE LA RESERVA SELECCIONADA
  */
-const obtenerHorarios = async (canchaSeleccionada) => {
+const obtenerHorarios = async (canchaSeleccionada,horarioActual = null) => {
     try {
-        if (!date) {
-            console.warn('Fecha no proporcionada al modal');
-        return;
+        let fechaReferencia = date;
+
+        // Si no hay date (modo edición probablemente), tratamos de usar el de activeEvent
+        if (!fechaReferencia && activeEvent && activeEvent.start) {
+            fechaReferencia = activeEvent.start;
         }
-    
-            const fechaISO = new Date(date).toISOString(); // Usa la prop `date` directamente
+
+        // Validamos si tenemos una fecha final
+        if (!fechaReferencia) {
+            console.warn('Fecha no proporcionada ni al crear ni al editar');
+            return;
+        }
+
+        const fechaISO = new Date(fechaReferencia).toISOString();
             const { data } = await calendarApi.post('/reserva/horarios-disponibles', {
             fecha: fechaISO,
             cancha: canchaSeleccionada,
         });
     
         if (data.ok) {
-            setHorariosDisponibles(data.horasDisponibles);// guardo las horas
+            // setHorariosDisponibles(data.horasDisponibles);// guardo las horas
+            let horarios = data.horasDisponibles;
+                  // Si estamos editando y el horario actual no está, lo agregamos
+            if (horarioActual && !horarios.includes(horarioActual)) {
+                horarios = [...horarios, horarioActual].sort(); // ordenado
+            }
+
+            setHorariosDisponibles(horarios);
+
         } else {
         Swal.fire('Error', 'No se pudieron obtener los horarios disponibles', 'error');
         }
@@ -193,6 +209,25 @@ const onClienteChanged = ({target}, value) => {
         [target.name]: target.value
     });
 }
+/**
+ * AL LEVANTAR NUEVAMENTE EL MODAL, TRAIGO EL CLIENTE COMO OBJETO (VALUE:LABEL)
+ */
+useEffect(() => {
+  if (activeEvent) {
+
+    setFormValues({
+      ...activeEvent,
+      cliente: {
+        value: activeEvent.id,
+        label: activeEvent.cliente+'-'+ activeEvent.apellidoCliente+' '+activeEvent.nombreCliente   // o `${apellido}, ${nombre}`
+      },
+     hora: activeEvent.hora || ''  // Setea el horario si viene
+    });
+    setDni(activeEvent.cliente);
+    
+  }
+}, [activeEvent]);
+
 /*
 * MANEJO DEL CAMBIO DE ESTADO DE LOS COMPONENTES:TAMBIEN EL CAMBIO DE ESTADO DE ESTADO DE PAGO E INPUT MONTO 
 */ 
@@ -349,7 +384,7 @@ return (
                 className="form-select"
                 name="hora"
                 id="select-hora"
-                value={formValues.hora}
+                value={formValues.hora || ""}
                 onChange={(e) =>
                 setFormValues(prev => ({
                     ...prev,

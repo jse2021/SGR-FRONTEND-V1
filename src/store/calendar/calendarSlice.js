@@ -39,7 +39,7 @@ export const calendarSlice = createSlice({
         onLoadEvents: (state, {payload = []})=>{
             state.isLoadingEvents= false;
             /**
-             * VERIFICO SI ESISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE, 
+             * VERIFICO SI EXISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE, 
              * LO INSERTO
              */
             payload.forEach(event => {

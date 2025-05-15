@@ -9,21 +9,25 @@ import { localizer, getMessagesES } from '../../helpers';
 import { useUiStore, useCalendarStore, useAuthStore } from '../../hooks';
 
 
+
+
+
 export const CalendarPage = () => {
 
   const {user} = useAuthStore();
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent,startLoadingEvents } = useCalendarStore();
-
+  const { activeEvent } = useCalendarStore();
+  
   // PARA ALMACENAR LA VISTA EN EL STORAGE
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'month' );
   const [date, setDate] = useState('');
   const [cliente, setCliente] = useState(null);
 
   useEffect(() => {
-  window.addEventListener("clienteSeleccionado", (event) => {
-  setCliente(event.detail);
-    });
+    window.addEventListener("clienteSeleccionado", (event) => {
+    setCliente(event.detail);
+  });
   }, []);
 
 /**
@@ -47,17 +51,17 @@ const eventStyleGetter = (event, start, end,isSelected) =>{
  * DIA SELECCIONADO
  */  
 const handleSelectSlot = (event) =>{
-
   setDate(event.start)
   openDateModal();
-  
 }
 
 /**
  * ABRE MODAL DE UNA RESERVA EN EL CALENDARIO
  */
-  const onDoubleClick = (event)=> {
-    openDateModal();
+const onDoubleClick = (event) => {  
+  
+  setActiveEvent(event);
+  openDateModal(); 
 }
 
 /**

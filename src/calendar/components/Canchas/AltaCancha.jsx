@@ -44,7 +44,7 @@ const { registerNombre, registerMedidas, onInputChange } = useForm( registrarCan
             startRegister({nombre: registerNombre, medidas: registerMedidas})
 
             // El cartel se mantiene hasta dar ok y dispara formulario
-            const promise = Swal.fire('Alta de cancha', "Cancha registrada" , 'success');
+            const promise = Swal.fire('Alta de cancha', "Cancha registrada, Por favor no olvidar cargar precios!" , 'success');
             promise.then(() => {
                 document.getElementById('formAltaCancha').submit();
             });

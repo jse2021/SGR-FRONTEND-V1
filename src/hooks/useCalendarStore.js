@@ -26,50 +26,50 @@ export const useCalendarStore = () => {
     /**
      *  PROCESO DE GRABACION DEL EVENTO: PREFIERO HACER EL CALCULO DESDE FRONT, Y NO DE BACKEND
      */
-const startSavingEvent = async(calendarEvent) => {
-    try {
-        if (calendarEvent.id) {
-            const { data } = await calendarApi.put(`/reserva/${calendarEvent.id}`, calendarEvent);
-            dispatch(onUpdateEvent({ ...calendarEvent, user }));
-        } else {
-            //Proceso de calculo previo envi
-            let monto_cancha = calendarEvent.precio || 0;
-            let monto_sena = 0;
+    const startSavingEvent = async(calendarEvent) => {
+        try {
+            if (calendarEvent.id) {
+                const { data } = await calendarApi.put(`/reserva/${calendarEvent.id}`, calendarEvent);
+                dispatch(onUpdateEvent({ ...calendarEvent, user }));
+            } else {
+                //Proceso de calculo previo envi
+                let monto_cancha = calendarEvent.precio || 0;
+                let monto_sena = 0;
 
-            switch (calendarEvent.forma_pago) {
-                case 'TOTAL':
-                    monto_sena = monto_cancha;
-                    break;
-                case 'SEÑA':
-                    monto_sena = Math.floor(monto_cancha / 2); // o tu lógica
-                    break;
-                case 'IMPAGO':
-                default:
-                    monto_sena = 0;
-                    break;
+                switch (calendarEvent.forma_pago) {
+                    case 'TOTAL':
+                        monto_sena = monto_cancha;
+                        break;
+                    case 'SEÑA':
+                        monto_sena = Math.floor(monto_cancha / 2); // o tu lógica
+                        break;
+                    case 'IMPAGO':
+                    default:
+                        monto_sena = 0;
+                        break;
+                }
+
+                const reservaConMontos = {
+                    ...calendarEvent,
+                    monto_cancha,
+                    monto_sena
+                };
+
+                const { data } = await calendarApi.post('/reserva', reservaConMontos);
+                dispatch(onAddNewEvent({ ...reservaConMontos, user, id: data._id }));
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Reserva registrada',
+                    showConfirmButton: false,
+                    timer: 900
+                });
             }
 
-            const reservaConMontos = {
-                ...calendarEvent,
-                monto_cancha,
-                monto_sena
-            };
-
-            const { data } = await calendarApi.post('/reserva', reservaConMontos);
-            dispatch(onAddNewEvent({ ...reservaConMontos, user, id: data._id }));
-            Swal.fire({
-                icon: 'success',
-                title: 'Reserva registrada',
-                showConfirmButton: false,
-                timer: 900
-            });
+        } catch (error) {
+            Swal.fire('Error al guardar', error.response?.data?.msg || 'Consulte con el administrador', 'error');
+            console.log({ error });
         }
-
-    } catch (error) {
-        Swal.fire('Error al guardar', error.response?.data?.msg || 'Consulte con el administrador', 'error');
-        console.log({ error });
-    }
-};
+    };
 
     /**
      * PROCESO DE ELIMINACION DE RESERVA

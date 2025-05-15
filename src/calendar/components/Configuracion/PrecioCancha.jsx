@@ -51,7 +51,7 @@ export const  PrecioCancha = ({canchas}) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const { registerNombre,registerPrecio,registerSena, onInputChange} = useForm(registrarMontos);
   
-  const precioClass = useMemo(() => {
+const precioClass = useMemo(() => {
     if ( !formSubmitted ) return '';
 
     return ( registerPrecio.length > 0 )
