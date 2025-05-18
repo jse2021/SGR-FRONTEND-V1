@@ -9,6 +9,7 @@ export const useClienteStore = () => {
      * REGISTRAR CLIENTES
      */
     const dispatch = useDispatch();
+
         const startRegister = async ({dni, nombre, apellido, email, celular}) => {
             try {
 
@@ -16,6 +17,7 @@ export const useClienteStore = () => {
                 const {data} = await calendarApi.post('cliente/crearCliente',{dni, nombre, apellido, email, celular});
 
             } catch (error) {
+                console.log(error)
                 setTimeout(() => {
                     dispatch( clearErrorMessage() );
                 }, 10);              

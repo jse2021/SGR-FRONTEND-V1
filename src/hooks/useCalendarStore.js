@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 
+
 /**
  * DE ACA LLEGAMOS AL BACKEN Y RELIZAMOS LOS PROCESOS
  */
@@ -31,6 +32,13 @@ export const useCalendarStore = () => {
             if (calendarEvent.id) {
                 const { data } = await calendarApi.put(`/reserva/${calendarEvent.id}`, calendarEvent);
                 dispatch(onUpdateEvent({ ...calendarEvent, user }));
+                console.log(data)
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Reserva modificada',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
             } else {
                 //Proceso de calculo previo envi
                 let monto_cancha = calendarEvent.precio || 0;
@@ -57,11 +65,12 @@ export const useCalendarStore = () => {
 
                 const { data } = await calendarApi.post('/reserva', reservaConMontos);
                 dispatch(onAddNewEvent({ ...reservaConMontos, user, id: data._id }));
+     
                 Swal.fire({
                     icon: 'success',
                     title: 'Reserva registrada',
                     showConfirmButton: false,
-                    timer: 900
+                    timer: 600
                 });
             }
 
@@ -80,6 +89,12 @@ export const useCalendarStore = () => {
             await calendarApi.delete(`/reserva/${activeEvent.id}`)
             // Todo: Llegar al backend
             dispatch( onDeleteEvent() );
+            Swal.fire({
+                    icon: 'success',
+                    title: 'Reserva eliminada',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
 
         } catch (error) {
             console.log(error)
