@@ -1,27 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import './ListaCliente.css'
-import { ResultadoPorCliente } from './ResultadoPorCliente'
-import { InputCliente } from './InputCliente';
+import React, { useEffect, useState } from "react";
+import "./ListaCliente.css";
+import { ResultadoPorCliente } from "./ResultadoPorCliente";
+import { InputCliente } from "./InputCliente";
 
-export const ListaCliente = ({results}) => {
-  
-    return (
+export const ListaCliente = ({ results }) => {
+  return (
     <>
-    <div className='results-list'
+      <div className="results-list">
+        {results.map((result, id) => {
+          console.log(result);
 
-    >
-      {
-        results.map((result, id) => {
-          console.log(result)
-          
-          return <ResultadoPorCliente 
-                    result={result}
-                    key={id} 
-          />
-            })
-        }
-    </div>
+          return <ResultadoPorCliente result={result} key={id} />;
+        })}
+      </div>
     </>
-    
-  )
-}
+  );
+};
