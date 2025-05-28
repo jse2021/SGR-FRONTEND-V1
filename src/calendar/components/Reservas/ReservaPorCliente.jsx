@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./reservas.css";
 import AsyncSelect from "react-select/async";
 import { calendarApi } from "../../../api";
+import Swal from "sweetalert2";
 
 export const ReservaPorCliente = () => {
   const [results, setResults] = useState([]);
@@ -13,6 +14,7 @@ export const ReservaPorCliente = () => {
   const [fechaDesde, setFechaDesde] = useState(null);
   const [fechaHasta, setFechaHasta] = useState(null);
   const [apellidoCliente, setApellidoCliente] = useState("");
+  const [busquedaRealizada, setBusquedaRealizada] = useState(false);
 
   /**
    * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
@@ -61,18 +63,16 @@ export const ReservaPorCliente = () => {
    */
   const handleBuscarReservas = async (e) => {
     e.preventDefault();
+    setBusquedaRealizada(true); //para el msj si exite o no reserva del cliente
 
     if (!dni || !fechaDesde || !fechaHasta) {
-      alert("Debe seleccionar cliente y rango de fechas");
+      // alert("Debe seleccionar cliente y rango de fechas");
+      Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
       return;
     }
 
     const desdeStr = fechaDesde.toISOString().split("T")[0]; // YYYY-MM-DD
     const hastaStr = fechaHasta.toISOString().split("T")[0];
-
-    console.log("Apellido:", apellidoCliente);
-    console.log("Desde:", desdeStr);
-    console.log("Hasta:", hastaStr);
 
     try {
       const { data } = await calendarApi.get(
@@ -92,48 +92,46 @@ export const ReservaPorCliente = () => {
       <h1 className="display-5">Consultar Reserva por Cliente</h1>
       <div className="col-md-8 login-form-3">
         <form onSubmit={handleBuscarReservas}>
-          <div className="form-group mb-2">
-            <AsyncSelect
-              className="select-option"
-              name="cliente"
-              placeholder="Buscar Cliente"
-              loadOptions={loadOptions}
-              defaultOptions
-              value={formValues.cliente}
-              onChange={(value) =>
-                onClienteChanged(
-                  { target: { name: "cliente", value: value } },
-                  value
-                )
-              }
-            />
+          <div className="row justify-content-center mb-4">
+            <div className="col-12 col-md-8">
+              <AsyncSelect
+                classNamePrefix="react-select"
+                className="w-100"
+                name="cliente"
+                placeholder="Buscar Cliente"
+                loadOptions={loadOptions}
+                defaultOptions
+                value={formValues.cliente}
+                onChange={(value) =>
+                  onClienteChanged(
+                    { target: { name: "cliente", value: value } },
+                    value
+                  )
+                }
+              />
+            </div>
           </div>
 
-          <div className="datepickers-container">
-            <div className="form-group col-md-10 mb-4">
-              <div className="form-group">
-                <label id="label-desde">Desde</label>
-                <DatePicker
-                  selected={fechaDesde}
-                  id="datePickerDesde"
-                  className="form-control"
-                  dateFormat="Pp"
-                  locale="es"
-                  onChange={(date) => setFechaDesde(date)}
-                />
-              </div>
-
-              <div className="form-group">
-                <label id="label-hasta">Hasta</label>
-                <DatePicker
-                  selected={fechaHasta}
-                  id="datePickerHasta"
-                  className="form-control"
-                  dateFormat="Pp"
-                  locale="es"
-                  onChange={(date) => setFechaHasta(date)}
-                />
-              </div>
+          <div className="row justify-content-center mb-3">
+            <div className="col-md-4">
+              <label className="form-label">Desde</label>
+              <DatePicker
+                selected={fechaDesde}
+                className="form-control"
+                dateFormat="Pp"
+                locale="es"
+                onChange={(date) => setFechaDesde(date)}
+              />
+            </div>
+            <div className="col-md-4">
+              <label className="form-label">Hasta</label>
+              <DatePicker
+                selected={fechaHasta}
+                className="form-control"
+                dateFormat="Pp"
+                locale="es"
+                onChange={(date) => setFechaHasta(date)}
+              />
             </div>
           </div>
 
@@ -143,43 +141,46 @@ export const ReservaPorCliente = () => {
 
           <div class="table-responsive mt-4 shadow rounded">
             {/* Verifico que results sea un array y que contenga datos */}
-            {Array.isArray(results) && results.length > 0 ? (
-              <table class="table table-bordered table-hover table-striped align-middle text-center">
-                <thead class="table-dark text-uppercase">
-                  <tr className="bg-gray-200">
-                    <th className="border px-4 py-2">Fecha</th>
-                    <th className="border px-4 py-2">Hora</th>
-                    <th className="border px-4 py-2">Cancha</th>
-                    <th class="text-nowrap">Forma de Pago</th>
-                    <th class="text-nowrap">Estado de Pago</th>
-                    <th className="border px-4 py-2">Total</th>
-                    <th className="border px-4 py-2">Seña</th>
-                    <th class="text-nowrap">Observ.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.map((reserva) => (
-                    <tr key={reserva._id}>
-                      <td className="border px-4 py-2">
-                        {new Date(reserva.fecha).toLocaleDateString()}
-                      </td>
-                      <td class="text-nowrap">{reserva.hora}</td>
-                      <td class="text-nowrap">{reserva.cancha}</td>
-                      <td class="text-nowrap">{reserva.forma_pago}</td>
-                      <td class="text-nowrap">{reserva.estado_pago}</td>
-                      <td class="text-nowrap">${reserva.monto_cancha}</td>
-                      <td class="text-nowrap">${reserva.monto_sena}</td>
-                      <td class="text-nowrap">{reserva.observacion || "-"}</td>
+            {busquedaRealizada ? (
+              Array.isArray(results) && results.length > 0 ? (
+                <table className="table table-bordered table-hover table-striped align-middle text-center">
+                  <thead className="table-dark text-uppercase">
+                    <tr className="bg-gray-200">
+                      <th className="border px-4 py-2">Fecha</th>
+                      <th className="border px-4 py-2">Hora</th>
+                      <th className="border px-4 py-2">Cancha</th>
+                      <th className="text-nowrap">Forma de Pago</th>
+                      <th className="text-nowrap">Estado de Pago</th>
+                      <th className="border px-4 py-2">Total</th>
+                      <th className="border px-4 py-2">Seña</th>
+                      <th classNames="text-nowrap">Observ.</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className="mt-4 text-gray-600">
-                No se encontraron reservas para este cliente en el rango de
-                fechas seleccionado.
-              </p>
-            )}
+                  </thead>
+                  <tbody>
+                    {results.map((reserva) => (
+                      <tr key={reserva._id}>
+                        <td className="border px-4 py-2">
+                          {new Date(reserva.fecha).toLocaleDateString()}
+                        </td>
+                        <td class="text-nowrap">{reserva.hora}</td>
+                        <td class="text-nowrap">{reserva.cancha}</td>
+                        <td class="text-nowrap">{reserva.forma_pago}</td>
+                        <td class="text-nowrap">{reserva.estado_pago}</td>
+                        <td class="text-nowrap">${reserva.monto_cancha}</td>
+                        <td class="text-nowrap">${reserva.monto_sena}</td>
+                        <td class="text-nowrap">
+                          {reserva.observacion || "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="mt-4 text-gray-600">
+                  No se encontraron reservas para el cliente.
+                </p>
+              )
+            ) : null}
           </div>
         </form>
       </div>

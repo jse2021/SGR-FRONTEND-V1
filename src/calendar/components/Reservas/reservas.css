@@ -1,43 +1,27 @@
 .btnSubmit {
-    border-radius: 1rem;
-    padding: 0.6%;
-    border: none;
-    cursor: pointer;
-    margin: 0 auto;
-    background-color: #333;
-    color: #fcf9f9;
-  }
-.btnSubmit{
-    width: 40%;
-    margin-left: 30%;
-    margin-top: 4%;
+  border-radius: 1rem;
+  padding: 0.6%;
+  border: none;
+  cursor: pointer;
+  background-color: #333;
+  color: #fcf9f9;
+  width: 40%;
+  margin: 0 auto;
+  display: block;
 }
-#datePickerDesde{
-    margin-left: 5%;
-}
-
-#datePickerHasta{
-    margin-left: 5%;
-}
-#buscar-cliente{
-    width: 50%;
-    margin-left: 25%;
-    margin-top: -5%;
+/* Fix de estilo para centrar y adaptar React Select */
+.react-select__control {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  min-height: 38px;
+  font-size: 0.95rem;
+  box-shadow: none;
 }
 
-#datePickerDesde,
-#datePickerHasta,#label-hasta,#label-desde {
-  margin-inline-start: auto;
-  margin-left: 35%;
-  margin-top: 2%;
+.react-select__menu {
+  z-index: 9999;
 }
 
-#cancha{
-    margin-left: 35%;
-    width: 30%;
+.react-select__value-container {
+  padding: 2px 8px;
 }
-#datePicker{
-    width: 155%;
-    margin-left: 185%;
-}
-
