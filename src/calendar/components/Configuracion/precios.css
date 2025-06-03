@@ -1,26 +1,29 @@
-.display-6{
-    margin-left: 35%;
+.display-6 {
+  margin-left: 35%;
 }
-.form-control, .form-select{
-    margin-left: 55%;
+.form-control,
+.form-select {
+  margin-left: 55%;
 }
-.form-control.montoCancha{
-    margin-left: 55%;
+.form-control.montoCancha {
+  margin-left: 55%;
 }
-.form-control.montoSena{
-    margin-left: 55%;
+.form-control.montoSena {
+  margin-left: 55%;
 }
 
-.btnSubmitActualizar,.btnSubmitGuardar {
-    border-radius: 1rem;
-    padding: 0.6%;
-    border: none;
-    cursor: pointer;
-    width: 40%;
-    margin: 0 auto;
-  }
+.btnSubmitActualizar,
+.btnSubmitGuardar {
+  border-radius: 1rem;
+  padding: 0.6%;
+  border: none;
+  cursor: pointer;
+  width: 40%;
+  margin: 0 auto;
+}
 
-.btnSubmitActualizar, .btnSubmitGuardar{
-    background-color: #333;
-    color: #fcf9f9;
+.btnSubmitActualizar,
+.btnSubmitGuardar {
+  background-color: #333;
+  color: #fcf9f9;
 }

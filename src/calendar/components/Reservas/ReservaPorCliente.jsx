@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FaTrash } from "react-icons/fa";
 import { Navbar } from "../Navbar";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,6 +7,11 @@ import "./reservas.css";
 import AsyncSelect from "react-select/async";
 import { calendarApi } from "../../../api";
 import Swal from "sweetalert2";
+import { CalendarModal } from "../CalendarModal";
+import { BsPencil } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
+import { useUiStore, useCalendarStore } from "../../../hooks";
+import { useSelector } from "react-redux";
 
 export const ReservaPorCliente = () => {
   const [results, setResults] = useState([]);
@@ -15,6 +21,12 @@ export const ReservaPorCliente = () => {
   const [fechaHasta, setFechaHasta] = useState(null);
   const [apellidoCliente, setApellidoCliente] = useState("");
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
+  const { events, activeEvent } = useSelector((state) => state.calendar);
+
+  // const [activeEvent, setActiveEvent] = useState(null);
+  const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
+  const { openDateModal } = useUiStore();
+  const { setActiveEvent, startDeletingEvent } = useCalendarStore();
 
   /**
    * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
@@ -80,9 +92,53 @@ export const ReservaPorCliente = () => {
       );
       // de esta forma y no solo data. Porque el backend me devuelve un array
       setResults(data.reservasCliente); // <-- el array directamente
-      console.log("Reservas encontradas:", data);
     } catch (error) {
       console.error("Error al buscar reservas:", error);
+    }
+  };
+  //--------------------------------------------------------------------------------------------------------------------------------------------------
+  /**
+   * FUNCION PARA LLAMAR AL MODAL - EDITAR
+   */
+  const handleEditarReserva = (reserva) => {
+    setActiveEvent(reserva); // importante: setear en el store qué reserva se va a editar
+    openDateModal(); // sin argumento
+    console.log(reserva);
+  };
+
+  const handleEliminarReserva = async (reserva) => {
+    const confirmacion = await Swal.fire({
+      title: "¿Eliminar reserva?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        // Llamada directa a la API para eliminar la reserva
+        await calendarApi.delete(`/reserva/${reserva.id}`);
+
+        // Actualización de la tabla local sin recargar ni usar Redux
+        setResults((prevResults) =>
+          prevResults.filter((r) => r._id !== reserva._id)
+        );
+
+        Swal.fire(
+          "Eliminado",
+          "La reserva fue eliminada correctamente",
+          "success"
+        );
+      } catch (error) {
+        console.error("Error al eliminar reserva:", error);
+        Swal.fire(
+          "Error",
+          error.response?.data?.msg || "No se pudo eliminar la reserva",
+          "error"
+        );
+      }
     }
   };
 
@@ -118,7 +174,7 @@ export const ReservaPorCliente = () => {
               <DatePicker
                 selected={fechaDesde}
                 className="form-control"
-                dateFormat="Pp"
+                dateFormat="dd/MM/yyyy"
                 locale="es"
                 onChange={(date) => setFechaDesde(date)}
               />
@@ -128,7 +184,7 @@ export const ReservaPorCliente = () => {
               <DatePicker
                 selected={fechaHasta}
                 className="form-control"
-                dateFormat="Pp"
+                dateFormat="dd/MM/yyyy"
                 locale="es"
                 onChange={(date) => setFechaHasta(date)}
               />
@@ -143,33 +199,58 @@ export const ReservaPorCliente = () => {
             {/* Verifico que results sea un array y que contenga datos */}
             {busquedaRealizada ? (
               Array.isArray(results) && results.length > 0 ? (
-                <table className="table table-bordered table-hover table-striped align-middle text-center">
+                <table className="table table-bordered table-hover table-striped align-middle text-center tabla-reserva-sm">
                   <thead className="table-dark text-uppercase">
                     <tr className="bg-gray-200">
-                      <th className="border px-4 py-2">Fecha</th>
-                      <th className="border px-4 py-2">Hora</th>
-                      <th className="border px-4 py-2">Cancha</th>
-                      <th className="text-nowrap">Forma de Pago</th>
-                      <th className="text-nowrap">Estado de Pago</th>
-                      <th className="border px-4 py-2">Total</th>
-                      <th className="border px-4 py-2">Seña</th>
-                      <th classNames="text-nowrap">Observ.</th>
+                      <th className="border px-2 py-1">Fecha</th>
+                      <th className="border px-2 py-1">Hora</th>
+                      <th className="border px-2 py-1">Cancha</th>
+                      <th className="border px-2 py-1">Forma de Pago</th>
+                      <th className="border px-2 py-1">Estado de Pago</th>
+                      <th className="border px-2 py-1">Total</th>
+                      <th className="border px-2 py-1">Seña</th>
+                      <th className="border px-2 py-1">Observ.</th>
+                      <th className="border px-2 py-1">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {results.map((reserva) => (
                       <tr key={reserva._id}>
                         <td className="border px-4 py-2">
-                          {new Date(reserva.fecha).toLocaleDateString()}
+                          {new Date(reserva.fecha).toLocaleDateString("es-AR")}
                         </td>
-                        <td class="text-nowrap">{reserva.hora}</td>
-                        <td class="text-nowrap">{reserva.cancha}</td>
-                        <td class="text-nowrap">{reserva.forma_pago}</td>
-                        <td class="text-nowrap">{reserva.estado_pago}</td>
-                        <td class="text-nowrap">${reserva.monto_cancha}</td>
-                        <td class="text-nowrap">${reserva.monto_sena}</td>
-                        <td class="text-nowrap">
+                        <td className="border px-2 py-1">{reserva.hora}</td>
+                        <td className="border px-2 py-1">{reserva.cancha}</td>
+                        <td className="border px-2 py-1">
+                          {reserva.forma_pago}
+                        </td>
+                        <td className="border px-2 py-1">
+                          {reserva.estado_pago}
+                        </td>
+                        <td className="border px-2 py-1">
+                          ${reserva.monto_cancha}
+                        </td>
+                        <td className="border px-2 py-1">
+                          ${reserva.monto_sena}
+                        </td>
+                        <td className="border px-2 py-1">
                           {reserva.observacion || "-"}
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-outline-primary btn-sm me-1"
+                            onClick={() => handleEditarReserva(reserva)}
+                            title="Editar reserva"
+                          >
+                            <BsPencil />
+                          </button>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleEliminarReserva(reserva)}
+                            title="Eliminar reserva"
+                          >
+                            <FaTrash />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -184,6 +265,8 @@ export const ReservaPorCliente = () => {
           </div>
         </form>
       </div>
+
+      <CalendarModal />
     </>
   );
 };

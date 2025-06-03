@@ -1,71 +1,75 @@
-import { useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import { LoginPage } from '../auth';
-import { CalendarPage,AltaUsuario, AltaCliente, ConsultarUsuario, AltaCancha, ConsultarCancha, PrecioCancha, 
-PagosDeReserva, Recaudacion, FormaPago, ConsultarCliente, ReservaPorCliente, ReservasFecha } from '../calendar';
-import { useAuthStore } from '../hooks';
-import './AppRouter.css'
-
+import { LoginPage } from "../auth";
+import {
+  CalendarPage,
+  AltaUsuario,
+  AltaCliente,
+  ConsultarUsuario,
+  AltaCancha,
+  ConsultarCancha,
+  PrecioCancha,
+  PagosDeReserva,
+  Recaudacion,
+  FormaPago,
+  ConsultarCliente,
+  ReservaPorCliente,
+  ReservasFecha,
+} from "../calendar";
+import { useAuthStore } from "../hooks";
+import "./AppRouter.css";
 
 export const AppRouter = () => {
+  const { status, checkAuthToken } = useAuthStore();
 
-    const { status, checkAuthToken } = useAuthStore();
+  useEffect(() => {
+    checkAuthToken();
+  }, []);
 
-        useEffect(() => {
-            checkAuthToken();
-        }, [])
-        
-            if ( status === 'checking' ) {
-                return (
-                    <div className="d-flex justify-content-center">
-                        <div className="spinner-border" role="status">
-                            <span className="visually-hidden"></span>
-                        </div>
-                    </div>
-                )  
-            }
-    
+  if (status === "checking") {
     return (
-        <Routes>
-            {
-                ( status === 'not-authenticated')  
-                    ? (
-                        <>
-                            <Route path="/auth/*" element={ <LoginPage /> } />
-                            <Route path="/*" element={ <Navigate to="/auth/login" /> } />
-                        </>
-                    )
-                    : (
-                        <>
-                            <Route path="/" element={ <CalendarPage /> } />
-                            <Route path="/pages/CalendarPage" element={<CalendarPage />} />
+      <div className="d-flex justify-content-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden"></span>
+        </div>
+      </div>
+    );
+  }
 
-                            
-                            <Route path="/AltaUsuario" element = {<AltaUsuario />} />
-                            <Route path="/ConsultarUsuario" element = {<ConsultarUsuario />} />
+  return (
+    <Routes>
+      {status === "not-authenticated" ? (
+        <>
+          <Route path="/auth/*" element={<LoginPage />} />
+          <Route path="/*" element={<Navigate to="/auth/login" />} />
+        </>
+      ) : (
+        <>
+          <Route path="/" element={<CalendarPage />} />
+          <Route path="/pages/CalendarPage" element={<CalendarPage />} />
 
-                            <Route path="/AltaCancha" element = {<AltaCancha />} />
-                            <Route path="/ConsultarCancha" element = {<ConsultarCancha />} />
+          <Route path="/AltaUsuario" element={<AltaUsuario />} />
+          <Route path="/ConsultarUsuario" element={<ConsultarUsuario />} />
 
-                            <Route path="/PrecioCancha" element = {<PrecioCancha />} />
+          <Route path="/AltaCancha" element={<AltaCancha />} />
+          <Route path="/ConsultarCancha" element={<ConsultarCancha />} />
 
-                            <Route path="/PagosDeReserva" element = {<PagosDeReserva />} />
-                            <Route path="/Recaudacion" element = {<Recaudacion />} />
-                            <Route path="/FormasPago" element = {<FormaPago />} />
+          <Route path="/PrecioCancha" element={<PrecioCancha />} />
 
-                            <Route path="/AltaCliente" element = {<AltaCliente />} />
-                            <Route path="/ConsultarCliente" element = {<ConsultarCliente />} />
+          <Route path="/PagosDeReserva" element={<PagosDeReserva />} />
+          <Route path="/Recaudacion" element={<Recaudacion />} />
+          <Route path="/FormasPago" element={<FormaPago />} />
 
-                            <Route path="/ReservaPorCliente" element = {<ReservaPorCliente />} />
-                            <Route path="/ReservaDelaFecha" element = {<ReservasFecha />} />
-                            
+          <Route path="/AltaCliente" element={<AltaCliente />} />
+          <Route path="/ConsultarCliente" element={<ConsultarCliente />} />
 
-                            <Route path="/*" element={ <Navigate to="/" /> } />
-                        </>
-                    )
-            }
-             
-        </Routes>
-    )
-}
+          <Route path="/ReservaPorCliente" element={<ReservaPorCliente />} />
+          <Route path="/ReservaDelaFecha" element={<ReservasFecha />} />
+
+          <Route path="/*" element={<Navigate to="/" />} />
+        </>
+      )}
+    </Routes>
+  );
+};

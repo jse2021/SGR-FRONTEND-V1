@@ -109,6 +109,10 @@ export const useCalendarStore = () => {
    */
   const startDeletingEvent = async () => {
     try {
+      console.log(
+        "Debug eliminar: Elimino reserva. CalendarStore: ",
+        activeEvent.id
+      );
       await calendarApi.delete(`/reserva/${activeEvent.id}`);
       // Todo: Llegar al backend
       dispatch(onDeleteEvent());
@@ -119,7 +123,7 @@ export const useCalendarStore = () => {
         timer: 1000,
       });
     } catch (error) {
-      console.log(error);
+      console.log({ error });
     }
   };
 

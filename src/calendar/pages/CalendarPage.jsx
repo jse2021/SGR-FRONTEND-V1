@@ -70,7 +70,6 @@ export const CalendarPage = () => {
    * CUANDO CAMBIA LA VISTA, SE ALMACENA EN EL STORAGE
    */
   const onViewChanged = (event) => {
-    console.log({ viewChange: event });
     localStorage.setItem("lastView", event);
   };
 

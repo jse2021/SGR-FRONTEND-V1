@@ -25,3 +25,6 @@
 .react-select__value-container {
   padding: 2px 8px;
 }
+.tabla-reserva-sm {
+  font-size: 0.85rem; /* Más pequeño pero aún legible */
+}

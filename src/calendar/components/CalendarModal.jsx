@@ -374,12 +374,35 @@ export const CalendarModal = ({ date, cliente }) => {
 
     setIsSubmitting(true); // cuando estoy por mandar a backend, cambia estado de boton
     setFormSubmitted(true);
-
+    const reservaGuardada = activeEvent;
     await startSavingEvent({ ...formValues, fecha: date, cliente: dni });
-
     closeDateModal();
     setFormSubmitted(false);
   };
+  //---------------------------------------------------------------------------------------
+  /**
+   * EVITO QUE SE CARGUEN LOS DATOS ANTERIORES AL ABRIR NUEVAMENTE EL MODAL
+   */
+
+  useEffect(() => {
+    if (!isDateModalOpen) {
+      setFormValues({
+        title: "",
+        start: "",
+        end: "",
+        cancha: "",
+        fecha: date || "",
+        hora: "",
+        forma_pago: "",
+        estado_pago: "",
+        observacion: "",
+        cliente: "",
+        monto_cancha: "",
+        monto_sena: "",
+      });
+    }
+  }, [isDateModalOpen]);
+
   //---------------------------------------------------------------------------------------
   /**
    * MANEJO LA FECHA DEL CALENDARIO PRINCIPAL

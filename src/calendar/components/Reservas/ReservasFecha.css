@@ -1,0 +1,28 @@
+.form-fecha-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.select_fecha {
+  margin-left: 10% !important;
+  /* width: 100% !important; */
+  padding: 8px;
+  min-width: 220px;
+}
+.select_cancha {
+  margin-left: 5% !important;
+  /* width: 100%; */
+  padding: 8px;
+  min-width: 220px;
+  margin-top: 4px;
+}
+.form-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
