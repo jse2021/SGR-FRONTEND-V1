@@ -28,6 +28,10 @@ export const ReservaPorCliente = () => {
   const { openDateModal } = useUiStore();
   const { setActiveEvent, startDeletingEvent } = useCalendarStore();
 
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   /**
    * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
    */
@@ -72,30 +76,71 @@ export const ReservaPorCliente = () => {
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
    * APLICO LOGICA DE BUSQUEDA DE RESERVAS POR CLIENTE EN UN RANGO DE FECHAS
+   * SEPARO LOGICA DE BUSQUEDA, PARA TRABAJAR POR SEPARDA LA PAGINACION EVITANDO INCONSISTENCIAS DE RENDERIZADO
    */
-  const handleBuscarReservas = async (e) => {
-    e.preventDefault();
-    setBusquedaRealizada(true); //para el msj si exite o no reserva del cliente
-
+  const fetchReservas = async (pageToFetch = 1) => {
     if (!dni || !fechaDesde || !fechaHasta) {
-      // alert("Debe seleccionar cliente y rango de fechas");
       Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
       return;
     }
 
-    const desdeStr = fechaDesde.toISOString().split("T")[0]; // YYYY-MM-DD
+    if (fechaDesde > fechaHasta) {
+      Swal.fire(
+        "Atención",
+        "La fecha desde no puede ser mayor que fecha hasta",
+        "warning"
+      );
+    }
+
+    const desdeStr = fechaDesde.toISOString().split("T")[0];
     const hastaStr = fechaHasta.toISOString().split("T")[0];
 
     try {
       const { data } = await calendarApi.get(
-        `/reserva/${dni}/${desdeStr}/${hastaStr}`
+        `/reserva/${dni}/${desdeStr}/${hastaStr}?page=${pageToFetch}&limit=5`
       );
-      // de esta forma y no solo data. Porque el backend me devuelve un array
-      setResults(data.reservasCliente); // <-- el array directamente
+
+      setResults(data.reservasCliente);
+      setTotalPages(data.totalPages);
+      setCurrentPage(pageToFetch); // actualizar después del fetch
     } catch (error) {
       console.error("Error al buscar reservas:", error);
     }
   };
+
+  const handleBuscarReservas = async (e) => {
+    e.preventDefault();
+    setBusquedaRealizada(true);
+    await fetchReservas(1); // siempre inicia desde la primera página
+  };
+
+  const handlePageChange = async (pageNumber) => {
+    await fetchReservas(pageNumber);
+  };
+  // const handleBuscarReservas = async (e) => {
+  //   e.preventDefault();
+  //   setBusquedaRealizada(true); //para el msj si exite o no reserva del cliente
+
+  //   if (!dni || !fechaDesde || !fechaHasta) {
+  //     // alert("Debe seleccionar cliente y rango de fechas");
+  //     Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
+  //     return;
+  //   }
+
+  //   const desdeStr = fechaDesde.toISOString().split("T")[0]; // YYYY-MM-DD
+  //   const hastaStr = fechaHasta.toISOString().split("T")[0];
+
+  //   try {
+  //     const { data } = await calendarApi.get(
+  //       `/reserva/${dni}/${desdeStr}/${hastaStr}`
+  //     );
+  //     // de esta forma y no solo data. Porque el backend me devuelve un array
+  //     setResults(data.reservasCliente); // <-- el array directamente
+  //   } catch (error) {
+  //     console.error("Error al buscar reservas:", error);
+  //   }
+  // };
+
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
@@ -105,6 +150,10 @@ export const ReservaPorCliente = () => {
     openDateModal(); // sin argumento
     console.log(reserva);
   };
+  //--------------------------------------------------------------------------------------------------------------------------------------------------
+  /**
+   * FUNCION PARA ELIMINAR RESERVA DESDE TABLA
+   */
 
   const handleEliminarReserva = async (reserva) => {
     const confirmacion = await Swal.fire({
@@ -118,10 +167,10 @@ export const ReservaPorCliente = () => {
 
     if (confirmacion.isConfirmed) {
       try {
-        // Llamada directa a la API para eliminar la reserva
+        // Eliminar en backend
         await calendarApi.delete(`/reserva/${reserva.id}`);
 
-        // Actualización de la tabla local sin recargar ni usar Redux
+        // Eliminar en la tabla local sin recargar
         setResults((prevResults) =>
           prevResults.filter((r) => r._id !== reserva._id)
         );
@@ -199,63 +248,88 @@ export const ReservaPorCliente = () => {
             {/* Verifico que results sea un array y que contenga datos */}
             {busquedaRealizada ? (
               Array.isArray(results) && results.length > 0 ? (
-                <table className="table table-bordered table-hover table-striped align-middle text-center tabla-reserva-sm">
-                  <thead className="table-dark text-uppercase">
-                    <tr className="bg-gray-200">
-                      <th className="border px-2 py-1">Fecha</th>
-                      <th className="border px-2 py-1">Hora</th>
-                      <th className="border px-2 py-1">Cancha</th>
-                      <th className="border px-2 py-1">Forma de Pago</th>
-                      <th className="border px-2 py-1">Estado de Pago</th>
-                      <th className="border px-2 py-1">Total</th>
-                      <th className="border px-2 py-1">Seña</th>
-                      <th className="border px-2 py-1">Observ.</th>
-                      <th className="border px-2 py-1">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.map((reserva) => (
-                      <tr key={reserva._id}>
-                        <td className="border px-4 py-2">
-                          {new Date(reserva.fecha).toLocaleDateString("es-AR")}
-                        </td>
-                        <td className="border px-2 py-1">{reserva.hora}</td>
-                        <td className="border px-2 py-1">{reserva.cancha}</td>
-                        <td className="border px-2 py-1">
-                          {reserva.forma_pago}
-                        </td>
-                        <td className="border px-2 py-1">
-                          {reserva.estado_pago}
-                        </td>
-                        <td className="border px-2 py-1">
-                          ${reserva.monto_cancha}
-                        </td>
-                        <td className="border px-2 py-1">
-                          ${reserva.monto_sena}
-                        </td>
-                        <td className="border px-2 py-1">
-                          {reserva.observacion || "-"}
-                        </td>
-                        <td>
-                          <button
-                            className="btn btn-outline-primary btn-sm me-1"
-                            onClick={() => handleEditarReserva(reserva)}
-                            title="Editar reserva"
-                          >
-                            <BsPencil />
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleEliminarReserva(reserva)}
-                            title="Eliminar reserva"
-                          >
-                            <FaTrash />
-                          </button>
-                        </td>
+                <>
+                  <table className="table table-bordered table-hover table-striped align-middle text-center tabla-reserva-sm">
+                    <thead className="table-dark text-uppercase">
+                      <tr className="bg-gray-200">
+                        <th className="border px-2 py-1">Fecha</th>
+                        <th className="border px-2 py-1">Hora</th>
+                        <th className="border px-2 py-1">Cancha</th>
+                        <th className="border px-2 py-1">Forma de Pago</th>
+                        <th className="border px-2 py-1">Estado de Pago</th>
+                        <th className="border px-2 py-1">Total</th>
+                        <th className="border px-2 py-1">Seña</th>
+                        <th className="border px-2 py-1">Observ.</th>
+                        <th className="border px-2 py-1"></th>
+                        <th className="border px-2 py-1"></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {results.map((reserva) => (
+                        <tr key={reserva._id}>
+                          <td className="border px-4 py-2">
+                            {new Date(reserva.fecha).toLocaleDateString(
+                              "es-AR"
+                            )}
+                          </td>
+                          <td className="border px-2 py-1">{reserva.hora}</td>
+                          <td className="border px-2 py-1">{reserva.cancha}</td>
+                          <td className="border px-2 py-1">
+                            {reserva.forma_pago}
+                          </td>
+                          <td className="border px-2 py-1">
+                            {reserva.estado_pago}
+                          </td>
+                          <td className="border px-2 py-1">
+                            ${reserva.monto_cancha}
+                          </td>
+                          <td className="border px-2 py-1">
+                            ${reserva.monto_sena}
+                          </td>
+                          <td className="border px-2 py-1">
+                            {reserva.observacion || "-"}
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-outline-primary btn-sm me-1"
+                              onClick={() => handleEditarReserva(reserva)}
+                              title="Editar reserva"
+                            >
+                              <BsPencil />
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleEliminarReserva(reserva)}
+                              title="Eliminar reserva"
+                            >
+                              <FaTrash />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="d-flex justify-content-center my-3">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (pageNum) => (
+                        <button
+                          type="button"
+                          key={pageNum}
+                          className={`btn btn-sm mx-1 ${
+                            currentPage === pageNum
+                              ? "btn-primary"
+                              : "btn-outline-primary"
+                          }`}
+                          onClick={() => handlePageChange(pageNum)}
+                        >
+                          {pageNum}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </>
               ) : (
                 <p className="mt-4 text-gray-600">
                   No se encontraron reservas para el cliente.

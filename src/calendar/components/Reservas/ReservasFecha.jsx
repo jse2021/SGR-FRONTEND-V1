@@ -5,6 +5,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { calendarApi } from "../../../api";
 import Swal from "sweetalert2";
 import "./ReservasFecha.css";
+import { BsPencil } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa";
+import { useCalendarStore, useUiStore } from "../../../hooks";
+import { CalendarModal } from "../CalendarModal";
 
 export const ReservasFecha = () => {
   const [cancha, setCancha] = useState([]);
@@ -12,6 +16,8 @@ export const ReservasFecha = () => {
   const [canchaSeleccionada, setCanchaSeleccionada] = useState("");
   const [results, setResults] = useState([]);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
+  const { setActiveEvent, startDeletingEvent } = useCalendarStore();
+  const { openDateModal } = useUiStore();
 
   async function fetchData() {
     const { data } = await calendarApi.get("/cancha");
@@ -55,7 +61,55 @@ export const ReservasFecha = () => {
       setBusquedaRealizada(true);
     }
   };
+  //--------------------------------------------------------------------------------------------------------------------------------------------------
+  /**
+   * FUNCION PARA LLAMAR AL MODAL - EDITAR
+   */
+  const handleEditarReserva = (reserva) => {
+    setActiveEvent(reserva); // importante: setear en el store qué reserva se va a editar
+    openDateModal(); // sin argumento
+    console.log(reserva);
+  };
+  //--------------------------------------------------------------------------------------------------------------------------------------------------
+  /**
+   * FUNCION PARA ELIMINAR RESERVA DESDE TABLA
+   */
 
+  const handleEliminarReserva = async (reserva) => {
+    const confirmacion = await Swal.fire({
+      title: "¿Eliminar reserva?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        // Eliminar en backend
+        await calendarApi.delete(`/reserva/${reserva.id}`);
+
+        // Eliminar en la tabla local sin recargar
+        setResults((prevResults) =>
+          prevResults.filter((r) => r._id !== reserva._id)
+        );
+
+        Swal.fire(
+          "Eliminado",
+          "La reserva fue eliminada correctamente",
+          "success"
+        );
+      } catch (error) {
+        console.error("Error al eliminar reserva:", error);
+        Swal.fire(
+          "Error",
+          error.response?.data?.msg || "No se pudo eliminar la reserva",
+          "error"
+        );
+      }
+    }
+  };
   return (
     <>
       <Navbar />
@@ -95,7 +149,6 @@ export const ReservasFecha = () => {
             </div>
           </div>
 
-          {/* BOTÓN DE BÚSQUEDA */}
           <button type="submit" className="btn btn-dark w-100">
             Buscar
           </button>
@@ -114,6 +167,7 @@ export const ReservasFecha = () => {
                     <th className="border px-2 py-1">Total</th>
                     <th className="border px-2 py-1">Seña</th>
                     <th className="border px-2 py-1">Observ.</th>
+                    <th className="border px-2 py-1">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -137,6 +191,22 @@ export const ReservasFecha = () => {
                       <td className="border px-2 py-1">
                         {reserva.observacion || "-"}
                       </td>
+                      <td>
+                        <button
+                          className="btn btn-outline-primary btn-sm me-1"
+                          onClick={() => handleEditarReserva(reserva)}
+                          title="Editar reserva"
+                        >
+                          <BsPencil />
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleEliminarReserva(reserva)}
+                          title="Eliminar reserva"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -150,6 +220,7 @@ export const ReservasFecha = () => {
         </div>
         {/* </form> */}
       </div>
+      <CalendarModal />
     </>
   );
 };
