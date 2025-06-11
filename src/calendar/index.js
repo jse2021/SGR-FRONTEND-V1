@@ -25,6 +25,7 @@ export * from "./components/Usuarios/ConsultarUsuario";
 export * from "./components/Usuarios/InputSearch";
 export * from "./components/Usuarios/SearchResultsList";
 export * from "./components/Usuarios/SearchResult";
+export * from "./components/Usuarios/ModalUsuarios";
 /**
  * Modulo Canchas
  */

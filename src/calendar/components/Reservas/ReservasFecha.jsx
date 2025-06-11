@@ -13,11 +13,17 @@ import { CalendarModal } from "../CalendarModal";
 export const ReservasFecha = () => {
   const [cancha, setCancha] = useState([]);
   const [fechaIni, setFechaIni] = useState(null);
+  const [fechaDesde, setFechaDesde] = useState(null);
   const [canchaSeleccionada, setCanchaSeleccionada] = useState("");
+
   const [results, setResults] = useState([]);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
   const { setActiveEvent, startDeletingEvent } = useCalendarStore();
   const { openDateModal } = useUiStore();
+
+  const [page, setPage] = useState(1); // Página actual
+  const [totalPages, setTotalPages] = useState(1); // Total de páginas (viene del backend)
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchData() {
     const { data } = await calendarApi.get("/cancha");
@@ -36,31 +42,61 @@ export const ReservasFecha = () => {
     fetchData();
   }, []);
 
-  const handleBuscarReservas = async (e) => {
-    e.preventDefault();
-
-    if (!fechaIni || !cancha) {
-      // alert("Debe seleccionar cliente y rango de fechas");
-      Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
+  const fetchReservas = async (pageToFetch = 1) => {
+    if (!fechaDesde || !canchaSeleccionada) {
+      Swal.fire("Campos requeridos", "Seleccione fecha y cancha", "warning");
       return;
     }
-    const desdeStr = fechaIni.toISOString().split("T")[0]; // YYYY-MM-DD
-    console.log(desdeStr);
     try {
+      setIsLoading(true);
+      const desdeStr = fechaDesde.toISOString().split("T")[0];
+      // const hastaStr = fechaHasta.toISOString().split("T")[0];
+
       const { data } = await calendarApi.get(
-        `/reserva/${desdeStr}/${canchaSeleccionada}`
+        `/reserva/${desdeStr}/${canchaSeleccionada}?page=${pageToFetch}&limit=5`
       );
 
-      console.log("Reservas encontradas:", data.reservasFecha);
       setResults(data.reservasFecha);
-      setResults(data.reservasFecha);
+      setTotalPages(data.totalPages);
+      setPage(data.page);
       setBusquedaRealizada(true);
     } catch (error) {
       console.error("Error al buscar reservas:", error);
-      setResults([]);
       setBusquedaRealizada(true);
+    } finally {
+      setIsLoading(false); // Finaliza carga
     }
   };
+  const handleBuscarReservas = (e) => {
+    e.preventDefault();
+    fetchReservas(1); // siempre comenzamos desde la página 1
+  };
+
+  // const handleBuscarReservas = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!fechaIni || !cancha) {
+  //     // alert("Debe seleccionar cliente y rango de fechas");
+  //     Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
+  //     return;
+  //   }
+  //   const desdeStr = fechaIni.toISOString().split("T")[0]; // YYYY-MM-DD
+  //   console.log(desdeStr);
+  //   try {
+  //     const { data } = await calendarApi.get(
+  //       `/reserva/${desdeStr}/${canchaSeleccionada}`
+  //     );
+
+  //     console.log("Reservas encontradas:", data.reservasFecha);
+  //     setResults(data.reservasFecha);
+  //     setResults(data.reservasFecha);
+  //     setBusquedaRealizada(true);
+  //   } catch (error) {
+  //     console.error("Error al buscar reservas:", error);
+  //     setResults([]);
+  //     setBusquedaRealizada(true);
+  //   }
+  // };
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
@@ -120,11 +156,11 @@ export const ReservasFecha = () => {
           <div className="form-row mb-3">
             <div className="form-group me-3">
               <DatePicker
-                selected={fechaIni}
+                selected={fechaDesde}
                 className="form-control select_fecha"
                 dateFormat="dd/MM/yyyy"
                 locale="es"
-                onChange={(date) => setFechaIni(date)}
+                onChange={(date) => setFechaDesde(date)}
                 id="datepicker"
                 placeholderText="Seleccioná una fecha"
               />
@@ -153,6 +189,14 @@ export const ReservasFecha = () => {
             Buscar
           </button>
         </form>
+        {isLoading && (
+          <div className="text-center my-4">
+            <div className="spinner-border text-blac" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+        )}
+
         <div className="table-responsive mt-4 shadow rounded">
           {busquedaRealizada ? (
             Array.isArray(results) && results.length > 0 ? (
@@ -167,7 +211,8 @@ export const ReservasFecha = () => {
                     <th className="border px-2 py-1">Total</th>
                     <th className="border px-2 py-1">Seña</th>
                     <th className="border px-2 py-1">Observ.</th>
-                    <th className="border px-2 py-1">Acciones</th>
+                    <th className="border px-2 py-1"></th>
+                    <th className="border px-2 py-1"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -199,6 +244,8 @@ export const ReservasFecha = () => {
                         >
                           <BsPencil />
                         </button>
+                      </td>
+                      <td>
                         <button
                           className="btn btn-danger"
                           onClick={() => handleEliminarReserva(reserva)}
@@ -218,8 +265,21 @@ export const ReservasFecha = () => {
             )
           ) : null}
         </div>
-        {/* </form> */}
+        <div className="d-flex justify-content-center mt-3">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`btn btn-sm mx-1 ${
+                page === i + 1 ? "btn-primary" : "btn-outline-primary"
+              }`}
+              onClick={() => fetchReservas(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
       </div>
+
       <CalendarModal />
     </>
   );

@@ -31,6 +31,7 @@ export const ReservaPorCliente = () => {
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
@@ -39,6 +40,7 @@ export const ReservaPorCliente = () => {
     const buscarCliente = async () => {
       const { data } = await calendarApi.get("/cliente");
       const cliente = Array.from(data.clientes);
+      console.log(cliente);
       const opciones = cliente.map((clientes) => ({
         value: clientes.dni,
         label: `${clientes.dni} - ${clientes.apellido} ${clientes.nombre}`,
@@ -96,6 +98,7 @@ export const ReservaPorCliente = () => {
     const hastaStr = fechaHasta.toISOString().split("T")[0];
 
     try {
+      setIsLoading(true);
       const { data } = await calendarApi.get(
         `/reserva/${dni}/${desdeStr}/${hastaStr}?page=${pageToFetch}&limit=5`
       );
@@ -105,6 +108,8 @@ export const ReservaPorCliente = () => {
       setCurrentPage(pageToFetch); // actualizar después del fetch
     } catch (error) {
       console.error("Error al buscar reservas:", error);
+    } finally {
+      setIsLoading(false); // Finaliza carga
     }
   };
 
@@ -117,29 +122,6 @@ export const ReservaPorCliente = () => {
   const handlePageChange = async (pageNumber) => {
     await fetchReservas(pageNumber);
   };
-  // const handleBuscarReservas = async (e) => {
-  //   e.preventDefault();
-  //   setBusquedaRealizada(true); //para el msj si exite o no reserva del cliente
-
-  //   if (!dni || !fechaDesde || !fechaHasta) {
-  //     // alert("Debe seleccionar cliente y rango de fechas");
-  //     Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
-  //     return;
-  //   }
-
-  //   const desdeStr = fechaDesde.toISOString().split("T")[0]; // YYYY-MM-DD
-  //   const hastaStr = fechaHasta.toISOString().split("T")[0];
-
-  //   try {
-  //     const { data } = await calendarApi.get(
-  //       `/reserva/${dni}/${desdeStr}/${hastaStr}`
-  //     );
-  //     // de esta forma y no solo data. Porque el backend me devuelve un array
-  //     setResults(data.reservasCliente); // <-- el array directamente
-  //   } catch (error) {
-  //     console.error("Error al buscar reservas:", error);
-  //   }
-  // };
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
@@ -245,7 +227,13 @@ export const ReservaPorCliente = () => {
           </div>
 
           <div class="table-responsive mt-4 shadow rounded">
-            {/* Verifico que results sea un array y que contenga datos */}
+            {isLoading && (
+              <div className="text-center my-4">
+                <div className="spinner-border text-black" role="status">
+                  <span className="visually-hidden">Cargando...</span>
+                </div>
+              </div>
+            )}
             {busquedaRealizada ? (
               Array.isArray(results) && results.length > 0 ? (
                 <>

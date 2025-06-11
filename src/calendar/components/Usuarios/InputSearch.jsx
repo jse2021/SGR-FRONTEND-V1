@@ -1,37 +1,45 @@
-import React, { useState } from 'react'
-import { calendarApi } from '../../../api';
-import './usuarios.css'
+import React, { useEffect, useState } from "react";
+import { calendarApi } from "../../../api";
+import "./usuarios.css";
 
-export const InputSearch = ({setResults}) => {
-    const [value, setValue] = useState("");
+export const InputSearch = ({ setResults, setSearchTerm, setCurrentPage }) => {
+  const [value, setValue] = useState("");
 
-    const buscarUsuario = async(apellido) => {
-        try {
-            if (apellido.length === 0) return [];
-            const {data} = await calendarApi.get(`/auth/${apellido}`)
-            const usuarios = Array.from(data.usuario);
-            setResults(usuarios)    
-        } catch (error) {
-            setError(error.response.data.msg);
-        }
-        
-    }
- 
-    const handleChange = (value) => {
-        setValue(value);
-        buscarUsuario(value);
-    }
-    
-    return (
-        <div className="form-group mb-2">
-            <input
-                className= 'form-control'
-                type="text"
-                placeholder="Buscar por Apellido"
-                value={value}
-                onChange={(e) => handleChange(e.target.value)}
-            />
-        </div>
-  )
-}
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (value.trim() === "") {
+  //         setResults([]);
+  //         return;
+  //       }
+
+  //       const response = await calendarApi.get(`/auth/buscar/${value}`);
+  //       setResults(response.data.usuarios);
+  //     } catch (error) {
+  //       console.error("Error al buscar usuarios:", error);
+  //       setResults([]);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [value]);
+
+  const handleChange = (e) => {
+    const value = e.target.value; // <-- Esto asegura que sea string
+    setSearchTerm(value); // 🔥 NO pases el evento completo
+    setCurrentPage(1); // Reinicio paginación
+  };
+
+  return (
+    <div className="form-group mb-2">
+      <input
+        className="form-control"
+        type="text"
+        placeholder="Buscar Usuario"
+        // value={value}
+        onChange={handleChange}
+      />
+    </div>
+  );
+};
 export default InputSearch;

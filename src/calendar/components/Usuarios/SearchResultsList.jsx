@@ -1,36 +1,57 @@
-import React from 'react'
-import "./SearchResultsList.css"
-import { SearchResult } from './SearchResult'
+import React from "react";
+import "./SearchResultsList.css";
+import { SearchResult } from "./SearchResult";
 
-
-export const SearchResultsList = ({results}) => {
-     
-  const searchResult = results.map((result, id) =>{
-    return <SearchResult result={result} key={result.id}/>
-  })
-        
+export const SearchResultsList = ({
+  results,
+  onDeleteUsuario,
+  totalPages,
+  setCurrentPage,
+  currentPage,
+}) => {
   return (
-    <>
-       <div className="table-responsive">
-        <table className="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Apellido</th>
-                <th scope="col">Celular</th>
-                <th scope="col">Email</th>
-                <th scope="col">Usuario</th>
-                <th scope="col">T.Usuario</th>
-              </tr>
-            </thead>
+    <div className="table-responsive mt-3">
+      {results.length > 0 ? (
+        <table className="table table-bordered table-striped text-center">
+          <thead className="table-dark text-uppercase">
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Celular</th>
+              <th>Email</th>
+              <th>Usuario</th>
+              <th>Tipo Usuario</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
-            {searchResult}
+            {results.map((user) => (
+              <SearchResult
+                key={user._id}
+                result={user} // acá estaba el error principal
+                onDeleteUsuario={onDeleteUsuario}
+              />
+            ))}
           </tbody>
-
         </table>
+      ) : (
+        <p className="text-muted text-center">No se encontraron usuarios</p>
+      )}
+      <div className="d-flex justify-content-center mt-3">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            className={`btn btn-sm mx-1 ${
+              currentPage === index + 1 ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setCurrentPage(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
-    </>
-    
-    )
-  }
+    </div>
+  );
+};
 export default SearchResultsList;
