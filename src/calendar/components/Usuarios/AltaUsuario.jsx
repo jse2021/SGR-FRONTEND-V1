@@ -91,7 +91,7 @@ export const AltaUsuario = () => {
    * IMPLEMENTACION DE REGISTRO Y MANDO A BACKEND
    */
 
-  const registerSubmit = (event) => {
+  const registerSubmit = async (event) => {
     event.preventDefault();
 
     try {
@@ -109,7 +109,7 @@ export const AltaUsuario = () => {
         return;
 
       // Mando al hook.
-      startRegister({
+      const result = await startRegister({
         nombre: registerNombre,
         apellido: registerApellido,
         celular: registerCelular,
@@ -118,6 +118,10 @@ export const AltaUsuario = () => {
         email: registerEmail,
         password: registerPassword,
       });
+      console.log(result);
+      if (result.ok) {
+        Swal.fire("Error", result.msg, "error");
+      }
       Swal.fire("Alta de usuario", "Usuario registrado", "success");
     } catch (error) {
       console.log(error);

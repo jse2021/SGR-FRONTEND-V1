@@ -7,6 +7,7 @@ import {
   onLogout,
   onLogoutCalendar,
 } from "../store";
+import Swal from "sweetalert2";
 
 export const useAuthStore = () => {
   const { status, user, errorMessage } = useSelector((state) => state.auth);
@@ -65,11 +66,16 @@ export const useAuthStore = () => {
       localStorage.setItem("token-init-date", new Date().getTime());
       //Esto actualiza el estado global para reflejar que el usuario ya está registrado y logueado.
       dispatch(onLogin({ user: data.user, id: data.token }));
+      return { ok: true };
     } catch (error) {
-      //dispatch(onLogout(error.response.data?.errors.msg || 'Error al registrarse'))
-      setTimeout(() => {
-        dispatch(clearErrorMessage());
-      }, 10);
+      console.log(error);
+      const msg = error.response?.data?.msg || "Error al registrar el usuario";
+      // dispatch(onLogout(msg));
+
+      // setTimeout(() => {
+      //   dispatch(clearErrorMessage());
+      // }, 10);
+      return { ok: false, msg };
     }
   };
 
