@@ -68,13 +68,8 @@ export const useAuthStore = () => {
       dispatch(onLogin({ user: data.user, id: data.token }));
       return { ok: true };
     } catch (error) {
-      console.log(error);
       const msg = error.response?.data?.msg || "Error al registrar el usuario";
-      // dispatch(onLogout(msg));
-
-      // setTimeout(() => {
-      //   dispatch(clearErrorMessage());
-      // }, 10);
+      console.log({ msg });
       return { ok: false, msg };
     }
   };

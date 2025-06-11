@@ -3,10 +3,7 @@ import { Navbar } from "../Navbar";
 import Swal from "sweetalert2";
 import { useAuthStore, useForm } from "../../../hooks";
 import "./usuarios.css";
-
-/**
- * UNICO CONTROL DE ERRORES:FALTAN CONTROLAR LOS QUE TRAE EL BACKEND
- */
+import { useRef } from "react";
 
 const registrarUsuario = {
   registerNombre: "",
@@ -19,122 +16,102 @@ const registrarUsuario = {
 };
 
 export const AltaUsuario = () => {
-  const { startRegister, errorMessage } = useAuthStore();
-  const [formSubmitted, setFormSubmitted] = useState(false); // estado local, para saber si se envio el formulario
-
-  const {
-    registerNombre,
-    registerApellido,
-    registerCelular,
-    registerUsuario,
-    registerPassword,
-    registerTipoUsuario,
-    registerEmail,
-    onInputChange: onRegisterInputChange,
-  } = useForm(registrarUsuario);
-
-  //-----------------------------------------------------------------------------------------------------
-  /**
-   * IMPLEMENTACION DE CAMPOS CONTROLADOS
-   */
+  const { startRegister } = useAuthStore();
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [key, setKey] = useState(0); // NO dejarlo undefined
+  const formRef = useRef(null);
+  const { formState, onInputChange, onResetForm } = useForm(registrarUsuario);
 
   const nombreClass = useMemo(() => {
     if (!formSubmitted) return "";
-
-    return registerNombre.length > 0 ? "" : "is-invalid";
-  }, [registerNombre, formSubmitted]);
+    return formState.registerNombre.length > 0 ? "" : "is-invalid";
+  }, [formState.registerNombre, formSubmitted]);
 
   const apellidoClass = useMemo(() => {
     if (!formSubmitted) return "";
-
-    return registerApellido.length > 0 ? "" : "is-invalid";
-  }, [registerApellido, formSubmitted]);
+    return formState.registerApellido.length > 0 ? "" : "is-invalid";
+  }, [formState.registerApellido, formSubmitted]);
 
   const celularClass = useMemo(() => {
     if (!formSubmitted) return "";
-
-    return registerCelular.length > 0 ? "" : "is-invalid";
-  }, [registerCelular, formSubmitted]);
+    return formState.registerCelular.length > 0 ? "" : "is-invalid";
+  }, [formState.registerCelular, formSubmitted]);
 
   const usuarioClass = useMemo(() => {
     if (!formSubmitted) return "";
-
-    return registerUsuario.length > 0 ? "" : "is-invalid";
-  }, [registerUsuario, formSubmitted]);
+    return formState.registerUsuario.length > 0 ? "" : "is-invalid";
+  }, [formState.registerUsuario, formSubmitted]);
 
   const passwordClass = useMemo(() => {
     if (!formSubmitted) return "";
-
-    return registerPassword.length > 0 ? "" : "is-invalid";
-  }, [registerPassword, formSubmitted]);
+    return formState.registerPassword.length > 0 ? "" : "is-invalid";
+  }, [formState.registerPassword, formSubmitted]);
 
   const emailClass = useMemo(() => {
     if (!formSubmitted) return "";
-
-    return registerEmail.length > 0 ? "" : "is-invalid";
-  }, [registerEmail, formSubmitted]);
+    return formState.registerEmail.length > 0 ? "" : "is-invalid";
+  }, [formState.registerEmail, formSubmitted]);
 
   const tipoUsuarioClass = useMemo(() => {
     if (!formSubmitted) return "";
+    return formState.registerTipoUsuario.length > 0 ? "" : "is-invalid";
+  }, [formState.registerTipoUsuario, formSubmitted]);
 
-    return registerTipoUsuario.length > 0 ? "" : "is-invalid";
-  }, [registerTipoUsuario, formSubmitted]);
-  //-----------------------------------------------------------------------------------------------------
-  /**
-   * PARA HACER FOCO EN EL NOMBRE APENAS ABRE FORMULARIO
-   */
   useEffect(() => {
     document.getElementById("nombre").focus();
   }, []);
-  //-----------------------------------------------------------------------------------------------------
-  /**
-   * IMPLEMENTACION DE REGISTRO Y MANDO A BACKEND
-   */
 
   const registerSubmit = async (event) => {
     event.preventDefault();
+    console.log("🚀 Enviando formulario...");
+    setFormSubmitted(true);
 
-    try {
-      setFormSubmitted(true);
-
-      if (
-        registerNombre.length <= 0 ||
-        registerApellido.length <= 0 ||
-        registerCelular.length <= 0 ||
-        registerUsuario.length <= 0 ||
-        registerPassword.length <= 0 ||
-        registerEmail.length <= 0 ||
-        registerTipoUsuario.length <= 0
-      )
-        return;
-
-      // Mando al hook.
-      const result = await startRegister({
-        nombre: registerNombre,
-        apellido: registerApellido,
-        celular: registerCelular,
-        user: registerUsuario,
-        tipo_usuario: registerTipoUsuario,
-        email: registerEmail,
-        password: registerPassword,
-      });
-      console.log(result);
-      if (result.ok) {
-        Swal.fire("Error", result.msg, "error");
-      }
-      Swal.fire("Alta de usuario", "Usuario registrado", "success");
-    } catch (error) {
-      console.log(error);
+    // Validaciones
+    if (
+      formState.registerNombre.length <= 0 ||
+      formState.registerApellido.length <= 0 ||
+      formState.registerCelular.length <= 0 ||
+      formState.registerUsuario.length <= 0 ||
+      formState.registerPassword.length <= 0 ||
+      formState.registerEmail.length <= 0 ||
+      formState.registerTipoUsuario.length <= 0
+    ) {
+      console.log("⛔ Formulario inválido");
+      return;
     }
+
+    // Envío
+    const result = await startRegister({
+      nombre: formState.registerNombre,
+      apellido: formState.registerApellido,
+      celular: formState.registerCelular,
+      user: formState.registerUsuario,
+      tipo_usuario: formState.registerTipoUsuario,
+      email: formState.registerEmail,
+      password: formState.registerPassword,
+    });
+
+    console.log("📥 Resultado backend:", result);
+
+    if (!result.ok) {
+      await Swal.fire("Atención", result.msg, "warning");
+      setKey(Date.now()); // 🔁 fuerza el form a reconstruirse
+      setFormSubmitted(false);
+      return;
+    }
+
+    await Swal.fire("Alta de usuario", "Usuario registrado", "success");
+
+    setFormSubmitted(false);
+    setKey((prev) => prev + 1);
   };
-  //-----------------------------------------------------------------------------------------------------
 
   return (
     <>
       <Navbar />
       <h1 className="display-5">Gestión Usuarios</h1>
       <div className="col-md-6 login-form-2">
-        <form onSubmit={registerSubmit} id="formAltaCUsuario">
+        <form key={key} onSubmit={registerSubmit}>
           <div className="form-group mb-2">
             <input
               type="text"
@@ -142,8 +119,8 @@ export const AltaUsuario = () => {
               className={`form-control ${nombreClass}`}
               placeholder="Nombre"
               name="registerNombre"
-              value={registerNombre}
-              onChange={onRegisterInputChange}
+              value={formState.registerNombre}
+              onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
@@ -152,8 +129,8 @@ export const AltaUsuario = () => {
               className={`form-control ${apellidoClass}`}
               placeholder="Apellido"
               name="registerApellido"
-              value={registerApellido}
-              onChange={onRegisterInputChange}
+              value={formState.registerApellido}
+              onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
@@ -162,8 +139,8 @@ export const AltaUsuario = () => {
               className={`form-control ${celularClass}`}
               placeholder="Celular"
               name="registerCelular"
-              value={registerCelular}
-              onChange={onRegisterInputChange}
+              value={formState.registerCelular}
+              onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
@@ -172,8 +149,8 @@ export const AltaUsuario = () => {
               className={`form-control ${emailClass}`}
               placeholder="Email"
               name="registerEmail"
-              value={registerEmail}
-              onChange={onRegisterInputChange}
+              value={formState.registerEmail}
+              onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
@@ -182,8 +159,8 @@ export const AltaUsuario = () => {
               className={`form-control ${usuarioClass}`}
               placeholder="Usuario"
               name="registerUsuario"
-              value={registerUsuario}
-              onChange={onRegisterInputChange}
+              value={formState.registerUsuario}
+              onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
@@ -192,8 +169,8 @@ export const AltaUsuario = () => {
               className={`form-control ${passwordClass}`}
               placeholder="Clave"
               name="registerPassword"
-              value={registerPassword}
-              onChange={onRegisterInputChange}
+              value={formState.registerPassword}
+              onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
@@ -201,10 +178,10 @@ export const AltaUsuario = () => {
               className={`form-select user ${tipoUsuarioClass}`}
               placeholder="tipo usuario"
               name="registerTipoUsuario"
-              value={registerTipoUsuario}
-              onChange={onRegisterInputChange}
+              value={formState.registerTipoUsuario}
+              onChange={onInputChange}
             >
-              <option selected></option>
+              <option value=""></option>
               <option value="Administrador">Administrador</option>
               <option value="Estandar">Estandar</option>
             </select>
@@ -217,4 +194,5 @@ export const AltaUsuario = () => {
     </>
   );
 };
+
 export default AltaUsuario;
