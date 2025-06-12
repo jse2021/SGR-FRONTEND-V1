@@ -17,72 +17,70 @@ const registrarUsuario = {
 export const AltaUsuario = () => {
   const { startRegister } = useAuthStore();
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const { formState, onInputChange, onResetForm, resetToggle } =
-    useForm(registrarUsuario);
+  const { formState, onInputChange, onResetForm } = useForm(registrarUsuario);
 
   const {
     registerNombre,
     registerApellido,
     registerCelular,
     registerUsuario,
-    registerPassword,
     registerTipoUsuario,
     registerEmail,
+    registerPassword,
   } = formState;
-
-  useEffect(() => {
-    console.log("Reset toggle cambiado. Estado actual:", formState);
-    setFormSubmitted(false);
-  }, [resetToggle]);
 
   const nombreClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerNombre.length > 0 ? "" : "is-invalid";
+    return registerNombre.trim() !== "" ? "" : "is-invalid";
   }, [registerNombre, formSubmitted]);
 
   const apellidoClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerApellido.length > 0 ? "" : "is-invalid";
+    return registerApellido.trim() !== "" ? "" : "is-invalid";
   }, [registerApellido, formSubmitted]);
 
   const celularClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerCelular.length > 0 ? "" : "is-invalid";
+    return registerCelular.trim() !== "" ? "" : "is-invalid";
   }, [registerCelular, formSubmitted]);
 
   const usuarioClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerUsuario.length > 0 ? "" : "is-invalid";
+    return registerUsuario.trim() !== "" ? "" : "is-invalid";
   }, [registerUsuario, formSubmitted]);
 
   const passwordClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerPassword.length > 0 ? "" : "is-invalid";
+    return registerPassword.trim() !== "" ? "" : "is-invalid";
   }, [registerPassword, formSubmitted]);
 
   const emailClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerEmail.length > 0 ? "" : "is-invalid";
+    return registerEmail.trim() !== "" ? "" : "is-invalid";
   }, [registerEmail, formSubmitted]);
 
   const tipoUsuarioClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerTipoUsuario.length > 0 ? "" : "is-invalid";
+    return registerTipoUsuario.trim() !== "" ? "" : "is-invalid";
   }, [registerTipoUsuario, formSubmitted]);
+
+  useEffect(() => {
+    document.getElementById("nombre")?.focus();
+  }, []);
 
   const registerSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
 
+    // Validación básica
     if (
-      registerNombre.length <= 0 ||
-      registerApellido.length <= 0 ||
-      registerCelular.length <= 0 ||
-      registerUsuario.length <= 0 ||
-      registerPassword.length <= 0 ||
-      registerEmail.length <= 0 ||
-      registerTipoUsuario.length <= 0
+      registerNombre.trim() === "" ||
+      registerApellido.trim() === "" ||
+      registerCelular.trim() === "" ||
+      registerUsuario.trim() === "" ||
+      registerPassword.trim() === "" ||
+      registerEmail.trim() === "" ||
+      registerTipoUsuario.trim() === ""
     )
       return;
 
@@ -98,11 +96,16 @@ export const AltaUsuario = () => {
 
     if (!result.ok) {
       await Swal.fire("Atención", result.msg, "warning");
-      onInputChange({ target: { name: "registerUsuario", value: "" } });
+
+      onResetForm();
+      setFormSubmitted(false);
       return;
     }
+
     await Swal.fire("Alta de usuario", "Usuario registrado", "success");
     onResetForm();
+    setFormSubmitted(false);
+    document.getElementById("nombre")?.focus();
   };
 
   return (
@@ -118,7 +121,7 @@ export const AltaUsuario = () => {
               className={`form-control ${nombreClass}`}
               placeholder="Nombre"
               name="registerNombre"
-              value={registerNombre || ""}
+              value={registerNombre}
               onChange={onInputChange}
             />
           </div>
@@ -128,7 +131,7 @@ export const AltaUsuario = () => {
               className={`form-control ${apellidoClass}`}
               placeholder="Apellido"
               name="registerApellido"
-              value={registerApellido || ""}
+              value={registerApellido}
               onChange={onInputChange}
             />
           </div>
@@ -138,7 +141,7 @@ export const AltaUsuario = () => {
               className={`form-control ${celularClass}`}
               placeholder="Celular"
               name="registerCelular"
-              value={registerCelular || ""}
+              value={registerCelular}
               onChange={onInputChange}
             />
           </div>
@@ -148,7 +151,7 @@ export const AltaUsuario = () => {
               className={`form-control ${emailClass}`}
               placeholder="Email"
               name="registerEmail"
-              value={registerEmail || ""}
+              value={registerEmail}
               onChange={onInputChange}
             />
           </div>
@@ -158,7 +161,7 @@ export const AltaUsuario = () => {
               className={`form-control ${usuarioClass}`}
               placeholder="Usuario"
               name="registerUsuario"
-              value={registerUsuario || ""}
+              value={registerUsuario}
               onChange={onInputChange}
             />
           </div>
@@ -168,19 +171,18 @@ export const AltaUsuario = () => {
               className={`form-control ${passwordClass}`}
               placeholder="Clave"
               name="registerPassword"
-              value={registerPassword || ""}
+              value={registerPassword}
               onChange={onInputChange}
             />
           </div>
           <div className="form-group mb-2">
             <select
               className={`form-select user ${tipoUsuarioClass}`}
-              placeholder="tipo usuario"
               name="registerTipoUsuario"
-              value={registerTipoUsuario || ""}
+              value={registerTipoUsuario}
               onChange={onInputChange}
             >
-              <option value=""></option>
+              <option value="">Seleccione tipo usuario</option>
               <option value="Administrador">Administrador</option>
               <option value="Estandar">Estandar</option>
             </select>

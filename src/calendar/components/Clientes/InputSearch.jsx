@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-import { calendarApi } from "../../../api";
 import "./clientes.css";
 
-export const InputSearch = ({ setResults }) => {
+export const InputSearch = ({ setResults, setSearchTerm, setCurrentPage }) => {
   const [value, setValue] = useState("");
 
-  const buscarCliente = async (apellido) => {
-    if (apellido.length === 0) return [];
-    const { data } = await calendarApi.get(`/cliente/${apellido}`);
-    const clientes = Array.from(data.cliente);
-    console.log({ clientes });
-    setResults(clientes);
-  };
-
-  const handleChange = (value) => {
-    setValue(value);
-    buscarCliente(value);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setCurrentPage(1); // Reinicio paginación
   };
 
   return (
@@ -23,10 +15,9 @@ export const InputSearch = ({ setResults }) => {
       <input
         className="form-control"
         type="text"
-        placeholder="Buscar por Apellido"
-        name="apellidoCliente"
-        value={value}
-        onChange={(e) => handleChange(e.target.value)}
+        placeholder="Buscar cliente"
+        // value={value}
+        onChange={handleChange}
       />
     </div>
   );

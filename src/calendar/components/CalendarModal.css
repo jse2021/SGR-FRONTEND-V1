@@ -1,8 +1,12 @@
-
 #titulo {
-    margin-left: 10%;
+  margin-left: 10%;
 }
-.select-option{
-    margin-bottom: 5%;
-    margin-left: 1.5%;
+.select-option {
+  margin-bottom: 5%;
+  margin-left: 1.5%;
+}
+#select-fPago {
+  margin-left: 55% !important;
+  width: 40%;
+  margin-top: -8%;
 }

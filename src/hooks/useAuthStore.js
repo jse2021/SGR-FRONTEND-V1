@@ -21,7 +21,7 @@ export const useAuthStore = () => {
 
     try {
       const { data } = await calendarApi.post("/auth", { user, password });
-      console.log({ data });
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("token-init-date", new Date().getTime());
       dispatch(onLogin({ user: data.user, id: data.token }));
@@ -46,7 +46,7 @@ export const useAuthStore = () => {
     email,
     password,
   }) => {
-    dispatch(onChecking());
+    // dispatch(onChecking()); // generaba un bug al crear nuevo usuario
     try {
       const { data } = await calendarApi.post("/auth/new", {
         nombre,
@@ -69,7 +69,6 @@ export const useAuthStore = () => {
       return { ok: true };
     } catch (error) {
       const msg = error.response?.data?.msg || "Error al registrar el usuario";
-      console.log("En auth.", { msg });
       return { ok: false, msg };
     }
   };
