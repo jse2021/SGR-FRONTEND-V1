@@ -69,7 +69,7 @@ export const useAuthStore = () => {
       return { ok: true };
     } catch (error) {
       const msg = error.response?.data?.msg || "Error al registrar el usuario";
-      console.log({ msg });
+      console.log("En auth.", { msg });
       return { ok: false, msg };
     }
   };

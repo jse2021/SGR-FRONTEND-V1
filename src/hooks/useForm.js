@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import AltaUsuario from "../calendar/components/Usuarios/AltaUsuario";
 
 export const useForm = (initialForm = {}, formValidations = {}) => {
   const [formState, setFormState] = useState(initialForm);
   const [formValidation, setFormValidation] = useState({});
+  const [resetToggle, setResetToggle] = useState(false);
 
   useEffect(() => {
     createValidators();
@@ -29,9 +29,14 @@ export const useForm = (initialForm = {}, formValidations = {}) => {
     });
   };
 
+  // const onResetForm = () => {
+  //   console.log("🧼 onResetForm ejecutado");
+  //   setFormState(initialForm);
+  // };
   const onResetForm = () => {
-    console.log("🧼 onResetForm ejecutado");
-    setFormState(initialForm);
+    console.log("Reseteando con:", initialForm);
+    setFormState({ ...initialForm });
+    setResetToggle((prev) => !prev);
   };
 
   const createValidators = () => {
@@ -52,7 +57,7 @@ export const useForm = (initialForm = {}, formValidations = {}) => {
     formState,
     onInputChange,
     onResetForm,
-
+    onResetForm,
     ...formValidation,
     isFormValid,
   };

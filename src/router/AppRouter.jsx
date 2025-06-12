@@ -30,7 +30,8 @@ export const AppRouter = () => {
   if (status === "checking") {
     return (
       <div className="d-flex justify-content-center">
-        <div className="spinner-border" role="status">
+        {/* <div className="spinner-border" role="status"> */}
+        <div role="status">
           <span className="visually-hidden"></span>
         </div>
       </div>
