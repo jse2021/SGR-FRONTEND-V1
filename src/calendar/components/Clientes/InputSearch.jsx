@@ -6,6 +6,7 @@ export const InputSearch = ({ setResults, setSearchTerm, setCurrentPage }) => {
 
   const handleChange = (e) => {
     const value = e.target.value;
+    console.log(value);
     setSearchTerm(value);
     setCurrentPage(1); // Reinicio paginación
   };
@@ -16,7 +17,6 @@ export const InputSearch = ({ setResults, setSearchTerm, setCurrentPage }) => {
         className="form-control"
         type="text"
         placeholder="Buscar cliente"
-        // value={value}
         onChange={handleChange}
       />
     </div>

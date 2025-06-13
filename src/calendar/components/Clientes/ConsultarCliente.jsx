@@ -10,26 +10,36 @@ export const ConsultarCliente = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect;
-  () => {
+  //--------------------------------------------------------------------------------
+  /**
+   *TRABAJO ELIMINAR CLIENTE
+   */
+  const handleEliminarCliente = (id) => {
+    setResults((prevResults) => prevResults.filter((r) => r._id !== id));
+  };
+  /**
+   *TRABAJO BUSCAR CLIENTE
+   */
+  useEffect(() => {
     const fetchClientes = async () => {
+      // if (typeof searchTerm !== "string" || searchTerm.trim() === "") return;
       if (searchTerm.trim() == "") return;
       try {
         const { data } = await calendarApi.get(
-          `/cliente/buscar/${searchTerm}?page=${currentPage}&limit=5`
+          `/cliente/buscar/${searchTerm}?page=${currentPage}&limit=1`
         );
+
         console.log(data);
         setResults(data.clientes);
         setTotalPages(data.totalPages);
       } catch (error) {
-        console.log("Error al buscar clientes: ", error);
+        console.error("Error al buscar clientes:", error);
       }
     };
-    fetchClientes();
-  },
-    [searchTerm, currentPage];
 
+    fetchClientes();
+  }, [searchTerm, currentPage]);
+  //--------------------------------------------------------------------------------
   return (
     <>
       <Navbar />
@@ -45,6 +55,7 @@ export const ConsultarCliente = () => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
+            onDeleteCliente={handleEliminarCliente}
           />
         </form>
       </div>

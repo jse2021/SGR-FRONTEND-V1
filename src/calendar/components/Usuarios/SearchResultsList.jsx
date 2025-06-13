@@ -26,13 +26,18 @@ export const SearchResultsList = ({
             </tr>
           </thead>
           <tbody>
-            {results.map((user) => (
-              <SearchResult
-                key={user._id}
-                result={user} // acá estaba el error principal
-                onDeleteUsuario={onDeleteUsuario}
-              />
-            ))}
+            {results.map(
+              (user) => (
+                console.log("en search: ", user.id),
+                (
+                  <SearchResult
+                    key={user.id}
+                    result={user} // acá estaba el error principal
+                    onDeleteUsuario={onDeleteUsuario}
+                  />
+                )
+              )
+            )}
           </tbody>
         </table>
       ) : (
@@ -41,6 +46,7 @@ export const SearchResultsList = ({
       <div className="d-flex justify-content-center mt-3">
         {Array.from({ length: totalPages }, (_, index) => (
           <button
+            type="button" // <-- clave para evitar submit
             key={index + 1}
             className={`btn btn-sm mx-1 ${
               currentPage === index + 1 ? "btn-primary" : "btn-outline-primary"

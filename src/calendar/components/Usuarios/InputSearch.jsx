@@ -16,7 +16,6 @@ export const InputSearch = ({ setResults, setSearchTerm, setCurrentPage }) => {
         className="form-control"
         type="text"
         placeholder="Buscar Usuario"
-        // value={value}
         onChange={handleChange}
       />
     </div>

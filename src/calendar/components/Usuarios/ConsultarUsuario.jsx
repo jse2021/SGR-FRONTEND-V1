@@ -22,11 +22,10 @@ export const ConsultarUsuario = () => {
    */
   useEffect(() => {
     const fetchUsuarios = async () => {
-      // if (typeof searchTerm !== "string" || searchTerm.trim() === "") return;
       if (searchTerm.trim() == "") return;
       try {
         const { data } = await calendarApi.get(
-          `/auth/buscar/${searchTerm}?page=${currentPage}&limit=5`
+          `/auth/buscar/${searchTerm}?page=${currentPage}&limit=1`
         );
 
         console.log(data);

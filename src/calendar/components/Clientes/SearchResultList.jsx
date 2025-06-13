@@ -7,6 +7,7 @@ export const SearchResultsList = ({
   totalPages,
   setCurrentPage,
   currentPage,
+  onDeleteCliente,
 }) => {
   return (
     <>
@@ -26,7 +27,11 @@ export const SearchResultsList = ({
             </thead>
             <tbody>
               {results.map((dni) => (
-                <SearchResult key={dni._id} result={dni} />
+                <SearchResult
+                  key={dni._id}
+                  result={dni}
+                  onDeleteCliente={onDeleteCliente}
+                />
               ))}
             </tbody>
           </table>
@@ -36,6 +41,7 @@ export const SearchResultsList = ({
         <div className="d-flex justify-content-center mt-3">
           {Array.from({ length: totalPages }, (_, index) => (
             <button
+              type="button" // <-- clave para evitar submit
               key={index + 1}
               className={`btn btn-sm mx-1 ${
                 currentPage === index + 1

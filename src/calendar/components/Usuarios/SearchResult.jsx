@@ -25,7 +25,7 @@ export const SearchResult = ({ result, onDeleteUsuario }) => {
     if (confirmacion.isConfirmed) {
       try {
         await calendarApi.delete(`/auth/${result.id}`);
-        onDeleteUsuario(result._id);
+        onDeleteUsuario(result.id);
         Swal.fire(
           "Eliminado",
           "El usuario fue eliminado correctamente",
