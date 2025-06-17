@@ -5,14 +5,22 @@ import {
   onCloseModalUsuario,
   onOpenModalUsuario,
   onSetActiveUsuario,
+  /*Cliente */
+  onCloseModalCliente,
+  onOpenModalCliente,
+  onSetActiveCliente,
 } from "../store";
 
 export const useUiStore = () => {
   const dispatch = useDispatch();
 
-  const { isDateModalOpen, isModalUsuarioOpen, activeUsuario } = useSelector(
-    (state) => state.ui
-  );
+  const {
+    isDateModalOpen,
+    isModalUsuarioOpen,
+    activeUsuario,
+    isModalClienteOpen,
+    activeCliente,
+  } = useSelector((state) => state.ui);
   /**
    * MANEJO MODAL RESERVA
    */
@@ -33,12 +41,21 @@ export const useUiStore = () => {
   const openModalUsuario = () => dispatch(onOpenModalUsuario());
   const closeModalUsuario = () => dispatch(onCloseModalUsuario());
   const setActiveUsuario = (usuario) => dispatch(onSetActiveUsuario(usuario));
+  /**
+   * MANEJO MODAL CLIENTES
+   */
+  const openModalCliente = () => dispatch(onOpenModalCliente());
+  const closeModalCliente = () => dispatch(onCloseModalCliente());
+  const setActiveCliente = (cliente) => dispatch(onSetActiveCliente(cliente));
 
   return {
     //* Propiedades
     isDateModalOpen,
     activeUsuario,
     isModalUsuarioOpen,
+    isModalClienteOpen,
+    activeCliente,
+
     //* Métodos
     closeDateModal,
     openDateModal,
@@ -46,7 +63,10 @@ export const useUiStore = () => {
 
     openModalUsuario,
     closeModalUsuario,
-
     setActiveUsuario,
+
+    openModalCliente,
+    closeModalCliente,
+    setActiveCliente,
   };
 };

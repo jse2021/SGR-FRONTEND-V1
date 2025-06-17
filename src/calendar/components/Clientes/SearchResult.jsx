@@ -6,6 +6,7 @@ import { BsPencil } from "react-icons/bs";
 import { useUiStore } from "../../../hooks";
 
 export const SearchResult = ({ result, onDeleteCliente }) => {
+  const { setActiveCliente, openModalCliente } = useUiStore();
   /**
    * MANEJO EL CONTROL PARA ELMINAR
    */
@@ -38,6 +39,13 @@ export const SearchResult = ({ result, onDeleteCliente }) => {
       }
     }
   };
+  /**
+   * MANEJO EL CONTROL PARA EDITAR
+   */
+  const handleEditarCliente = () => {
+    setActiveCliente(result);
+    openModalCliente(); // Abre el modal
+  };
   return (
     <>
       <tr style={{ cursor: "pointer" }}>
@@ -46,6 +54,16 @@ export const SearchResult = ({ result, onDeleteCliente }) => {
         <td className="search-result">{result.apellido}</td>
         <td className="search-result">{result.email}</td>
         <td className="search-result">{result.celular}</td>
+        <td>
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm me-2"
+            onClick={handleEditarCliente}
+            title="Editar cliente"
+          >
+            <BsPencil />
+          </button>
+        </td>
         <td>
           <button
             type="button"

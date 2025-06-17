@@ -26,18 +26,13 @@ export const SearchResultsList = ({
             </tr>
           </thead>
           <tbody>
-            {results.map(
-              (user) => (
-                console.log("en search: ", user.id),
-                (
-                  <SearchResult
-                    key={user.id}
-                    result={user} // acá estaba el error principal
-                    onDeleteUsuario={onDeleteUsuario}
-                  />
-                )
-              )
-            )}
+            {results.map((user) => (
+              <SearchResult
+                key={user.id}
+                result={user}
+                onDeleteUsuario={onDeleteUsuario}
+              />
+            ))}
           </tbody>
         </table>
       ) : (

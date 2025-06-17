@@ -6,6 +6,8 @@ export const uiSlice = createSlice({
     isDateModalOpen: false,
     isModalUsuarioOpen: false,
     activeUsuario: null,
+    isModalClienteOpen: false,
+    activeCliente: null,
   },
   reducers: {
     /**
@@ -29,14 +31,28 @@ export const uiSlice = createSlice({
     onSetActiveUsuario: (state, { payload }) => {
       state.activeUsuario = payload;
     },
+    /**
+     * CLIENTES
+     */
+    onOpenModalCliente: (state) => {
+      state.isModalClienteOpen = true;
+    },
+    onCloseModalCliente: (state) => {
+      state.isModalClienteOpen = false;
+    },
+    onSetActiveCliente: (state, { payload }) => {
+      state.activeCliente = payload;
+    },
   },
 });
 
-// Action creators are generated for each case reducer function
 export const {
   onOpenDateModal,
   onCloseDateModal,
   onOpenModalUsuario,
   onCloseModalUsuario,
   onSetActiveUsuario,
+  onOpenModalCliente,
+  onCloseModalCliente,
+  onSetActiveCliente,
 } = uiSlice.actions;

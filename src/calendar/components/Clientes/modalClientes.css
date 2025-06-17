@@ -1,0 +1,38 @@
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-fondo {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal form .form-control,
+.modal form .form-select {
+  margin-left: 0 !important;
+}
+
+input,
+textarea {
+  font-size: 1rem;
+}
+.btn-secondary {
+  margin-top: 15px !important;
+  color: white !important;
+  border-radius: 1rem;
+  padding: 1.5%;
+  border: none;
+  cursor: pointer;
+  width: 75%;
+  margin: 0 auto;
+  background-color: black;
+}

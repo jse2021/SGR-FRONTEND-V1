@@ -5,10 +5,6 @@ import { useClienteStore } from "../../../hooks/useClienteStore";
 import { useForm } from "../../../hooks";
 import Swal from "sweetalert2";
 
-/**
- * FALTA CONTROLAR LOS ERRORES QUE VIENEN DEL BACKEND
- */
-
 const registrarCliente = {
   registerDni: "",
   registerNombre: "",

@@ -3,6 +3,7 @@ import { Navbar } from "../Navbar";
 import InputSearch from "./InputSearch";
 import SearchResultsList from "./SearchResultList";
 import { calendarApi } from "../../../api";
+import { ModalClientes } from "./ModalClientes";
 
 export const ConsultarCliente = () => {
   // Para el manejo de la paginación.
@@ -22,11 +23,10 @@ export const ConsultarCliente = () => {
    */
   useEffect(() => {
     const fetchClientes = async () => {
-      // if (typeof searchTerm !== "string" || searchTerm.trim() === "") return;
       if (searchTerm.trim() == "") return;
       try {
         const { data } = await calendarApi.get(
-          `/cliente/buscar/${searchTerm}?page=${currentPage}&limit=1`
+          `/cliente/buscar/${searchTerm}?page=${currentPage}&limit=5`
         );
 
         console.log(data);
@@ -59,6 +59,7 @@ export const ConsultarCliente = () => {
           />
         </form>
       </div>
+      <ModalClientes />
     </>
   );
 };

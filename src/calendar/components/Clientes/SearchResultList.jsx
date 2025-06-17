@@ -41,7 +41,7 @@ export const SearchResultsList = ({
         <div className="d-flex justify-content-center mt-3">
           {Array.from({ length: totalPages }, (_, index) => (
             <button
-              type="button" // <-- clave para evitar submit
+              type="button"
               key={index + 1}
               className={`btn btn-sm mx-1 ${
                 currentPage === index + 1

@@ -63,7 +63,7 @@ export const ModalUsuarios = () => {
     // Creamos una copia de los valores del formulario
     const datosEnviar = { ...formValues };
 
-    // 🔐 Si el campo contraseña está vacío, lo eliminamos antes de enviar al backend
+    //Si el campo contraseña está vacío, lo eliminamos antes de enviar al backend
     if (!datosEnviar.password || datosEnviar.password.trim() === "") {
       delete datosEnviar.password;
     }
