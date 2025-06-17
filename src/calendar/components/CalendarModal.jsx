@@ -50,6 +50,7 @@ export const CalendarModal = ({ date, cliente }) => {
   useEffect(() => {
     const buscarCliente = async () => {
       const { data } = await calendarApi.get("/cliente");
+      console.log({ data });
       cliente = Array.from(data.clientes);
       const opciones = cliente.map((clientes) => ({
         value: clientes.dni,

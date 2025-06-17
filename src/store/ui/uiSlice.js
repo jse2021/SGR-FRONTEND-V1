@@ -4,10 +4,15 @@ export const uiSlice = createSlice({
   name: "ui",
   initialState: {
     isDateModalOpen: false,
+
     isModalUsuarioOpen: false,
     activeUsuario: null,
+
     isModalClienteOpen: false,
     activeCliente: null,
+
+    isModalCanchaOpen: false,
+    activeCancha: null,
   },
   reducers: {
     /**
@@ -43,16 +48,34 @@ export const uiSlice = createSlice({
     onSetActiveCliente: (state, { payload }) => {
       state.activeCliente = payload;
     },
+    /**
+     * CANCHAS
+     */
+    onOpenModalCancha: (state) => {
+      state.isModalCanchaOpen = true;
+    },
+    onCloseModalCancha: (state) => {
+      state.isModalCanchaOpen = false;
+    },
+    onSetActiveCancha: (state, { payload }) => {
+      state.activeCancha = payload;
+    },
   },
 });
 
 export const {
   onOpenDateModal,
   onCloseDateModal,
+
   onOpenModalUsuario,
   onCloseModalUsuario,
   onSetActiveUsuario,
+
   onOpenModalCliente,
   onCloseModalCliente,
   onSetActiveCliente,
+
+  onOpenModalCancha,
+  onCloseModalCancha,
+  onSetActiveCancha,
 } = uiSlice.actions;

@@ -9,6 +9,10 @@ import {
   onCloseModalCliente,
   onOpenModalCliente,
   onSetActiveCliente,
+  /*Cancha */
+  onCloseModalCancha,
+  onOpenModalCancha,
+  onSetActiveCancha,
 } from "../store";
 
 export const useUiStore = () => {
@@ -20,6 +24,9 @@ export const useUiStore = () => {
     activeUsuario,
     isModalClienteOpen,
     activeCliente,
+
+    isModalCanchaOpen,
+    activeCancha,
   } = useSelector((state) => state.ui);
   /**
    * MANEJO MODAL RESERVA
@@ -47,14 +54,25 @@ export const useUiStore = () => {
   const openModalCliente = () => dispatch(onOpenModalCliente());
   const closeModalCliente = () => dispatch(onCloseModalCliente());
   const setActiveCliente = (cliente) => dispatch(onSetActiveCliente(cliente));
+  /**
+   * MANEJO MODAL CANCHAS
+   */
+  const openModalCancha = () => dispatch(onOpenModalCancha());
+  const closeModalCancha = () => dispatch(onCloseModalCancha());
+  const setActiveCancha = (cancha) => dispatch(onSetActiveCancha(cancha));
 
   return {
     //* Propiedades
     isDateModalOpen,
+
     activeUsuario,
     isModalUsuarioOpen,
+
     isModalClienteOpen,
     activeCliente,
+
+    isModalCanchaOpen,
+    activeCancha,
 
     //* Métodos
     closeDateModal,
@@ -68,5 +86,9 @@ export const useUiStore = () => {
     openModalCliente,
     closeModalCliente,
     setActiveCliente,
+
+    openModalCancha,
+    closeModalCancha,
+    setActiveCancha,
   };
 };

@@ -3,6 +3,7 @@ import { Navbar } from "../Navbar";
 import InputSearch from "./InputSearch";
 import SearchResultsList from "./SearchResultsList";
 import { calendarApi } from "../../../api";
+import { ModalCanchas } from "./ModalCanchas";
 
 export const ConsultarCancha = () => {
   // Para el manejo de la paginación.
@@ -60,6 +61,7 @@ export const ConsultarCancha = () => {
           />
         </form>
       </div>
+      <ModalCanchas />
     </>
   );
 };

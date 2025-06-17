@@ -15,7 +15,7 @@ export const InputSearch = ({ setSearchTerm, setCurrentPage }) => {
       <input
         className="form-control"
         type="text"
-        placeholder="Buscar por Cancha"
+        placeholder="Buscar Cancha"
         onChange={handleChange}
       />
     </div>

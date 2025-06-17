@@ -6,6 +6,7 @@ import { BsPencil } from "react-icons/bs";
 import { useUiStore } from "../../../hooks";
 
 export const SearchResult = ({ result, onDeleteCancha }) => {
+  const { setActiveCancha, openModalCancha } = useUiStore();
   /**
    * MANEJO EL CONTROL PARA ELMINAR
    */
@@ -38,11 +39,28 @@ export const SearchResult = ({ result, onDeleteCancha }) => {
       }
     }
   };
+  /**
+   * MANEJO EL CONTROL PARA EDITAR
+   */
+  const handleEditarCancha = () => {
+    setActiveCancha(result);
+    openModalCancha(); // Abre el modal
+  };
   return (
     <>
       <tr style={{ cursor: "pointer" }}>
         <td className="search-result">{result.nombre}</td>
         <td className="search-result">{result.medidas}</td>
+        <td>
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm me-2"
+            onClick={handleEditarCancha}
+            title="Editar cancha"
+          >
+            <BsPencil />
+          </button>
+        </td>
         <td>
           <button
             type="button"
