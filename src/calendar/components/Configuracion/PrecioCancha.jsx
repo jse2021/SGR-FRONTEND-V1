@@ -7,14 +7,7 @@ import { useEffect } from "react";
 import { useConfiguracionStore } from "../../../hooks/useConfiguracionStore";
 import { useForm } from "../../../hooks";
 import Swal from "sweetalert2";
-
-/**
- * MOSTRAR EN PANTALLA LAS MODIFICACIONES - EN LA TABLA
- * TERMINAR DE MANEJAR CONTROL DE ERRORES
- * IMPLEMENTAR EL BOTON ACTUALIZAR
- * AGREGAR LAS COLUMNAS TANTAS CANCHAS NUEVAS HAYA
- *
- */
+import { id } from "date-fns/locale";
 
 const registrarMontos = {
   registerNombre: "",
@@ -22,81 +15,90 @@ const registrarMontos = {
   registerSena: "",
 };
 
-export const PrecioCancha = ({ canchas }) => {
-  const [cancha, setCancha] = useState([]);
+export const PrecioCancha = () => {
+  const [canchasConPrecios, setCanchasConPrecios] = useState([]);
+  const { startRegister, error } = useConfiguracionStore();
+  const [canchas, setCanchas] = useState([]);
+  const [canchaSeleccionada, setCanchaSeleccionada] = useState("");
+  const [precioCancha, setPrecioCancha] = useState("");
+  const [precioSena, setPrecioSena] = useState("");
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [registerNombre, setRegisterNombre] = useState("");
 
-  const [id, setId] = useState(null);
+  //-----------------------------------------------------------------------------
 
-  async function fetchData() {
-    const { data } = await calendarApi.get("/cancha");
-    console.log(data.canchas);
-
-    if (data.canchas instanceof Array) {
-      setCancha(
-        data.canchas.map((cancha) => {
-          return {
-            id: cancha.id,
-            nombre: cancha.nombre,
-          };
-        })
-      );
-    }
-  }
   useEffect(() => {
-    fetchData();
+    async function fetchCanchas() {
+      try {
+        const { data } = await calendarApi.get("/cancha");
+
+        if (Array.isArray(data.canchas)) {
+          setCanchas(data.canchas); // guardamos todas las canchas
+        }
+      } catch (error) {
+        console.error("Error al traer canchas", error);
+      }
+    }
+
+    fetchCanchas();
   }, []);
 
-  const { startRegister, error } = useConfiguracionStore();
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const { registerNombre, registerPrecio, registerSena, onInputChange } =
-    useForm(registrarMontos);
+  //-----------------------------------------------------------------------------
+  useEffect(() => {
+    const cargarCanchasConPrecios = async () => {
+      try {
+        const { data } = await calendarApi.get("/configuracion/");
 
-  const precioClass = useMemo(() => {
-    if (!formSubmitted) return "";
+        if (data.ok) {
+          setCanchasConPrecios(data.canchasPrecio);
+        } else {
+          console.warn("No se encontraron configuraciones de precios");
+        }
+      } catch (error) {
+        console.error("Error al cargar precios de canchas:", error);
+      }
+    };
 
-    return registerPrecio.length > 0 ? "" : "is-invalid";
-  }, [registerPrecio, formSubmitted]);
-
-  const senaClass = useMemo(() => {
-    if (!formSubmitted) return "";
-
-    return registerSena.length > 0 ? "" : "is-invalid";
-  }, [registerSena, formSubmitted]);
-
-  const registerSubmit = (event) => {
-    const obtener = event.target.value;
+    cargarCanchasConPrecios();
+  }, []);
+  //-----------------------------------------------------------------------------
+  const registerSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
 
-    if (registerPrecio.length <= 0 || registerSena <= 0) return;
+    if (!registerNombre || !precioCancha || !precioSena) {
+      Swal.fire(
+        "Campos incompletos",
+        "Todos los campos son obligatorios",
+        "error"
+      );
+      return;
+    }
 
-    startRegister({
+    const { ok, msg } = await startRegister({
       nombre: registerNombre,
-      monto_cancha: registerPrecio,
-      monto_sena: registerSena,
+      monto_cancha: precioCancha,
+      monto_sena: precioSena,
     });
 
-    if (error !== undefined) {
-      const promise = Swal.fire({
+    if (ok) {
+      Swal.fire({
         position: "top-center",
         icon: "success",
         title: "Precios registrados",
         showConfirmButton: false,
         timer: 1500,
       });
-      promise.then(() => {
-        document.getElementById("formAltaPrecio").submit();
-      });
-    }
-
-    if (error) {
-      console.log("Paso por error");
+    } else {
       Swal.fire({
         icon: "error",
-        text: error,
+        title: "Error",
+        text: msg || "No se pudo registrar el precio",
       });
     }
   };
+
+  //-----------------------------------------------------------------------------
 
   return (
     <>
@@ -109,42 +111,81 @@ export const PrecioCancha = ({ canchas }) => {
               <div className="form-group mb-2">
                 <div className="form-group mb-2">
                   <select
-                    class="form-select"
-                    name="registerNombre"
-                    id="cancha_precio"
-                    value={registerNombre}
-                    onChange={onInputChange}
-                    placeholder="Seleccione una cancha"
+                    id="cancha"
+                    className="form-select"
+                    value={canchaSeleccionada}
+                    onChange={async (e) => {
+                      const idSeleccionado = e.target.value;
+                      setCanchaSeleccionada(idSeleccionado);
+                      const canchaSeleccionadaObj = canchas.find(
+                        (c) => c.id === idSeleccionado
+                      );
+                      if (canchaSeleccionadaObj) {
+                        setRegisterNombre(canchaSeleccionadaObj.nombre);
+                      }
+
+                      try {
+                        const { data } = await calendarApi.get(
+                          `/configuracion/id/${idSeleccionado}`
+                        );
+
+                        if (data?.canchasMonto?.monto_cancha != null) {
+                          setPrecioCancha(data.canchasMonto.monto_cancha);
+                          setPrecioSena(data.canchasMonto.monto_sena);
+                        } else {
+                          setPrecioCancha("");
+                          setPrecioSena("");
+                          Swal.fire({
+                            icon: "warning",
+                            title: "Cancha sin precios",
+                            text: "Esta cancha no tiene precios configurados.",
+                          });
+                        }
+                      } catch (error) {
+                        console.error(
+                          "Error al buscar precio de cancha:",
+                          error
+                        );
+                        setPrecioCancha("");
+                        setPrecioSena("");
+                        Swal.fire({
+                          icon: "warning",
+                          title: "Cancha sin precios",
+                          text: "Esta cancha no tiene precios configurados.",
+                        });
+                      }
+                    }}
                   >
-                    <option key="0" value="" disabled>
-                      Seleccione una cancha
-                    </option>
-                    {cancha && cancha.length > 0
-                      ? cancha.map((cancha) => (
-                          <option key={cancha.id} value={cancha.nombre}>
-                            {cancha.nombre}
-                          </option>
-                        ))
-                      : null}
+                    <option value="">Seleccione una cancha</option>
+                    {canchas.map((cancha) => (
+                      <option key={cancha.id} value={cancha.id}>
+                        {cancha.nombre}
+                      </option>
+                    ))}
                   </select>
                 </div>
+
+                <label htmlFor="precio" className="form-label">
+                  Precio Cancha
+                </label>
                 <input
                   type="number"
-                  className={`form-control montoCancha ${precioClass}`}
-                  placeholder="Monto Cancha"
-                  name="registerPrecio"
-                  value={registerPrecio}
-                  onChange={onInputChange}
+                  className={`form-control montoCancha `}
+                  id="precio"
+                  value={precioCancha}
+                  onChange={(e) => setPrecioCancha(e.target.value)}
                 />
               </div>
-              <div className="form-group mb-2">
+              <div className="form-group mb-3">
+                <label htmlFor="sena" className="form-label">
+                  Precio Seña
+                </label>
                 <input
                   type="number"
-                  className={`form-control montoSena ${senaClass}`}
-                  placeholder="Monto Seña"
-                  name="registerSena"
-                  value={registerSena}
-                  onChange={onInputChange}
+                  className={`form-control montoSena`}
+                  id="sena"
+                  value={precioSena}
+                  onChange={(e) => setPrecioSena(e.target.value)}
                 />
               </div>
             </div>
@@ -158,16 +199,30 @@ export const PrecioCancha = ({ canchas }) => {
               value="Actualizar"
             />
           </div>
-          <table class="table table-hover">
-            <thead>
+          <table className="table table-bordered">
+            <thead className="table-dark text-center">
               <tr>
-                <th scope="col">Fecha Modificación</th>
-                <th scope="col">Precio Cancha</th>
-                <th scope="col">Precio Seña</th>
+                <th>Nombre Cancha</th>
+                <th>Precio Cancha</th>
+                <th>Precio Seña</th>
               </tr>
             </thead>
             <tbody>
-              <tr></tr>
+              {canchasConPrecios.length > 0 ? (
+                canchasConPrecios.map((cancha) => (
+                  <tr key={cancha.id}>
+                    <td>{cancha.nombre}</td>
+                    <td>${cancha.precio_cancha}</td>
+                    <td>${cancha.precio_sena}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" className="text-center">
+                    No hay canchas configuradas
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </form>
