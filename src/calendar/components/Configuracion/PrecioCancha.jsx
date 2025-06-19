@@ -24,7 +24,7 @@ export const PrecioCancha = () => {
   const [precioSena, setPrecioSena] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [registerNombre, setRegisterNombre] = useState("");
-
+  const [canchaTienePrecio, setCanchaTienePrecio] = useState(false); // manejo botones
   //-----------------------------------------------------------------------------
 
   useEffect(() => {
@@ -48,6 +48,7 @@ export const PrecioCancha = () => {
     const cargarCanchasConPrecios = async () => {
       try {
         const { data } = await calendarApi.get("/configuracion/");
+        console.log(data);
 
         if (data.ok) {
           setCanchasConPrecios(data.canchasPrecio);
@@ -97,6 +98,32 @@ export const PrecioCancha = () => {
       });
     }
   };
+  const handleActualizarPrecios = async () => {
+    if (!registerNombre) {
+      return Swal.fire("Atención", "Debe seleccionar una cancha", "warning");
+    }
+
+    try {
+      const { data } = await calendarApi.put(
+        `/configuracion/${registerNombre}`,
+        {
+          monto_cancha: precioCancha,
+          monto_sena: precioSena,
+        }
+      );
+
+      if (data.ok) {
+        Swal.fire("Actualizado", "Precios actualizados con éxito", "success");
+
+        // Actualizar tabla
+        const { data: precios } = await calendarApi.get("/configuracion/");
+        setCanchasConPrecios(precios.canchasPrecio);
+      }
+    } catch (error) {
+      console.error("Error al actualizar precios:", error);
+      Swal.fire("Error", "No se pudo actualizar el precio", "error");
+    }
+  };
 
   //-----------------------------------------------------------------------------
 
@@ -132,9 +159,11 @@ export const PrecioCancha = () => {
                         if (data?.canchasMonto?.monto_cancha != null) {
                           setPrecioCancha(data.canchasMonto.monto_cancha);
                           setPrecioSena(data.canchasMonto.monto_sena);
+                          setCanchaTienePrecio(true);
                         } else {
                           setPrecioCancha("");
                           setPrecioSena("");
+                          setCanchaTienePrecio(false);
                           Swal.fire({
                             icon: "warning",
                             title: "Cancha sin precios",
@@ -148,6 +177,7 @@ export const PrecioCancha = () => {
                         );
                         setPrecioCancha("");
                         setPrecioSena("");
+                        setCanchaTienePrecio(false);
                         Swal.fire({
                           icon: "warning",
                           title: "Cancha sin precios",
@@ -165,8 +195,12 @@ export const PrecioCancha = () => {
                   </select>
                 </div>
 
-                <label htmlFor="precio" className="form-label">
-                  Precio Cancha
+                <label
+                  htmlFor="precio"
+                  id="canchaPrecio"
+                  className="form-label"
+                >
+                  Cancha
                 </label>
                 <input
                   type="number"
@@ -177,8 +211,8 @@ export const PrecioCancha = () => {
                 />
               </div>
               <div className="form-group mb-3">
-                <label htmlFor="sena" className="form-label">
-                  Precio Seña
+                <label htmlFor="sena" id="canchaSena" className="form-label">
+                  Seña
                 </label>
                 <input
                   type="number"
@@ -192,39 +226,52 @@ export const PrecioCancha = () => {
           </div>
 
           <div className="d-grid gap-2">
-            <input type="submit" className="btnSubmitGuardar" value="Guardar" />
+            <input
+              type="submit"
+              className={`btnSubmitGuardar ${
+                canchaTienePrecio ? "btn-disabled" : ""
+              }`}
+              disabled={canchaTienePrecio}
+              value="Guardar"
+            />
             <input
               type="button"
-              className="btnSubmitActualizar"
+              className={`btnSubmitActualizar ${
+                !canchaTienePrecio ? "btn-disabled" : ""
+              }`}
               value="Actualizar"
+              onClick={handleActualizarPrecios}
+              disabled={!canchaTienePrecio}
             />
           </div>
-          <table className="table table-bordered">
-            <thead className="table-dark text-center">
-              <tr>
-                <th>Nombre Cancha</th>
-                <th>Precio Cancha</th>
-                <th>Precio Seña</th>
-              </tr>
-            </thead>
-            <tbody>
-              {canchasConPrecios.length > 0 ? (
-                canchasConPrecios.map((cancha) => (
-                  <tr key={cancha.id}>
-                    <td>{cancha.nombre}</td>
-                    <td>${cancha.precio_cancha}</td>
-                    <td>${cancha.precio_sena}</td>
-                  </tr>
-                ))
-              ) : (
+          <div className="tabla-scroll-wrapper">
+            <table className="table table-bordered">
+              <thead className="table-dark text-center">
                 <tr>
-                  <td colSpan="3" className="text-center">
-                    No hay canchas configuradas
-                  </td>
+                  <th>Nombre Cancha</th>
+                  <th>Precio Cancha</th>
+                  <th>Precio Seña</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {canchasConPrecios.length > 0 ? (
+                  canchasConPrecios.map((cancha) => (
+                    <tr key={cancha.id}>
+                      <td>{cancha.nombre}</td>
+                      <td>${cancha.precio_cancha}</td>
+                      <td>${cancha.precio_sena}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center">
+                      No hay canchas configuradas
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </form>
       </div>
     </>

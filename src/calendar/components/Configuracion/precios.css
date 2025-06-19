@@ -21,9 +21,38 @@
   width: 40%;
   margin: 0 auto;
 }
-
+#canchaPrecio,
+#canchaSena {
+  margin-left: 90%;
+}
 .btnSubmitActualizar,
 .btnSubmitGuardar {
   background-color: #333;
   color: #fcf9f9;
+}
+
+.tabla-scroll-wrapper {
+  max-height: 300px; /* Aproximadamente 5 filas */
+  overflow-y: auto;
+  margin-top: 1rem;
+}
+
+.tabla-scroll-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-scroll-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background-color: #343a40;
+  color: white;
+  z-index: 2;
+}
+.btn-disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  border: none;
 }
