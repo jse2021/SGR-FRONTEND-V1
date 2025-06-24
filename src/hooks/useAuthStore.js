@@ -21,12 +21,10 @@ export const useAuthStore = () => {
 
     try {
       const { data } = await calendarApi.post("/auth", { user, password });
-
       localStorage.setItem("token", data.token);
       localStorage.setItem("token-init-date", new Date().getTime());
       dispatch(onLogin({ user: data.user, id: data.token }));
     } catch (error) {
-      console.log({ error });
       dispatch(onLogout(error.response.data?.msg || "--"));
       setTimeout(() => {
         dispatch(clearErrorMessage());

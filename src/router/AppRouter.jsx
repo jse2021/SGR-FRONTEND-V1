@@ -21,7 +21,9 @@ import { useAuthStore } from "../hooks";
 import "./AppRouter.css";
 
 export const AppRouter = () => {
-  const { status, checkAuthToken } = useAuthStore();
+  const { status, checkAuthToken, user } = useAuthStore();
+  const usuario = user.tipo_usuario;
+  console.log(usuario);
 
   useEffect(() => {
     checkAuthToken();
@@ -31,7 +33,6 @@ export const AppRouter = () => {
     return (
       <div className="d-flex justify-content-center">
         <div className="spinner-border" role="status">
-          {/* <div role="status"> */}
           <span className="visually-hidden"></span>
         </div>
       </div>
@@ -50,23 +51,24 @@ export const AppRouter = () => {
           <Route path="/" element={<CalendarPage />} />
           <Route path="/pages/CalendarPage" element={<CalendarPage />} />
 
-          <Route path="/AltaUsuario" element={<AltaUsuario />} />
-          <Route path="/ConsultarUsuario" element={<ConsultarUsuario />} />
-
-          <Route path="/AltaCancha" element={<AltaCancha />} />
-          <Route path="/ConsultarCancha" element={<ConsultarCancha />} />
-
-          <Route path="/PrecioCancha" element={<PrecioCancha />} />
-
-          <Route path="/PagosDeReserva" element={<PagosDeReserva />} />
-          <Route path="/Recaudacion" element={<Recaudacion />} />
-          <Route path="/FormasPago" element={<FormaPago />} />
-
+          {/* Rutas comunes */}
           <Route path="/AltaCliente" element={<AltaCliente />} />
           <Route path="/ConsultarCliente" element={<ConsultarCliente />} />
-
-          <Route path="/ReservaPorCliente" element={<ReservaPorCliente />} />
           <Route path="/ReservaDelaFecha" element={<ReservasFecha />} />
+          <Route path="/PagosDeReserva" element={<PagosDeReserva />} />
+          <Route path="/AltaCancha" element={<AltaCancha />} />
+          <Route path="/ConsultarCancha" element={<ConsultarCancha />} />
+          <Route path="/PrecioCancha" element={<PrecioCancha />} />
+
+          {/* Condicional por tipo de usuario */}
+          {usuario === "Administrador" && (
+            <>
+              <Route path="/AltaUsuario" element={<AltaUsuario />} />
+              <Route path="/ConsultarUsuario" element={<ConsultarUsuario />} />
+              <Route path="/Recaudacion" element={<Recaudacion />} />
+              <Route path="/FormasPago" element={<FormaPago />} />
+            </>
+          )}
 
           <Route path="/*" element={<Navigate to="/" />} />
         </>

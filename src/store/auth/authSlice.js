@@ -16,7 +16,7 @@ export const authSlice = createSlice({
     },
     onLogin: (state, { payload }) => {
       state.status = "authenticated";
-      state.user = payload; // <- datos como nombre, tipo, email
+      state.user = payload.user;
       state.errorMessage = undefined;
     },
     onLogout: (state, { payload }) => {
