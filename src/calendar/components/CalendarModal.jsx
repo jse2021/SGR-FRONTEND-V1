@@ -50,7 +50,7 @@ export const CalendarModal = ({ date, cliente }) => {
   useEffect(() => {
     const buscarCliente = async () => {
       const { data } = await calendarApi.get("/cliente");
-      console.log({ data });
+
       cliente = Array.from(data.clientes);
       const opciones = cliente.map((clientes) => ({
         value: clientes.dni,
@@ -243,8 +243,6 @@ export const CalendarModal = ({ date, cliente }) => {
    */
   useEffect(() => {
     if (activeEvent) {
-      console.log(activeEvent.monto_cancha);
-      console.log(activeEvent.monto_sena);
       let monto = 0;
 
       switch (activeEvent.estado_pago) {
@@ -261,10 +259,27 @@ export const CalendarModal = ({ date, cliente }) => {
           monto = 0;
         // monto_sena = 0;
       }
-      const fechaParsed = new Date(activeEvent.start);
+
+      //Parte de la solucion de invalid date. hacer pruebas para que no rompa otro codigo.
+      // const fechaParsed = new Date(activeEvent.start);
+      let fechaParsed = new Date(activeEvent.start);
+      // Si la fecha no es válida, formateamos manualmente
+      if (isNaN(fechaParsed.getTime())) {
+        const dateString = new Date(activeEvent.start).toLocaleDateString(
+          "es-AR",
+          {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }
+        );
+
+        fechaParsed = new Date();
+      }
       setFormValues({
         ...activeEvent,
-        fecha: isNaN(fechaParsed.getTime()) ? new Date() : fechaParsed,
+        // fecha: isNaN(fechaParsed.getTime()) ? new Date() : fechaParsed,
+        fecha: fechaParsed,
         cliente: {
           value: activeEvent.id,
           label:
@@ -415,6 +430,19 @@ export const CalendarModal = ({ date, cliente }) => {
     year: "numeric",
   });
   //---------------------------------------------------------------------------------------
+  /**
+   * SOLUCION A INVALID DATE EN MODAL.
+   */
+  const getFechaFormateada = (fecha) => {
+    if (!(fecha instanceof Date) || isNaN(fecha)) return "Fecha no válida";
+
+    return fecha.toLocaleDateString("es-AR", {
+      // weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   return (
     <Modal
@@ -431,7 +459,9 @@ export const CalendarModal = ({ date, cliente }) => {
       <hr />
       <form className="container" onSubmit={onSubmit}>
         <div className="form-group mb-2">
-          <h5 style={{ textAlign: "center" }}>{fechaReserva}</h5>
+          <h5 style={{ textAlign: "center" }}>
+            {<h3>{getFechaFormateada(formValues.fecha)}</h3>}
+          </h5>
         </div>
         <div className="form-group mb-2">
           <AsyncSelect
