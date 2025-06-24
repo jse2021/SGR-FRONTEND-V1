@@ -1,12 +1,11 @@
 import { createContext, useEffect, useState } from "react";
 import { Calendar } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import moment from "moment";
 import { Navbar, CalendarModal, FabDelete } from "../";
 import CalendarEvent from "../components/CalendarEvent";
-
 import { localizer, getMessagesES } from "../../helpers";
 import { useUiStore, useCalendarStore, useAuthStore } from "../../hooks";
+import CustomToolbar from "./CustomToolbar";
 
 export const CalendarPage = () => {
   const { user } = useAuthStore();
@@ -93,9 +92,11 @@ export const CalendarPage = () => {
         endAccessor="end"
         style={{ height: "calc( 100vh - 80px )" }}
         messages={getMessagesES()}
+        popup={true} //Esto activa el Ver más
         eventPropGetter={eventStyleGetter}
         components={{
           event: CalendarEvent,
+          toolbar: CustomToolbar,
         }}
         views={["month", "agenda"]}
         onDoubleClickEvent={onDoubleClick}

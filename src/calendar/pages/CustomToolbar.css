@@ -1,0 +1,47 @@
+/* src/calendar/components/CustomToolbar.css */
+.custom-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  /* background-color: #f8f9fa; */
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.toolbar-left {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar-btn {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.toolbar-btn:hover {
+  background-color: #333;
+}
+
+.toolbar-center {
+  flex: 1;
+  text-align: center;
+}
+
+.toolbar-label {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+.rbc-show-more {
+  font-weight: bold;
+  color: #00060c;
+  cursor: pointer;
+  padding: 4px;
+}
