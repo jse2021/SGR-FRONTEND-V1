@@ -23,8 +23,6 @@ import "./AppRouter.css";
 export const AppRouter = () => {
   const { status, checkAuthToken, user } = useAuthStore();
   const usuario = user.tipo_usuario;
-  console.log(usuario);
-
   useEffect(() => {
     checkAuthToken();
   }, []);
@@ -51,15 +49,6 @@ export const AppRouter = () => {
           <Route path="/" element={<CalendarPage />} />
           <Route path="/pages/CalendarPage" element={<CalendarPage />} />
 
-          {/* Rutas comunes */}
-          <Route path="/AltaCliente" element={<AltaCliente />} />
-          <Route path="/ConsultarCliente" element={<ConsultarCliente />} />
-          <Route path="/ReservaDelaFecha" element={<ReservasFecha />} />
-          <Route path="/PagosDeReserva" element={<PagosDeReserva />} />
-          <Route path="/AltaCancha" element={<AltaCancha />} />
-          <Route path="/ConsultarCancha" element={<ConsultarCancha />} />
-          <Route path="/PrecioCancha" element={<PrecioCancha />} />
-
           {/* Condicional por tipo de usuario */}
           {usuario === "Administrador" && (
             <>
@@ -67,6 +56,30 @@ export const AppRouter = () => {
               <Route path="/ConsultarUsuario" element={<ConsultarUsuario />} />
               <Route path="/Recaudacion" element={<Recaudacion />} />
               <Route path="/FormasPago" element={<FormaPago />} />
+              <Route path="/AltaCliente" element={<AltaCliente />} />
+              <Route path="/ConsultarCliente" element={<ConsultarCliente />} />
+              <Route path="/ReservaDelaFecha" element={<ReservasFecha />} />
+              <Route path="/PagosDeReserva" element={<PagosDeReserva />} />
+              <Route path="/AltaCancha" element={<AltaCancha />} />
+              <Route path="/ConsultarCancha" element={<ConsultarCancha />} />
+              <Route path="/PrecioCancha" element={<PrecioCancha />} />
+              <Route
+                path="/ReservaPorCliente"
+                element={<ReservaPorCliente />}
+              />
+            </>
+          )}
+
+          {/* Condicional por tipo de usuario */}
+          {usuario === "Estandar" && (
+            <>
+              <Route path="/AltaCliente" element={<AltaCliente />} />s
+              <Route path="/ConsultarCliente" element={<ConsultarCliente />} />
+              <Route path="/ReservaDelaFecha" element={<ReservasFecha />} />
+              <Route
+                path="/ReservaPorCliente"
+                element={<ReservaPorCliente />}
+              />
             </>
           )}
 

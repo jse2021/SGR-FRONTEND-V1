@@ -24,11 +24,12 @@ export const useAuthStore = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("token-init-date", new Date().getTime());
       dispatch(onLogin({ user: data.user, id: data.token }));
+      return { ok: true };
     } catch (error) {
-      dispatch(onLogout(error.response.data?.msg || "--"));
-      setTimeout(() => {
-        dispatch(clearErrorMessage());
-      }, 10);
+      const msg = error.response.data?.msg;
+      console.log("xx: ", msg);
+      dispatch(onLogout());
+      return { ok: false, msg };
     }
   };
 

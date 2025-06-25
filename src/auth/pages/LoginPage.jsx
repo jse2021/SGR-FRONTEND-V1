@@ -17,28 +17,34 @@ export const LoginPage = () => {
     onInputChange: onLoginInputChange,
   } = useForm(loginFormFields);
 
-  const loginSubmit = (event) => {
+  const loginSubmit = async (event) => {
     event.preventDefault();
-    startLogin({ user: loginUser, password: loginPassword });
-  };
-
-  useEffect(() => {
-    if (errorMessage !== undefined) {
-      Swal.fire("Error en la autenticación", errorMessage, "warning");
+    if (loginUser.trim() == "" || loginPassword.trim() == "") {
+      await Swal.fire("Atención", "Usuario o Clave no ingresados", "warning");
+      return;
     }
-  }, [errorMessage]);
+
+    const result = await startLogin({
+      user: loginUser,
+      password: loginPassword,
+    });
+    if (!result.ok) {
+      await Swal.fire("Atención", result.msg, "warning");
+    }
+  };
 
   return (
     <div className="container login-container">
+      <h1 className="display-1">Sistema de Gestión de Reservas</h1>
       <div className="row">
-        <h1 className="display-1">Sistema de Gestión de Reservas</h1>
-        <div className="col-md-4 login-form-1">
+        <div className="col-md-6 login-form-1">
           <h3>Acceder</h3>
           <form onSubmit={loginSubmit}>
             <div className="form-group mb-2">
               <input
                 type="text"
                 className="form-control"
+                id="input-user"
                 placeholder="Tu Usuario"
                 name="loginUser"
                 value={loginUser}
