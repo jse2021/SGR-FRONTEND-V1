@@ -29,7 +29,6 @@ export const ConsultarCliente = () => {
           `/cliente/buscar/${searchTerm}?page=${currentPage}&limit=5`
         );
 
-        console.log(data);
         setResults(data.clientes);
         setTotalPages(data.totalPages);
       } catch (error) {

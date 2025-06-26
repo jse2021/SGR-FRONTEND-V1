@@ -34,7 +34,6 @@ export const ModalClientes = () => {
   useEffect(() => {
     if (activeCliente) {
       setFormValues({ ...activeCliente });
-      console.log(activeCliente.id);
     }
   }, [activeCliente]);
   /**
@@ -68,14 +67,15 @@ export const ModalClientes = () => {
       );
 
       Swal.fire("Actualizado", "Cliente actualizado con éxito", "success");
-      closeModalCliente(); // cerrar el modal si todo salió bien
+      closeModalCliente();
     } catch (error) {
       console.error("Error al actualizar cliente:", error);
       Swal.fire(
         "Error",
         error.response?.data?.msg || "No se pudo actualizar el cliente",
-        "error"
+        "warning"
       );
+      return;
     }
   };
 
@@ -99,6 +99,7 @@ export const ModalClientes = () => {
             name="dni"
             value={formValues.dni}
             onChange={handleInputChange}
+            disabled
           />
         </div>
         <div className="form-group mb-1">
