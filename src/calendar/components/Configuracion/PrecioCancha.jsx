@@ -48,7 +48,6 @@ export const PrecioCancha = () => {
     const cargarCanchasConPrecios = async () => {
       try {
         const { data } = await calendarApi.get("/configuracion/");
-        console.log(data);
 
         if (data.ok) {
           setCanchasConPrecios(data.canchasPrecio);

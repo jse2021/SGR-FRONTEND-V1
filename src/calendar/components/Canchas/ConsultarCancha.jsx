@@ -30,7 +30,6 @@ export const ConsultarCancha = () => {
           `/cancha/buscar/${searchTerm}?page=${currentPage}&limit=5`
         );
 
-        console.log(data);
         setResults(data.canchas);
         setTotalPages(data.totalPages);
       } catch (error) {

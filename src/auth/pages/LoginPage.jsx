@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useAuthStore, useForm } from "../../hooks";
 import "./LoginPage.css";
@@ -9,7 +9,8 @@ const loginFormFields = {
 };
 
 export const LoginPage = () => {
-  const { startLogin, errorMessage } = useAuthStore();
+  const { startLogin } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     loginUser,
@@ -19,53 +20,48 @@ export const LoginPage = () => {
 
   const loginSubmit = async (event) => {
     event.preventDefault();
-    if (loginUser.trim() == "" || loginPassword.trim() == "") {
-      await Swal.fire("Atención", "Usuario o Clave no ingresados", "warning");
+    if (loginUser.trim() === "" || loginPassword.trim() === "") {
+      Swal.fire("Atención", "Usuario o Clave no ingresados", "warning");
       return;
     }
 
+    setIsLoading(true);
     const result = await startLogin({
       user: loginUser,
       password: loginPassword,
     });
+    setIsLoading(false);
+
     if (!result.ok) {
-      await Swal.fire("Atención", result.msg, "warning");
+      Swal.fire("Atención", result.msg, "warning");
     }
   };
 
   return (
-    <div className="container login-container">
-      <h1 className="display-1">Sistema de Gestión de Reservas</h1>
-      <div className="row">
-        <div className="col-md-6 login-form-1">
-          <h3>Acceder</h3>
-          <form onSubmit={loginSubmit}>
-            <div className="form-group mb-2">
-              <input
-                type="text"
-                className="form-control"
-                id="input-user"
-                placeholder="Tu Usuario"
-                name="loginUser"
-                value={loginUser}
-                onChange={onLoginInputChange}
-              />
-            </div>
-            <div className="form-group mb-2">
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Tu Clave"
-                name="loginPassword"
-                value={loginPassword}
-                onChange={onLoginInputChange}
-              />
-            </div>
-            <div className="d-grid gap-2">
-              <input type="submit" className="btnSubmit" value="Ingresar" />
-            </div>
-          </form>
-        </div>
+    <div className="login-wrapper">
+      <div className="login-card">
+        <h1 className="login-title">Sistema de Reservas</h1>
+        <form onSubmit={loginSubmit} className="login-form">
+          <input
+            type="text"
+            placeholder="Usuario"
+            name="loginUser"
+            className="login-input"
+            value={loginUser}
+            onChange={onLoginInputChange}
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            name="loginPassword"
+            className="login-input"
+            value={loginPassword}
+            onChange={onLoginInputChange}
+          />
+          <button type="submit" className="login-button" disabled={isLoading}>
+            {isLoading ? "Ingresando..." : "Ingresar"}
+          </button>
+        </form>
       </div>
     </div>
   );
