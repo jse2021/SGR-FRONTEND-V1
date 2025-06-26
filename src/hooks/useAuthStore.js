@@ -22,12 +22,12 @@ export const useAuthStore = () => {
     try {
       const { data } = await calendarApi.post("/auth", { user, password });
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user)); //----------------------------------
       localStorage.setItem("token-init-date", new Date().getTime());
       dispatch(onLogin({ user: data.user, id: data.token }));
       return { ok: true };
     } catch (error) {
       const msg = error.response.data?.msg;
-      console.log("xx: ", msg);
       dispatch(onLogout());
       return { ok: false, msg };
     }
@@ -62,6 +62,7 @@ export const useAuthStore = () => {
        */
 
       localStorage.setItem("token", data.token); //guardo toqken para que el usuario quede logueado
+      localStorage.setItem("user", JSON.stringify(data.user)); //----------------------------------
       localStorage.setItem("token-init-date", new Date().getTime());
       //Esto actualiza el estado global para reflejar que el usuario ya está registrado y logueado.
       dispatch(onLogin({ user: data.user, id: data.token }));
@@ -77,12 +78,17 @@ export const useAuthStore = () => {
    */
   const checkAuthToken = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return dispatch(onLogout());
+    const userStorage = localStorage.getItem("user");
+
+    if (!token || !userStorage) {
+      return dispatch(onLogout());
+    }
 
     try {
       const { data } = await calendarApi.get("auth/renew");
       localStorage.setItem("token", data.token);
       localStorage.setItem("token-init-date", new Date().getTime()); // para renovar el token
+      localStorage.setItem("user", JSON.stringify(data.user));
       dispatch(onLogin({ user: data.user, id: data.token }));
     } catch (error) {
       localStorage.clear();

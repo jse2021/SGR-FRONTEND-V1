@@ -19,19 +19,28 @@ import {
 } from "../calendar";
 import { useAuthStore } from "../hooks";
 import "./AppRouter.css";
+import { useDispatch } from "react-redux";
+import { onLogin } from "../store";
 
 export const AppRouter = () => {
   const { status, checkAuthToken, user } = useAuthStore();
-  const usuario = user.tipo_usuario;
+  const dispatch = useDispatch();
+  // const usuario = user.tipo_usuario;
+  const usuario = user?.tipo_usuario || null;
+  console.log(usuario);
+
   useEffect(() => {
     checkAuthToken();
   }, []);
 
   if (status === "checking") {
     return (
-      <div className="d-flex justify-content-center">
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
+      >
         <div className="spinner-border" role="status">
-          <span className="visually-hidden"></span>
+          <span className="visually-hidden">Cargando...</span>
         </div>
       </div>
     );
