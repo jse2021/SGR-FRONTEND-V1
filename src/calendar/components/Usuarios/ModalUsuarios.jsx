@@ -78,11 +78,10 @@ export const ModalUsuarios = () => {
       Swal.fire("Actualizado", "Usuario actualizado con éxito", "success");
       closeModalUsuario(); // cerrar el modal si todo salió bien
     } catch (error) {
-      console.error("Error al actualizar usuario:", error);
       Swal.fire(
-        "Error",
+        "Atención",
         error.response?.data?.msg || "No se pudo actualizar el usuario",
-        "error"
+        "warning"
       );
     }
   };

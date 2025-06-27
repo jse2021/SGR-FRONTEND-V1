@@ -25,9 +25,7 @@ import { onLogin } from "../store";
 export const AppRouter = () => {
   const { status, checkAuthToken, user } = useAuthStore();
   const dispatch = useDispatch();
-  // const usuario = user.tipo_usuario;
   const usuario = user?.tipo_usuario || null;
-  console.log(usuario);
 
   useEffect(() => {
     checkAuthToken();
