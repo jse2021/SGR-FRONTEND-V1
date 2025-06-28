@@ -3,6 +3,7 @@ import { Navbar } from "../Navbar";
 import Swal from "sweetalert2";
 import { useAuthStore, useForm } from "../../../hooks";
 import "./usuarios.css";
+import { logFrontendError } from "../../../utils/logError";
 
 const registrarUsuario = {
   registerNombre: "",
