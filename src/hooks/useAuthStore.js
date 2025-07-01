@@ -27,6 +27,7 @@ export const useAuthStore = () => {
       dispatch(onLogin({ user: data.user, id: data.token }));
       return { ok: true };
     } catch (error) {
+      console.error("❌ Error login", error); // ⬅️ importante
       const msg = error.response.data?.msg;
       dispatch(onLogout());
       return { ok: false, msg };
