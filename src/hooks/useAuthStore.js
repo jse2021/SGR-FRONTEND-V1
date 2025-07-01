@@ -91,6 +91,7 @@ export const useAuthStore = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       dispatch(onLogin({ user: data.user, id: data.token }));
     } catch (error) {
+      console.error("❌ Error en /auth/renew:", error.response?.data || error);
       localStorage.clear();
       dispatch(onLogout());
     }
