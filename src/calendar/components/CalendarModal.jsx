@@ -460,7 +460,7 @@ export const CalendarModal = ({ date, cliente }) => {
       <form className="container" onSubmit={onSubmit}>
         <div className="form-group mb-2">
           <h5 style={{ textAlign: "center" }}>
-            {<h3>{getFechaFormateada(formValues.fecha)}</h3>}
+            {/* {<h3>{getFechaFormateada(formValues.fecha)}</h3>} */}
           </h5>
         </div>
         <div className="form-group mb-2">
