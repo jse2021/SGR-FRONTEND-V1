@@ -545,7 +545,7 @@ export const CalendarModal = ({ date, cliente }) => {
             onChange={onInputChanged}
           >
             <option key="0" value="" disabled>
-              Seleccione estado de pago
+              {/* Seleccione estado de pago */}
             </option>
             <option value="TOTAL">TOTAL</option>
             <option value="SEÑA">SEÑA</option>
