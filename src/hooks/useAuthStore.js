@@ -18,8 +18,8 @@ export const useAuthStore = () => {
    */
   const startLogin = async ({ user, password }) => {
     dispatch(onChecking());
-    if (!response?.data) throw new Error("Sin datos en respuesta");
     try {
+      // if (!response?.data) throw new Error("Sin datos en respuesta");
       const { data } = await calendarApi.post("/auth", { user, password });
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user)); //----------------------------------
