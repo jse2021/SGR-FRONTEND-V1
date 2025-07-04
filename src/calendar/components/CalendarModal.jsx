@@ -410,24 +410,46 @@ export const CalendarModal = ({ date, cliente }) => {
    * EVITO QUE SE CARGUEN LOS DATOS ANTERIORES AL ABRIR NUEVAMENTE EL MODAL
    */
 
+  // useEffect(() => {
+  //   if (!isDateModalOpen) {
+  //     setFormValues({
+  //       title: "",
+  //       start: "",
+  //       end: "",
+  //       cancha: "",
+  //       fecha: date || "",
+  //       hora: "",
+  //       forma_pago: "",
+  //       estado_pago: "",
+  //       observacion: "",
+  //       cliente: "",
+  //       monto_cancha: "",
+  //       monto_sena: "",
+  //     });
+  //   }
+  // }, [isDateModalOpen]);
   useEffect(() => {
-    if (!isDateModalOpen) {
-      setFormValues({
-        title: "",
-        start: "",
-        end: "",
-        cancha: "",
-        fecha: date || "",
-        hora: "",
-        forma_pago: "",
-        estado_pago: "",
-        observacion: "",
-        cliente: "",
-        monto_cancha: "",
-        monto_sena: "",
-      });
+    if (isDateModalOpen) {
+      if (activeEvent) {
+        setFormValues({ ...activeEvent }); // Editar una reserva existente
+      } else {
+        setFormValues({
+          title: "",
+          start: "",
+          end: "",
+          cancha: "",
+          fecha: date || "",
+          hora: "",
+          forma_pago: "",
+          estado_pago: "",
+          observacion: "",
+          cliente: "",
+          monto_cancha: "",
+          monto_sena: "",
+        }); // Crear nueva reserva
+      }
     }
-  }, [isDateModalOpen]);
+  }, [isDateModalOpen, activeEvent]);
 
   //---------------------------------------------------------------------------------------
   /**
