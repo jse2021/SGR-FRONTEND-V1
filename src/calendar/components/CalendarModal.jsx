@@ -359,6 +359,7 @@ export const CalendarModal = ({ date, cliente }) => {
    */
   const onCloseModal = () => {
     closeDateModal();
+    setActiveEvent(null); //  limpiamos el evento activo
   };
   //---------------------------------------------------------------------------------------
   /**
@@ -409,6 +410,56 @@ export const CalendarModal = ({ date, cliente }) => {
   /**
    * EVITO QUE SE CARGUEN LOS DATOS ANTERIORES AL ABRIR NUEVAMENTE EL MODAL
    */
+  useEffect(() => {
+    if (!isDateModalOpen) {
+      // Cuando se cierra, limpiamos
+      setFormValues({
+        title: "",
+        start: "",
+        end: "",
+        cancha: "",
+        fecha: date || "",
+        hora: "",
+        forma_pago: "",
+        estado_pago: "",
+        observacion: "",
+        cliente: "",
+        monto_cancha: "",
+        monto_sena: "",
+      });
+      return;
+    }
+
+    // Cuando se abre: si hay evento activo, es edición
+    if (isDateModalOpen && activeEvent) {
+      const fechaParsed = new Date(activeEvent.start);
+      const clienteValue = {
+        value: activeEvent.id,
+        label: `${activeEvent.cliente}-${activeEvent.apellidoCliente} ${activeEvent.nombreCliente}`,
+      };
+
+      let monto = 0;
+      switch (activeEvent.estado_pago) {
+        case "TOTAL":
+          monto = activeEvent.monto_cancha || 0;
+          break;
+        case "SEÑA":
+          monto = activeEvent.monto_sena || 0;
+          break;
+        default:
+          monto = 0;
+      }
+
+      setFormValues({
+        ...activeEvent,
+        fecha: isNaN(fechaParsed.getTime()) ? new Date() : fechaParsed,
+        cliente: clienteValue,
+        hora: activeEvent.hora || "",
+        monto,
+      });
+      setDni(activeEvent.cliente); // para el envío correcto
+    }
+  }, [isDateModalOpen, activeEvent]);
 
   // useEffect(() => {
   //   if (!isDateModalOpen) {
@@ -428,28 +479,28 @@ export const CalendarModal = ({ date, cliente }) => {
   //     });
   //   }
   // }, [isDateModalOpen]);
-  useEffect(() => {
-    if (isDateModalOpen) {
-      if (activeEvent) {
-        setFormValues({ ...activeEvent }); // Editar una reserva existente
-      } else {
-        setFormValues({
-          title: "",
-          start: "",
-          end: "",
-          cancha: "",
-          fecha: date || "",
-          hora: "",
-          forma_pago: "",
-          estado_pago: "",
-          observacion: "",
-          cliente: "",
-          monto_cancha: "",
-          monto_sena: "",
-        }); // Crear nueva reserva
-      }
-    }
-  }, [isDateModalOpen, activeEvent]);
+  // useEffect(() => {
+  //   if (isDateModalOpen) {
+  //     if (activeEvent) {
+  //       setFormValues({ ...activeEvent }); // Editar una reserva existente
+  //     } else {
+  //       setFormValues({
+  //         title: "",
+  //         start: "",
+  //         end: "",
+  //         cancha: "",
+  //         fecha: date || "",
+  //         hora: "",
+  //         forma_pago: "",
+  //         estado_pago: "",
+  //         observacion: "",
+  //         cliente: "",
+  //         monto_cancha: "",
+  //         monto_sena: "",
+  //       }); // Crear nueva reserva
+  //     }
+  //   }
+  // }, [isDateModalOpen, activeEvent]);
 
   //---------------------------------------------------------------------------------------
   /**

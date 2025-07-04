@@ -12,7 +12,7 @@ export const CalendarPage = () => {
   const { openDateModal } = useUiStore();
   const { events, setActiveEvent, startLoadingEvents } = useCalendarStore();
   const { activeEvent } = useCalendarStore();
-
+  const { isDateModalOpen, closeDateModal } = useUiStore();
   // PARA ALMACENAR LA VISTA EN EL STORAGE
   const [lastView, setLastView] = useState(
     localStorage.getItem("lastView") || "month"
@@ -25,6 +25,12 @@ export const CalendarPage = () => {
       setCliente(event.detail);
     });
   }, []);
+
+  useEffect(() => {
+    if (!isDateModalOpen) {
+      setCliente(null); // ✅ Limpieza segura cuando se cierra modal
+    }
+  }, [isDateModalOpen]);
 
   /**
    * DISEÑO DE LOS EVENTOS, "BOTON" DEL CALENDARIO
