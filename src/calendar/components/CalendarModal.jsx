@@ -20,12 +20,22 @@ registerLocale("es", es);
 
 const customStyles = {
   content: {
-    top: "50%",
+    position: "absolute",
+    top: "5%",
     left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
+    transform: "translateX(-50%)",
+    width: "90%",
+    maxWidth: "500px",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    borderRadius: "12px",
+    padding: "20px",
+    border: "1px solid #ccc",
+    background: "#fff",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    zIndex: 1000,
   },
 };
 
