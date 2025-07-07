@@ -18,7 +18,7 @@ export const Navbar = () => {
       <div className="container-fluid">
         {/* Izquierda: usuario */}
         <span className="navbar-brand mb-0 h6 text-white">
-          Usuario: <strong>{user.nombre}</strong>
+          {/* Usuario: <strong>{user.nombre}</strong> */}
         </span>
 
         {/* Botón hamburguesa */}
