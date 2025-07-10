@@ -7,7 +7,9 @@ export const FormaPago = () => {
   return (
     <>
       <Navbar />
-      <h1 className="text-center my-4">Control Formas de Pago</h1>
+      <h1 className="text-center my-4">
+        Control Formas de Pago(en construccion)
+      </h1>
       <div className="col-md-8 login-form-3 mx-auto">
         <form>
           <div className="row align-items-end g-2">
