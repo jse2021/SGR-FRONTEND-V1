@@ -6,6 +6,8 @@ import AsyncSelect from "react-select/async";
 import { calendarApi } from "../../../api";
 import Select from "react-select";
 import Swal from "sweetalert2";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // ✅ Esta línea es clave
 
 export const FormaPago = () => {
   const [form, setForm] = useState({
@@ -19,6 +21,42 @@ export const FormaPago = () => {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const exportarPDF = () => {
+    if (resultados.length === 0) return;
+
+    const doc = new jsPDF();
+
+    doc.text("Reporte de Reservas", 14, 15);
+
+    autoTable(doc, {
+      startY: 20,
+      head: [
+        [
+          "Nombre",
+          "Apellido",
+          "Hora",
+          "Cancha",
+          "Forma Pago",
+          "Estado",
+          "Total",
+          "Seña",
+        ],
+      ],
+      body: resultados.map((reserva) => [
+        reserva.Nombre || "-",
+        reserva.Apellido || "-",
+        reserva.Hora,
+        reserva.Cancha,
+        reserva.Forma_Pago,
+        reserva.Estado_Pago,
+        `$${reserva.Monto || 0}`,
+        `$${reserva.Seña || 0}`,
+      ]),
+    });
+
+    doc.save("reservas.pdf");
+  };
 
   //**TRAIGO LAS CANCHAS QUE TIENEN PRECIOS */
   const loadCanchas = async () => {
@@ -245,6 +283,12 @@ export const FormaPago = () => {
                     )}
                   </div>
                 )}
+                <button
+                  className="btn btn-danger mb-3 ms-2"
+                  onClick={exportarPDF}
+                >
+                  Exportar a PDF
+                </button>
               </>
             ) : (
               <p className="mt-4 text-gray-600 text-center">
