@@ -78,12 +78,14 @@ export const FormaPago = () => {
     { label: "TRANSFERENCIA", value: "TRANSFERENCIA" },
     { label: "DÉBITO", value: "DÉBITO" },
     { label: "TARJETA", value: "TARJETA" },
+    { label: "SIN OPERACION", value: "SO" },
     { label: "TODAS", value: "TODAS" },
   ];
 
   const estadosPago = [
     { label: "TOTAL", value: "TOTAL" },
     { label: "SEÑA", value: "SEÑA" },
+    { label: "IMPAGO", value: "IMPAGO" },
     { label: "TODAS", value: "TODAS" },
   ];
 

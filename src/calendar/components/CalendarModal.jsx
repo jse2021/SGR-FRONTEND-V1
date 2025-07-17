@@ -661,7 +661,7 @@ export const CalendarModal = ({ date, cliente }) => {
             <option value="DEBITO">DEBITO</option>
             <option value="EFECTIVO">EFECTIVO</option>
             <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-            <option value="S/O">SIN OPERACION</option>
+            <option value="SO">SIN OPERACION</option>
           </select>
         </div>
 
