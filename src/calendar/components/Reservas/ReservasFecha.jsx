@@ -57,6 +57,7 @@ export const ReservasFecha = () => {
       );
 
       setResults(data.reservasFecha);
+      // console.log(data.reservasFecha);
       setTotalPages(data.totalPages);
       setPage(data.page);
       setBusquedaRealizada(true);
