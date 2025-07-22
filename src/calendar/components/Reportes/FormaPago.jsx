@@ -7,7 +7,7 @@ import { calendarApi } from "../../../api";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // ✅ Esta línea es clave
+import autoTable from "jspdf-autotable";
 
 export const FormaPago = () => {
   const [form, setForm] = useState({
