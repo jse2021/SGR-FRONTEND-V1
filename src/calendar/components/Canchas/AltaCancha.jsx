@@ -51,7 +51,7 @@ export const AltaCancha = () => {
   return (
     <>
       <Navbar />
-      <h1 className="text-center my-4">Alta Cancha</h1>
+      <h1 className="text-center my-4 mt-5">Alta Cancha</h1>
       {/* <div className="col-md-6 login-form-2"> */}
       <div className="col-md-8 login-form-3 mx-auto">
         <form onSubmit={registerSubmit} id="formAltaCancha">

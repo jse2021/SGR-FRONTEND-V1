@@ -125,7 +125,7 @@ export const ReservasFecha = () => {
   return (
     <>
       <Navbar />
-      <h1 className="text-center my-4">Reservas de la Fecha</h1>
+      <h1 className="text-center my-4 mt-5">Reservas de la Fecha</h1>
       <div className="col-md-8 login-form-3">
         <form onSubmit={handleBuscarReservas} className="form-fecha-container">
           {/* CONTENEDOR FLEX DE INPUTS */}

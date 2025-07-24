@@ -23,7 +23,8 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    // <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
       <div className="container-fluid">
         {/* Izquierda: usuario */}
         <span className="navbar-brand mb-0 h6 text-white">

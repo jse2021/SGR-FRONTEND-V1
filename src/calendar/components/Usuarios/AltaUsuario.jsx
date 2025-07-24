@@ -112,7 +112,7 @@ export const AltaUsuario = () => {
   return (
     <>
       <Navbar />
-      <h1 className="text-center my-4">Alta Usuario</h1>
+      <h1 className="text-center my-4 mt-5">Alta Usuario</h1>
       <div className="col-md-8 login-form-2 mx-auto">
         <form onSubmit={registerSubmit} id="formAltaCUsuario">
           <div className="form-group mb-2">

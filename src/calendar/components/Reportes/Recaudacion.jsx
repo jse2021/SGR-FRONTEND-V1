@@ -111,7 +111,7 @@ export const Recaudacion = () => {
     <>
       <Navbar />
       <div>
-        <h1 className="text-center my-4">Recaudación</h1>
+        <h1 className="text-center my-4 mt-5">Recaudación</h1>
         <div className="col-md-8 login-form-3 mx-auto">
           <form>
             <div className="row justify-content-center align-items-end g-2">

@@ -44,7 +44,7 @@ export const ConsultarCancha = () => {
   return (
     <>
       <Navbar />
-      <h1 className="text-center my-4">Consultar Cancha</h1>
+      <h1 className="text-center my-4 mt-5">Consultar Cancha</h1>
       {/* <div className="col-md-8 login-form-3"> */}
       <div className="col-md-8 login-form-3 mx-auto">
         <form>
