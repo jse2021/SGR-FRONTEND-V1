@@ -42,8 +42,8 @@ export const ConsultarUsuario = () => {
   return (
     <>
       <Navbar />
-      <h1 className="display-5">Consultar Usuarios</h1>
-      <div className="col-md-8 login-form-3">
+      <h1 className="text-center my-4">Consultar Usuarios</h1>
+      <div className="col-md-8 login-form-3 mx-auto">
         <form>
           <InputSearch
             // setResults={setResults}

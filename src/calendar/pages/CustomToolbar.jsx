@@ -1,8 +1,10 @@
 // src/calendar/components/CustomToolbar.jsx
 import React from "react";
 import "./CustomToolbar.css";
+import { getMessagesES } from "../../helpers/getMessages";
+const messages = getMessagesES();
 
-export const CustomToolbar = ({ label, onNavigate }) => {
+export const CustomToolbar = ({ label, onNavigate, onView, views }) => {
   return (
     <div className="custom-toolbar">
       <div className="toolbar-left">
@@ -19,6 +21,18 @@ export const CustomToolbar = ({ label, onNavigate }) => {
 
       <div className="toolbar-center">
         <span className="toolbar-label">{label.toUpperCase()}</span>
+      </div>
+
+      <div className="toolbar-right">
+        {views.map((view) => (
+          <button
+            key={view}
+            onClick={() => onView(view)}
+            className="toolbar-btn"
+          >
+            {messages[view] || view}
+          </button>
+        ))}
       </div>
     </div>
   );

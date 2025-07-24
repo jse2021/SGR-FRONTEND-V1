@@ -119,6 +119,7 @@ export const Recaudacion = () => {
               <div className="col-md-3">
                 <DatePicker
                   className="form-control"
+                  locale="es"
                   placeholderText="Fecha inicio"
                   dateFormat="dd/MM/yyyy"
                   selected={form.fechaInicio}
@@ -131,6 +132,7 @@ export const Recaudacion = () => {
               <div className="col-md-3">
                 <DatePicker
                   className="form-control"
+                  locale="es"
                   placeholderText="Fecha fin"
                   dateFormat="dd/MM/yyyy"
                   selected={form.fechaFin}

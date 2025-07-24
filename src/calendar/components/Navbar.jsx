@@ -9,9 +9,18 @@ import { MenuItemCliente } from "./MenuItemCliente";
 import { MenuItemCalendario } from "./MenuItemCalendario";
 import { MenuItemReserva } from "./MenuItemReserva";
 import "./styles.css";
+import { useEffect, useRef } from "react";
+import Collapse from "bootstrap/js/dist/collapse";
 
 export const Navbar = () => {
   const { startLogout, user } = useAuthStore();
+  const navbarCollapseRef = useRef(null);
+
+  useEffect(() => {
+    if (navbarCollapseRef.current) {
+      new Collapse(navbarCollapseRef.current, { toggle: false });
+    }
+  }, []);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">

@@ -526,6 +526,11 @@ export const CalendarModal = ({ date, cliente }) => {
       day: "numeric",
     });
   };
+  useEffect(() => {
+    if (isDateModalOpen) {
+      setIsSubmitting(false); // Reinicia botón al abrir modal
+    }
+  }, [isDateModalOpen]);
 
   return (
     <Modal

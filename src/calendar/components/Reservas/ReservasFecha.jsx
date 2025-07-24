@@ -73,31 +73,6 @@ export const ReservasFecha = () => {
     fetchReservas(1); // siempre comenzamos desde la página 1
   };
 
-  // const handleBuscarReservas = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!fechaIni || !cancha) {
-  //     // alert("Debe seleccionar cliente y rango de fechas");
-  //     Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
-  //     return;
-  //   }
-  //   const desdeStr = fechaIni.toISOString().split("T")[0]; // YYYY-MM-DD
-  //   console.log(desdeStr);
-  //   try {
-  //     const { data } = await calendarApi.get(
-  //       `/reserva/${desdeStr}/${canchaSeleccionada}`
-  //     );
-
-  //     console.log("Reservas encontradas:", data.reservasFecha);
-  //     setResults(data.reservasFecha);
-  //     setResults(data.reservasFecha);
-  //     setBusquedaRealizada(true);
-  //   } catch (error) {
-  //     console.error("Error al buscar reservas:", error);
-  //     setResults([]);
-  //     setBusquedaRealizada(true);
-  //   }
-  // };
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
@@ -150,7 +125,7 @@ export const ReservasFecha = () => {
   return (
     <>
       <Navbar />
-      <h1 className="display-5">Consultar reserva de la fecha</h1>
+      <h1 className="text-center my-4">Reservas de la Fecha</h1>
       <div className="col-md-8 login-form-3">
         <form onSubmit={handleBuscarReservas} className="form-fecha-container">
           {/* CONTENEDOR FLEX DE INPUTS */}

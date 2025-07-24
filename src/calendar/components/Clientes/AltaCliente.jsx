@@ -92,8 +92,9 @@ export const AltaCliente = () => {
   return (
     <>
       <Navbar />
-      <h1 className="display-5">Gestión Clientes</h1>
-      <div className="col-md-6 login-form-2">
+      <h1 className="text-center my-4">Alta Cliente</h1>
+      {/* <div className="col-md-6 login-form-2"> */}
+      <div className="col-md-8 login-form-3 mx-auto">
         <form onSubmit={registerSubmit} id="formAltaCliente">
           <div className="form-group mb-2">
             <input

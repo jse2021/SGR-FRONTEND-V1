@@ -36,8 +36,11 @@ export const CalendarPage = () => {
    * DISEÑO DE LOS EVENTOS, "BOTON" DEL CALENDARIO
    */
   const eventStyleGetter = (event, start, end, isSelected) => {
+    let backgroundColor = "#dd1212ff"; // default: impago
+    if (event.estado_pago === "TOTAL") backgroundColor = "#28a745"; // verde
+    else if (event.estado_pago === "SEÑA") backgroundColor = "#ffc107"; // amarillo
     const style = {
-      backgroundColor: "#000000",
+      backgroundColor,
       borderRadius: "8px",
       opacity: 0.9,
       color: "white",
@@ -52,7 +55,19 @@ export const CalendarPage = () => {
    * DIA SELECCIONADO
    */
   const handleSelectSlot = (event) => {
-    setDate(event.start);
+    // setDate(event.start);
+    // openDateModal();
+
+    const selectedDate = new Date(event.start);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalizamos a solo fecha
+
+    // No permitir fechas pasadas
+    if (selectedDate < today) {
+      return; // Simplemente no hace nada si es fecha anterior
+    }
+
+    setDate(selectedDate);
     openDateModal();
   };
 
@@ -84,7 +99,6 @@ export const CalendarPage = () => {
   useEffect(() => {
     startLoadingEvents();
   }, [startLoadingEvents()]);
-
   return (
     <>
       <Navbar />
@@ -98,11 +112,15 @@ export const CalendarPage = () => {
         endAccessor="end"
         style={{ height: "calc( 100vh - 80px )" }}
         messages={getMessagesES()}
-        popup={true} //Esto activa el Ver más
+        popup={true}
         eventPropGetter={eventStyleGetter}
         components={{
           event: CalendarEvent,
           toolbar: CustomToolbar,
+          agenda: {
+            // event: AgendaCustomEvent,
+            time: () => null, // 💥 Oculta la columna "Hora"
+          },
         }}
         views={["month", "agenda"]}
         onDoubleClickEvent={onDoubleClick}

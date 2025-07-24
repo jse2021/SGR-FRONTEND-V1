@@ -45,3 +45,13 @@
   cursor: pointer;
   padding: 4px;
 }
+.toolbar-right {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-left: auto;
+}
+.rbc-agenda-view table th:nth-child(2),
+.rbc-agenda-view table td:nth-child(2) {
+  display: none;
+}

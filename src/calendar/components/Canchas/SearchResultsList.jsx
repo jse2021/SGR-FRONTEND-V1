@@ -16,7 +16,7 @@ export const SearchResultsList = ({
             <thead className="table-dark text-uppercase">
               <tr>
                 <th>Nombre</th>
-                <th>Medidas</th>
+                <th>Caracteristicas</th>
                 <th></th>
                 <th></th>
               </tr>
