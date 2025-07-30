@@ -6,6 +6,7 @@ import CalendarEvent from "../components/CalendarEvent";
 import { localizer, getMessagesES } from "../../helpers";
 import { useUiStore, useCalendarStore, useAuthStore } from "../../hooks";
 import CustomToolbar from "./CustomToolbar";
+import "./CalendarPage.css";
 
 export const CalendarPage = () => {
   const { user } = useAuthStore();
@@ -102,33 +103,34 @@ export const CalendarPage = () => {
   return (
     <>
       <Navbar />
-
-      <Calendar
-        culture="es"
-        defaultView={lastView}
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: "calc( 100vh - 80px )" }}
-        messages={getMessagesES()}
-        popup={true}
-        eventPropGetter={eventStyleGetter}
-        components={{
-          event: CalendarEvent,
-          toolbar: CustomToolbar,
-          agenda: {
-            // event: AgendaCustomEvent,
-            time: () => null, // 💥 Oculta la columna "Hora"
-          },
-        }}
-        views={["month", "agenda"]}
-        onDoubleClickEvent={onDoubleClick}
-        onSelectEvent={onSelect}
-        onView={onViewChanged}
-        onSelectSlot={handleSelectSlot}
-        selectable
-      />
+      <div className="calendar-wrapper">
+        <Calendar
+          culture="es"
+          defaultView={lastView}
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: "calc( 100vh - 80px )" }}
+          messages={getMessagesES()}
+          popup={true}
+          eventPropGetter={eventStyleGetter}
+          components={{
+            event: CalendarEvent,
+            toolbar: CustomToolbar,
+            agenda: {
+              // event: AgendaCustomEvent,
+              time: () => null, // 💥 Oculta la columna "Hora"
+            },
+          }}
+          views={["month", "agenda"]}
+          onDoubleClickEvent={onDoubleClick}
+          onSelectEvent={onSelect}
+          onView={onViewChanged}
+          onSelectSlot={handleSelectSlot}
+          selectable
+        />
+      </div>
       <CalendarModal date={date} cliente={cliente} />
       <FabDelete />
     </>
