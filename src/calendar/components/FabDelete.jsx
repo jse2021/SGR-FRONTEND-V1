@@ -4,7 +4,6 @@ export const FabDelete = () => {
   const { startDeletingEvent, hasEventSelected } = useCalendarStore();
 
   const handleDelete = () => {
-    console.log("Debug eliminar: Estoy en boton");
     startDeletingEvent();
   };
 

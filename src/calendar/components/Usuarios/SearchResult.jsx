@@ -8,7 +8,6 @@ import { useUiStore } from "../../../hooks";
 
 export const SearchResult = ({ result, onDeleteUsuario }) => {
   const { setActiveUsuario, openModalUsuario } = useUiStore();
-  console.log("Usuario a editar:", result);
   /**
    * MANEJO EL CONTROL PARA ELMINAR
    */

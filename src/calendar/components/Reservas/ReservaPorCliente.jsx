@@ -23,10 +23,10 @@ export const ReservaPorCliente = () => {
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
   const { events, activeEvent } = useSelector((state) => state.calendar);
 
-  // const [activeEvent, setActiveEvent] = useState(null);
   const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
   const { openDateModal } = useUiStore();
-  const { setActiveEvent, startDeletingEvent } = useCalendarStore();
+  const { setActiveEvent, startDeletingEvent, startLoadingEvents } =
+    useCalendarStore();
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,7 +40,6 @@ export const ReservaPorCliente = () => {
     const buscarCliente = async () => {
       const { data } = await calendarApi.get("/cliente");
       const cliente = Array.from(data.clientes);
-      console.log(cliente);
       const opciones = cliente.map((clientes) => ({
         value: clientes.dni,
         label: `${clientes.dni} - ${clientes.apellido} ${clientes.nombre}`,
@@ -66,10 +65,8 @@ export const ReservaPorCliente = () => {
     if (value && value.value) {
       setDni(value.value);
     }
-    const apellido = value.label.split(" ")[2]; // Asegúrate de que esto coincida con el formato del label
-    setApellidoCliente(apellido.toUpperCase()); // Postman usa mayúsculas
-    console.log(apellido);
-
+    const apellido = value.label.split(" ")[2];
+    setApellidoCliente(apellido.toUpperCase());
     setFormValues({
       ...formValues,
       [target.name]: target.value,
@@ -104,6 +101,7 @@ export const ReservaPorCliente = () => {
       );
 
       setResults(data.reservasCliente);
+      console.log(data.reservasCliente);
       setTotalPages(data.totalPages);
       setCurrentPage(pageToFetch); // actualizar después del fetch
     } catch (error) {
@@ -128,9 +126,8 @@ export const ReservaPorCliente = () => {
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
    */
   const handleEditarReserva = (reserva) => {
-    setActiveEvent(reserva); // importante: setear en el store qué reserva se va a editar
+    setActiveEvent(reserva); // setear en el store qué reserva se va a editar
     openDateModal(); // sin argumento
-    console.log(reserva);
   };
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
@@ -150,12 +147,15 @@ export const ReservaPorCliente = () => {
     if (confirmacion.isConfirmed) {
       try {
         // Eliminar en backend
-        await calendarApi.delete(`/reserva/${reserva.id}`);
+        // await calendarApi.delete(`/reserva/${reserva.id}`); ANULO , POR PUT
+        await calendarApi.put(`/reserva/eliminar/${reserva.id}`);
 
         // Eliminar en la tabla local sin recargar
         setResults((prevResults) =>
           prevResults.filter((r) => r._id !== reserva._id)
         );
+        //Forzamos recarga del calendario
+        await startLoadingEvents();
 
         Swal.fire(
           "Eliminado",

@@ -35,9 +35,7 @@ export const PrecioCancha = () => {
         if (Array.isArray(data.canchas)) {
           setCanchas(data.canchas); // guardamos todas las canchas
         }
-      } catch (error) {
-        console.error("Error al traer canchas", error);
-      }
+      } catch (error) {}
     }
 
     fetchCanchas();
@@ -54,9 +52,7 @@ export const PrecioCancha = () => {
         } else {
           console.warn("No se encontraron configuraciones de precios");
         }
-      } catch (error) {
-        console.error("Error al cargar precios de canchas:", error);
-      }
+      } catch (error) {}
     };
 
     cargarCanchasConPrecios();

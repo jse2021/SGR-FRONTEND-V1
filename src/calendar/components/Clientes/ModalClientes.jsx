@@ -61,15 +61,13 @@ export const ModalClientes = () => {
 
     try {
       const { data } = await calendarApi.put(
-        `/cliente/actualizar/${formValues.id}`, // usamos el ID correctamente
-        // formValues,
+        `/cliente/actualizar/${formValues.id}`,
         datosEnviar
       );
 
       Swal.fire("Actualizado", "Cliente actualizado con éxito", "success");
       closeModalCliente();
     } catch (error) {
-      console.error("Error al actualizar cliente:", error);
       Swal.fire(
         "Error",
         error.response?.data?.msg || "No se pudo actualizar el cliente",

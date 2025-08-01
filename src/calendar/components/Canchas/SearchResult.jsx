@@ -30,7 +30,6 @@ export const SearchResult = ({ result, onDeleteCancha }) => {
           "success"
         );
       } catch (error) {
-        console.error("Error al eliminar cancha:", error);
         Swal.fire(
           "Error",
           error.response?.data?.msg || "No se pudo eliminar la cancha",

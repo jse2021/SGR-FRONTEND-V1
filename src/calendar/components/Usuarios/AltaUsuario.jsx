@@ -73,7 +73,7 @@ export const AltaUsuario = () => {
     event.preventDefault();
     setFormSubmitted(true);
 
-    // Validación básica
+    // Validación
     if (
       registerNombre.trim() === "" ||
       registerApellido.trim() === "" ||

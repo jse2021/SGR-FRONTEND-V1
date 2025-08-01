@@ -25,10 +25,9 @@ export const ConsultarUsuario = () => {
       if (searchTerm.trim() == "") return;
       try {
         const { data } = await calendarApi.get(
-          `/auth/buscar/${searchTerm}?page=${currentPage}&limit=1`
+          `/auth/buscar/${searchTerm}?page=${currentPage}&limit=5`
         );
 
-        console.log(data);
         setResults(data.usuarios);
         setTotalPages(data.totalPages);
       } catch (error) {
@@ -46,7 +45,6 @@ export const ConsultarUsuario = () => {
       <div className="col-md-8 login-form-3 mx-auto">
         <form>
           <InputSearch
-            // setResults={setResults}
             setSearchTerm={setSearchTerm}
             setCurrentPage={setCurrentPage}
           />

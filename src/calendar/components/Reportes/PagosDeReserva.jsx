@@ -72,10 +72,8 @@ export const PagosDeReserva = () => {
       );
 
       setResultados(data.reservasFormateadas || []);
-      console.log(data.reservasFormateadas);
       setTotalPaginas(data.totalPages || 1);
       setPaginaActual(pagina);
-      console.log(data.totalPages);
       setBusquedaRealizada(true);
     } catch (error) {
       console.error("Error al obtener recaudación", error);
@@ -182,7 +180,7 @@ export const PagosDeReserva = () => {
                             )}
                           </td>
                           <td className="border px-2 py-1">
-                            {(reserva.nombre, reserva.apellido)}
+                            {reserva.nombre + ` ` + reserva.apellido}
                           </td>
                           <td className="border px-2 py-1">{reserva.cancha}</td>
                           <td className="border px-2 py-1">{reserva.estado}</td>

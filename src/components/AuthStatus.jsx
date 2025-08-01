@@ -15,12 +15,18 @@ export const AuthStatus = () => {
   };
 
   return (
-    <div style={{ border: "1px solid #ddd", padding: "1rem", marginTop: "1rem" }}>
+    <div
+      style={{ border: "1px solid #ddd", padding: "1rem", marginTop: "1rem" }}
+    >
       <h3>Estado de Autenticación</h3>
-      <p><strong>Status:</strong> {status}</p>
+      <p>
+        <strong>Status:</strong> {status}
+      </p>
 
       {user ? (
-        <p><strong>Usuario:</strong> {user.name} ({user.email})</p>
+        <p>
+          <strong>Usuario:</strong> {user.name} ({user.email})
+        </p>
       ) : (
         <p>No hay usuario logueado</p>
       )}

@@ -10,7 +10,6 @@ export const useClienteStore = () => {
    */
   const startRegister = async ({ dni, nombre, apellido, email, celular }) => {
     try {
-      //   dispatch(onCheckingCliente());
       const { data } = await calendarApi.post("cliente/crearCliente", {
         dni,
         nombre,
@@ -20,7 +19,7 @@ export const useClienteStore = () => {
       });
       return { ok: true };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       const msg = error.response?.data?.msg;
       return { ok: false, msg };
     }

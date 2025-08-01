@@ -83,7 +83,6 @@ export const Recaudacion = () => {
       );
 
       setResultados(data.resultados || []);
-      console.log(data.resultados);
       setTotalPaginas(data.totalPaginas || 1);
       setPaginaActual(pagina);
       setBusquedaRealizada(true);

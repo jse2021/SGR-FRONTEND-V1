@@ -10,7 +10,7 @@ const calendarApi = axios.create({
   baseURL: VITE_API_URL, // Base URL dinámica
 });
 
-//configurara receptores: nos va apermitir interceptar peticiones que van o regresan del backend - necesario para mantener la autenticacion
+//configurar receptores: nos va a permitir interceptar peticiones que van o regresan del backend - necesario para mantener la autenticacion
 calendarApi.interceptors.request.use((config) => {
   config.headers = {
     ...config.headers, //esparce todos los headers que vienen en config

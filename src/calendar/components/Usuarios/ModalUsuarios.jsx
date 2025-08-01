@@ -37,7 +37,6 @@ export const ModalUsuarios = () => {
   useEffect(() => {
     if (activeUsuario) {
       setFormValues({ ...activeUsuario, password: "" }); // reseteamos password
-      console.log(activeUsuario.id);
     }
   }, [activeUsuario]);
   /**
@@ -70,13 +69,12 @@ export const ModalUsuarios = () => {
 
     try {
       const { data } = await calendarApi.put(
-        `/auth/actualizar/${formValues.id}`, // usamos el ID correctamente
-        // formValues,
+        `/auth/actualizar/${formValues.id}`,
         datosEnviar
       );
 
       Swal.fire("Actualizado", "Usuario actualizado con éxito", "success");
-      closeModalUsuario(); // cerrar el modal si todo salió bien
+      closeModalUsuario();
     } catch (error) {
       Swal.fire(
         "Atención",

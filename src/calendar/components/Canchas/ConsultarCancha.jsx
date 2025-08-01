@@ -32,9 +32,7 @@ export const ConsultarCancha = () => {
 
         setResults(data.canchas);
         setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Error al buscar canchas:", error);
-      }
+      } catch (error) {}
     };
 
     fetchCanchas();
@@ -45,7 +43,6 @@ export const ConsultarCancha = () => {
     <>
       <Navbar />
       <h1 className="text-center my-4 mt-5">Consultar Cancha</h1>
-      {/* <div className="col-md-8 login-form-3"> */}
       <div className="col-md-8 login-form-3 mx-auto">
         <form>
           <InputSearch

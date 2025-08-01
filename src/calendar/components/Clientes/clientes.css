@@ -1,48 +1,47 @@
-
 /* ALTA DE CLIENTE */
-.login-form-2{
-    border-radius: 15px;
-    box-shadow: 0px 0px 40px #848484;
-    padding: 3%;
-    background:#ffffff;
-    margin-top: 2%;
-    margin-left: 20%;
+.login-form-2 {
+  border-radius: 15px;
+  box-shadow: 0px 0px 40px #848484;
+  padding: 3%;
+  background: #ffffff;
+  margin-top: 2%;
+  margin-left: 20%;
 }
-.display-5{
-    margin-left: 35%;
+.display-5 {
+  margin-left: 35%;
 }
-.login-form-2 h3{
-    text-align: center;
-    color: #8d8b8b;
+.login-form-2 h3 {
+  text-align: center;
+  color: #8d8b8b;
 }
 
 .btnSubmit {
-    border-radius: 1rem;
-    padding: 1.5%;
-    border: none;
-    cursor: pointer;
-    width: 75%;
-    margin: 0 auto;
-  }
-
-.login-form-2 .btnSubmit{
-    background-color: #333;
-    color: #fcf9f9;
+  border-radius: 1rem;
+  padding: 1.5%;
+  border: none;
+  cursor: pointer;
+  width: 75%;
+  margin: 0 auto;
 }
-input{
-    margin-top: 2%;
+
+.login-form-2 .btnSubmit {
+  background-color: #333;
+  color: #fcf9f9;
+}
+input {
+  margin-top: 2%;
 }
 
 /* CONSULTAR CLIENTE */
-.login-form-3{
-    border-radius: 15px;
-    box-shadow: 0px 0px 40px #848484;
-    padding: 5%;
-    background:#ffffff;
-    margin-top: 3%;
-    margin-left: 15%;
+.login-form-3 {
+  border-radius: 15px;
+  box-shadow: 0px 0px 40px #848484;
+  padding: 5%;
+  background: #ffffff;
+  margin-top: 3%;
+  margin-left: 15%;
 }
-#btn-consultar{
-    width: 50%;
-    margin-left: 25%;
+#btn-consultar {
+  width: 50%;
+  margin-left: 25%;
 }

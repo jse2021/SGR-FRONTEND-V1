@@ -30,7 +30,6 @@ export const SearchResult = ({ result, onDeleteCliente }) => {
           "success"
         );
       } catch (error) {
-        console.error("Error al eliminar cliente:", error);
         Swal.fire(
           "Error",
           error.response?.data?.msg || "No se pudo eliminar el cliente",

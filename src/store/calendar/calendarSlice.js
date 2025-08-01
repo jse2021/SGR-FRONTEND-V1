@@ -29,7 +29,6 @@ export const calendarSlice = createSlice({
     },
 
     onDeleteEvent: (state) => {
-      console.log("Debug eliminar: Estoy en slice: ", state.activeEvent);
       if (state.activeEvent) {
         state.events = state.events.filter(
           (event) => event.id !== state.activeEvent.id

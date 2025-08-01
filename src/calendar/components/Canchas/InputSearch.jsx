@@ -5,7 +5,6 @@ import "./canchas.css";
 export const InputSearch = ({ setSearchTerm, setCurrentPage }) => {
   const handleChange = (e) => {
     const value = e.target.value;
-    console.log(value);
     setSearchTerm(value);
     setCurrentPage(1); // Reinicio paginación
   };

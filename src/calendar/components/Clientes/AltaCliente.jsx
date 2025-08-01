@@ -93,7 +93,6 @@ export const AltaCliente = () => {
     <>
       <Navbar />
       <h1 className="text-center my-4 mt-5">Alta Cliente</h1>
-      {/* <div className="col-md-6 login-form-2"> */}
       <div className="col-md-8 login-form-3 mx-auto">
         <form onSubmit={registerSubmit} id="formAltaCliente">
           <div className="form-group mb-2">

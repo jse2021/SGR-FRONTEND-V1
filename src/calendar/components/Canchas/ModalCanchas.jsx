@@ -26,7 +26,6 @@ export const ModalCanchas = () => {
   useEffect(() => {
     if (activeCancha) {
       setFormValues({ ...activeCancha });
-      console.log(activeCancha.id);
     }
   }, [activeCancha]);
   /**
@@ -54,15 +53,13 @@ export const ModalCanchas = () => {
 
     try {
       const { data } = await calendarApi.put(
-        `/cancha/actualizar/${formValues.id}`, // usamos el ID correctamente
-        // formValues,
+        `/cancha/actualizar/${formValues.id}`,
         datosEnviar
       );
 
       Swal.fire("Actualizado", "Cancha actualizada con éxito", "success");
-      closeModalCancha(); // cerrar el modal si todo salió bien
+      closeModalCancha();
     } catch (error) {
-      console.error("Error al actualizar cancha:", error);
       Swal.fire(
         "Error",
         error.response?.data?.msg || "No se pudo actualizar la cancha",

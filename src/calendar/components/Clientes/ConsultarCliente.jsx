@@ -31,9 +31,7 @@ export const ConsultarCliente = () => {
 
         setResults(data.clientes);
         setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Error al buscar clientes:", error);
-      }
+      } catch (error) {}
     };
 
     fetchClientes();

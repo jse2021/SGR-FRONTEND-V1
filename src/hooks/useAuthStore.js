@@ -19,10 +19,9 @@ export const useAuthStore = () => {
   const startLogin = async ({ user, password }) => {
     dispatch(onChecking());
     try {
-      // if (!response?.data) throw new Error("Sin datos en respuesta");
       const { data } = await calendarApi.post("/auth", { user, password });
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user)); //----------------------------------
+      localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token-init-date", new Date().getTime());
       dispatch(onLogin({ user: data.user, id: data.token }));
       return { ok: true };
@@ -33,7 +32,7 @@ export const useAuthStore = () => {
       return { ok: false, msg };
     }
   };
-
+  //_----------------------------------------------------------------------------------------------
   /**
    * REGISTRAR USUARIOS
    */
@@ -58,12 +57,8 @@ export const useAuthStore = () => {
         password,
       });
 
-      /**
-       * Lo comento porque cuando registraba, intentaba loguear al usuario, pero no quiero eso
-       */
-
       localStorage.setItem("token", data.token); //guardo toqken para que el usuario quede logueado
-      localStorage.setItem("user", JSON.stringify(data.user)); //----------------------------------
+      localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token-init-date", new Date().getTime());
       //Esto actualiza el estado global para reflejar que el usuario ya está registrado y logueado.
       dispatch(onLogin({ user: data.user, id: data.token }));
@@ -73,7 +68,7 @@ export const useAuthStore = () => {
       return { ok: false, msg };
     }
   };
-
+  //_----------------------------------------------------------------------------------------------
   /**
    * CHEQUEAR TOKEN
    */
@@ -92,11 +87,15 @@ export const useAuthStore = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       dispatch(onLogin({ user: data.user, id: data.token }));
     } catch (error) {
-      console.error("❌ Error en /auth/renew:", error.response?.data || error);
+      console.error("Error en /auth/renew:", error.response?.data || error);
       localStorage.clear();
       dispatch(onLogout());
     }
   };
+  //_----------------------------------------------------------------------------------------------
+  /**
+   * LIMPIAR SESION AL SALIR
+   */
 
   const startLogout = () => {
     localStorage.clear();

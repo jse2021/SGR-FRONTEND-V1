@@ -6,6 +6,7 @@ import CalendarEvent from "../components/CalendarEvent";
 import { localizer, getMessagesES } from "../../helpers";
 import { useUiStore, useCalendarStore, useAuthStore } from "../../hooks";
 import CustomToolbar from "./CustomToolbar";
+import AgendaCustomEvent from "./AgendaCustomEvent";
 import "./CalendarPage.css";
 
 export const CalendarPage = () => {
@@ -14,6 +15,7 @@ export const CalendarPage = () => {
   const { events, setActiveEvent, startLoadingEvents } = useCalendarStore();
   const { activeEvent } = useCalendarStore();
   const { isDateModalOpen, closeDateModal } = useUiStore();
+
   // PARA ALMACENAR LA VISTA EN EL STORAGE
   const [lastView, setLastView] = useState(
     localStorage.getItem("lastView") || "month"
@@ -29,7 +31,7 @@ export const CalendarPage = () => {
 
   useEffect(() => {
     if (!isDateModalOpen) {
-      setCliente(null); // ✅ Limpieza segura cuando se cierra modal
+      setCliente(null); //Limpieza segura cuando se cierra modal
     }
   }, [isDateModalOpen]);
 
@@ -37,9 +39,9 @@ export const CalendarPage = () => {
    * DISEÑO DE LOS EVENTOS, "BOTON" DEL CALENDARIO
    */
   const eventStyleGetter = (event, start, end, isSelected) => {
-    let backgroundColor = "#dd1212ff"; // default: impago
-    if (event.estado_pago === "TOTAL") backgroundColor = "#28a745"; // verde
-    else if (event.estado_pago === "SEÑA") backgroundColor = "#ffc107"; // amarillo
+    let backgroundColor = "#dd1212ff"; //
+    if (event.estado_pago === "TOTAL") backgroundColor = "#28a745";
+    else if (event.estado_pago === "SEÑA") backgroundColor = "#ffc107";
     const style = {
       backgroundColor,
       borderRadius: "8px",
@@ -63,7 +65,7 @@ export const CalendarPage = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalizamos a solo fecha
 
-    // No permitir fechas pasadas
+    // No permitir agregar reservas fechas pasadas
     if (selectedDate < today) {
       return; // Simplemente no hace nada si es fecha anterior
     }
@@ -100,6 +102,7 @@ export const CalendarPage = () => {
   useEffect(() => {
     startLoadingEvents();
   }, [startLoadingEvents()]);
+
   return (
     <>
       <Navbar />
@@ -119,8 +122,9 @@ export const CalendarPage = () => {
             event: CalendarEvent,
             toolbar: CustomToolbar,
             agenda: {
-              // event: AgendaCustomEvent,
-              time: () => null, // 💥 Oculta la columna "Hora"
+              event: AgendaCustomEvent,
+
+              // time: () => null,
             },
           }}
           views={["month", "agenda"]}
@@ -136,3 +140,5 @@ export const CalendarPage = () => {
     </>
   );
 };
+
+//

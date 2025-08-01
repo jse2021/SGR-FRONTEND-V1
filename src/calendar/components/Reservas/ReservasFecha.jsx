@@ -18,7 +18,8 @@ export const ReservasFecha = () => {
 
   const [results, setResults] = useState([]);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
-  const { setActiveEvent, startDeletingEvent } = useCalendarStore();
+  const { setActiveEvent, startDeletingEvent, startLoadingEvents } =
+    useCalendarStore();
   const { openDateModal } = useUiStore();
 
   const [page, setPage] = useState(1); // Página actual
@@ -50,14 +51,11 @@ export const ReservasFecha = () => {
     try {
       setIsLoading(true);
       const desdeStr = fechaDesde.toISOString().split("T")[0];
-      // const hastaStr = fechaHasta.toISOString().split("T")[0];
-
       const { data } = await calendarApi.get(
         `/reserva/${desdeStr}/${canchaSeleccionada}?page=${pageToFetch}&limit=5`
       );
 
       setResults(data.reservasFecha);
-      // console.log(data.reservasFecha);
       setTotalPages(data.totalPages);
       setPage(data.page);
       setBusquedaRealizada(true);
@@ -78,9 +76,8 @@ export const ReservasFecha = () => {
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
    */
   const handleEditarReserva = (reserva) => {
-    setActiveEvent(reserva); // importante: setear en el store qué reserva se va a editar
+    setActiveEvent(reserva); // setear en el store qué reserva se va a editar
     openDateModal(); // sin argumento
-    console.log(reserva);
   };
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
@@ -100,12 +97,15 @@ export const ReservasFecha = () => {
     if (confirmacion.isConfirmed) {
       try {
         // Eliminar en backend
-        await calendarApi.delete(`/reserva/${reserva.id}`);
+        // await calendarApi.delete(`/reserva/${reserva.id}`); ANULO, MODIFICO POR PUT
+        await calendarApi.put(`/reserva/eliminar/${reserva.id}`);
 
         // Eliminar en la tabla local sin recargar
         setResults((prevResults) =>
           prevResults.filter((r) => r._id !== reserva._id)
         );
+        // Forzamos recarga del calendario
+        await startLoadingEvents();
 
         Swal.fire(
           "Eliminado",

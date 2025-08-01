@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { onCheckingConfiguracion } from "../store";
 import { calendarApi } from "../api";
 
 export const useConfiguracionStore = () => {

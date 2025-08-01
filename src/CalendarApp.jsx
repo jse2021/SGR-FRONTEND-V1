@@ -3,8 +3,6 @@ import { AppRouter } from "./router/AppRouter";
 import { Provider } from "react-redux";
 import { store } from "./store";
 
-// import React, { useState} from 'react'
-
 export const CalendarApp = () => {
   return (
     /**

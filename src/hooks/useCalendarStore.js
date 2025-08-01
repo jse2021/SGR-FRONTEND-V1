@@ -19,7 +19,7 @@ export const useCalendarStore = () => {
   const { events, activeEvent } = useSelector((state) => state.calendar);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
+  //_----------------------------------------------------------------------------------------------
   /**
    * TOMO LA INFO DEL STORE, Y DISPARO PARA TOMAR DEL CALENDAR PAGE
    */
@@ -27,7 +27,7 @@ export const useCalendarStore = () => {
   const setActiveEvent = (calendarEvent) => {
     dispatch(onSetActiveEvent(calendarEvent));
   };
-
+  //_----------------------------------------------------------------------------------------------
   /**
    *  PROCESO DE GRABACION DEL EVENTO: PREFIERO HACER EL CALCULO DESDE FRONT, Y NO DE BACKEND
    */
@@ -45,9 +45,6 @@ export const useCalendarStore = () => {
         );
         //Convertir fechas recibidas del backend para evitar Invalid Date
         const [eventoActualizado] = convertEventsToDateEvents([data.reserva]);
-        console.log(">>> Antes del update:");
-        console.log("Evento: ", eventoActualizado);
-        console.log("req.body: ", calendarEvent);
         dispatch(onUpdateEvent({ ...calendarEvent, user }));
 
         Swal.fire({
@@ -85,7 +82,6 @@ export const useCalendarStore = () => {
           monto_cancha,
           monto_sena,
         };
-        console.log("store 2:", reservaConMontos);
 
         const { data } = await calendarApi.post("/reserva", reservaConMontos);
         // Convertimos el evento antes de guardar en store
@@ -100,20 +96,17 @@ export const useCalendarStore = () => {
         });
       }
     } catch (error) {
-      console.log({ error });
+      console.error(error);
     }
   };
-
+  //_----------------------------------------------------------------------------------------------
   /**
    * PROCESO DE ELIMINACION DE RESERVA
    */
   const startDeletingEvent = async () => {
     try {
-      console.log(
-        "Debug eliminar: Elimino reserva. CalendarStore: ",
-        activeEvent.id
-      );
-      await calendarApi.delete(`/reserva/${activeEvent.id}`);
+      // await calendarApi.delete(`/reserva/${activeEvent.id}`); ANULO, ACTUALIZO NO ELIMINO
+      await calendarApi.put(`/reserva/eliminar/${activeEvent.id}`);
       // Todo: Llegar al backend
       dispatch(onDeleteEvent());
       Swal.fire({
@@ -123,10 +116,10 @@ export const useCalendarStore = () => {
         timer: 1000,
       });
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
     }
   };
-
+  //_----------------------------------------------------------------------------------------------
   /**
    * TRAIGO LOS EVENTOS DEL BACKEND PARA MOSTRAR EN PANTALLA
    * tiene que ser llamado en calendarPage
@@ -134,11 +127,15 @@ export const useCalendarStore = () => {
   const startLoadingEvents = async () => {
     try {
       const { data } = await calendarApi.get("/reserva");
-      const events = convertEventsToDateEvents(data.reservas);
+      // const events = convertEventsToDateEvents(data.reservas);
+      const eventosActivos = data.reservas.filter(
+        (r) => r.estado === "activo" || !r.estado
+      );
+      const events = convertEventsToDateEvents(eventosActivos);
+
       dispatch(onLoadEvents(events));
     } catch (error) {
-      console.log("error cargando eventos");
-      console.log({ error });
+      console.error({ error });
     }
   };
 

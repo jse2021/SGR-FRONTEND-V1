@@ -8,8 +8,6 @@ export const ListaCliente = ({ results }) => {
     <>
       <div className="results-list">
         {results.map((result, id) => {
-          console.log(result);
-
           return <ResultadoPorCliente result={result} key={id} />;
         })}
       </div>

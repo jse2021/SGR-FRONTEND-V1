@@ -192,8 +192,6 @@ export const CalendarModal = ({ date, cliente }) => {
             fecha: formValues.fecha,
             estado_pago: formValues.estado_pago,
           });
-          console.log(formValues.fecha);
-          console.log("DATA RECIBIDA:", data);
 
           let monto_cancha = 0;
           let monto_sena = 0;
@@ -258,20 +256,17 @@ export const CalendarModal = ({ date, cliente }) => {
       switch (activeEvent.estado_pago) {
         case "TOTAL":
           monto = activeEvent.monto_cancha || 0;
-          // monto_sena = 0;
+
           break;
         case "SEÑA":
           monto = activeEvent.monto_sena || 0;
-          // monto_sena = activeEvent.monto_sena || 0;
+
           break;
         case "IMPAGO":
         default:
           monto = 0;
-        // monto_sena = 0;
       }
 
-      //Parte de la solucion de invalid date. hacer pruebas para que no rompa otro codigo.
-      // const fechaParsed = new Date(activeEvent.start);
       let fechaParsed = new Date(activeEvent.start);
       // Si la fecha no es válida, formateamos manualmente
       if (isNaN(fechaParsed.getTime())) {
@@ -288,7 +283,6 @@ export const CalendarModal = ({ date, cliente }) => {
       }
       setFormValues({
         ...activeEvent,
-        // fecha: isNaN(fechaParsed.getTime()) ? new Date() : fechaParsed,
         fecha: fechaParsed,
         cliente: {
           value: activeEvent.id,
@@ -301,8 +295,6 @@ export const CalendarModal = ({ date, cliente }) => {
         },
         hora: activeEvent.hora || "",
         monto,
-        // monto: monto_cancha,
-        // monto_sena,
       });
 
       setDni(activeEvent.cliente);
@@ -339,7 +331,6 @@ export const CalendarModal = ({ date, cliente }) => {
           ...prev,
           monto: data.monto,
         }));
-        console.log(data.monto);
       } catch (error) {
         console.error("Error al obtener monto:", error);
       }
@@ -461,52 +452,10 @@ export const CalendarModal = ({ date, cliente }) => {
     }
   }, [isDateModalOpen, activeEvent]);
 
-  // useEffect(() => {
-  //   if (!isDateModalOpen) {
-  //     setFormValues({
-  //       title: "",
-  //       start: "",
-  //       end: "",
-  //       cancha: "",
-  //       fecha: date || "",
-  //       hora: "",
-  //       forma_pago: "",
-  //       estado_pago: "",
-  //       observacion: "",
-  //       cliente: "",
-  //       monto_cancha: "",
-  //       monto_sena: "",
-  //     });
-  //   }
-  // }, [isDateModalOpen]);
-  // useEffect(() => {
-  //   if (isDateModalOpen) {
-  //     if (activeEvent) {
-  //       setFormValues({ ...activeEvent }); // Editar una reserva existente
-  //     } else {
-  //       setFormValues({
-  //         title: "",
-  //         start: "",
-  //         end: "",
-  //         cancha: "",
-  //         fecha: date || "",
-  //         hora: "",
-  //         forma_pago: "",
-  //         estado_pago: "",
-  //         observacion: "",
-  //         cliente: "",
-  //         monto_cancha: "",
-  //         monto_sena: "",
-  //       }); // Crear nueva reserva
-  //     }
-  //   }
-  // }, [isDateModalOpen, activeEvent]);
-
   //---------------------------------------------------------------------------------------
   /**
    * MANEJO LA FECHA DEL CALENDARIO PRINCIPAL
    */
-
   const fechaReserva = new Date(date).toLocaleDateString("es-AR", {
     day: "numeric",
     month: "long",
@@ -520,7 +469,6 @@ export const CalendarModal = ({ date, cliente }) => {
     if (!(fecha instanceof Date) || isNaN(fecha)) return "Fecha no válida";
 
     return fecha.toLocaleDateString("es-AR", {
-      // weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
