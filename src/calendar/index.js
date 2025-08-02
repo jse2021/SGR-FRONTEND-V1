@@ -48,6 +48,7 @@ export * from "./components/Configuracion/PrecioCancha";
 export * from "./components/Reportes/PagosDeReserva";
 export * from "./components/Reportes/Recaudacion";
 export * from "./components/Reportes/FormaPago";
+export * from "./components/Reportes/ReservasEliminadas";
 
 /**
  * Modulo Reservas

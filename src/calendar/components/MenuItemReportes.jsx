@@ -29,6 +29,11 @@ export const MenuItemReportes = () => {
               Recaudación
             </Link>
           </li>
+          <li>
+            <Link className="dropdown-item" to="/ReservasEliminadas">
+              Reservas Eliminadas
+            </Link>
+          </li>
         </ul>
       </li>
     </>

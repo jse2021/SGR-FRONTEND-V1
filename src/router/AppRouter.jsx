@@ -16,6 +16,7 @@ import {
   ConsultarCliente,
   ReservaPorCliente,
   ReservasFecha,
+  ReservasEliminadas,
 } from "../calendar";
 import { useAuthStore } from "../hooks";
 import "./AppRouter.css";
@@ -63,6 +64,10 @@ export const AppRouter = () => {
               <Route path="/ConsultarUsuario" element={<ConsultarUsuario />} />
               <Route path="/Recaudacion" element={<Recaudacion />} />
               <Route path="/FormasPago" element={<FormaPago />} />
+              <Route
+                path="/ReservasEliminadas"
+                element={<ReservasEliminadas />}
+              />
               <Route path="/AltaCliente" element={<AltaCliente />} />
               <Route path="/ConsultarCliente" element={<ConsultarCliente />} />
               <Route path="/ReservaDelaFecha" element={<ReservasFecha />} />
@@ -70,6 +75,7 @@ export const AppRouter = () => {
               <Route path="/AltaCancha" element={<AltaCancha />} />
               <Route path="/ConsultarCancha" element={<ConsultarCancha />} />
               <Route path="/PrecioCancha" element={<PrecioCancha />} />
+
               <Route
                 path="/ReservaPorCliente"
                 element={<ReservaPorCliente />}
