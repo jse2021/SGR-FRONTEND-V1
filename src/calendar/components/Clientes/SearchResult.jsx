@@ -30,11 +30,29 @@ export const SearchResult = ({ result, onDeleteCliente }) => {
           "success"
         );
       } catch (error) {
-        Swal.fire(
-          "Error",
-          error.response?.data?.msg || "No se pudo eliminar el cliente",
-          "error"
-        );
+        const errorMsg = error.response?.data?.msg;
+        if (errorMsg?.includes("reserva")) {
+          Swal.fire({
+            icon: "warning",
+            title: "No se puede eliminar",
+            html: `
+      <p>El cliente tiene reservas activas asociadas.</p>
+      <p>Primero debe eliminarlas.</p>
+    `,
+            confirmButtonText: "Ok",
+          });
+        } else {
+          Swal.fire(
+            "Error",
+            errorMsg || "No se pudo eliminar el cliente",
+            "error"
+          );
+        }
+        // Swal.fire(
+        //   "Error",
+        //   error.response?.data?.msg || "No se pudo eliminar el cliente",
+        //   "error"
+        // );
       }
     }
   };
