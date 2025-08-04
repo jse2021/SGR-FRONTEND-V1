@@ -123,7 +123,7 @@ export const CalendarModal = ({ date, cliente }) => {
 
   //---------------------------------------------------------------------------------------
   /**
-   * PASO PARAMETROS A LA FUNCION OBTENERHORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA,
+   * PASO PARAMETROS A LA FUNCION OBTENER_HORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA,
    * EL MODAL MUESTRE EL HORARIO EXACTO DE LA RESERVA
    */
   useEffect(() => {
@@ -131,7 +131,7 @@ export const CalendarModal = ({ date, cliente }) => {
       obtenerHorarios(activeEvent.cancha, activeEvent.hora);
     }
   }, [activeEvent]);
-
+  //_-------------------------------------------------------------------------------------
   /**
    * TRABAJO LOS HORARIOS:
    * PARA CREAR RESERVA: TRAIGO LOS HORARIOS DISPONIBLES
@@ -246,6 +246,7 @@ export const CalendarModal = ({ date, cliente }) => {
       [target.name]: target.value,
     });
   };
+  //_-------------------------------------------------------------------------------------
   /**
    * AL LEVANTAR NUEVAMENTE EL MODAL, TRAIGO EL CLIENTE COMO OBJETO (VALUE:LABEL)
    */
@@ -300,7 +301,7 @@ export const CalendarModal = ({ date, cliente }) => {
       setDni(activeEvent.cliente);
     }
   }, [activeEvent]);
-
+  //_-------------------------------------------------------------------------------------
   /*
    * MANEJO DEL CAMBIO DE ESTADO DE LOS COMPONENTES:TAMBIEN EL CAMBIO DE ESTADO DE ESTADO DE PAGO E INPUT MONTO
    */
@@ -338,7 +339,7 @@ export const CalendarModal = ({ date, cliente }) => {
   };
   //---------------------------------------------------------------------------------------
   /**
-   * MANEJOD EL BOTON GUARDAR: REINICIO BOTON GUARDAR
+   * MANEJO DEL BOTON GUARDAR: REINICIO BOTON GUARDAR
    */
   useEffect(() => {
     setIsSubmitting(false); // se reinicia cuando cambia la fecha
@@ -348,16 +349,15 @@ export const CalendarModal = ({ date, cliente }) => {
   /**
    * MANEJO DEL CIERRE DE MODAL
    */
-  const onCloseModal = () => {
+  const onCloseModal = async () => {
     closeDateModal();
     setActiveEvent(null); //  limpiamos el evento activo
   };
   //---------------------------------------------------------------------------------------
   /**
    * TRABAJO ENVIO DE RESERVA AL BACKEND
-   * Trabajo el manejo de errorer por cada elemento.
+   * Trabajo el manejo de error por cada elemento.
    */
-
   const onSubmit = async (event) => {
     event.preventDefault();
 
@@ -394,6 +394,7 @@ export const CalendarModal = ({ date, cliente }) => {
     setFormSubmitted(true);
     const reservaGuardada = activeEvent;
     await startSavingEvent({ ...formValues, fecha: date, cliente: dni });
+
     closeDateModal();
     setFormSubmitted(false);
   };
