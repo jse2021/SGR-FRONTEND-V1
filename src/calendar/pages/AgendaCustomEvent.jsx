@@ -1,11 +1,16 @@
 const AgendaCustomEvent = ({ event }) => {
-  const hora = event.hora || "Sin hora";
-  const cliente = event.nombreCliente || "Sin cliente";
-  const cancha = event.title || "Sin cancha";
+  const hora = new Date(event.start).toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const cliente =
+    (event.nombreCliente || "") + " " + (event.apellidoCliente || "");
+  const cancha = event.cancha || event.title || "Sin cancha";
 
   return (
     <span style={{ fontWeight: "bold", color: "#222" }}>
-      {`Hora: ${hora} Cancha: ${cancha} Cliente: ${cliente}`}
+      {`CANCHA: ${cancha} - CLIENTE: ${cliente}`}
     </span>
   );
 };

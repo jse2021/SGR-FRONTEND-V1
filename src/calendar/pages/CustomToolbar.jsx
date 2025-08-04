@@ -23,7 +23,7 @@ export const CustomToolbar = ({ label, onNavigate, onView, views }) => {
         <span className="toolbar-label">{label.toUpperCase()}</span>
       </div>
 
-      {/* <div className="toolbar-right">
+      <div className="toolbar-right">
         {views.map((view) => (
           <button
             key={view}
@@ -33,8 +33,9 @@ export const CustomToolbar = ({ label, onNavigate, onView, views }) => {
             {messages[view] || view}
           </button>
         ))}
-          QUITO BOTON AGENDA. HASTA ENCONTRAR SOLUCION A LOS EVENTOS. YA QUE NO MUESTRA LA DESCRIPCION DE TODOS LOS EVENTOS DE UN DIA
-      </div> */}
+        {/* QUITO BOTON AGENDA. HASTA ENCONTRAR SOLUCION A LOS EVENTOS. YA QUE NO
+        MUESTRA LA DESCRIPCION DE TODOS LOS EVENTOS DE UN DIA */}
+      </div>
     </div>
   );
 };
