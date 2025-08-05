@@ -126,11 +126,26 @@ export const CalendarModal = ({ date, cliente }) => {
    * PASO PARAMETROS A LA FUNCION OBTENER_HORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA,
    * EL MODAL MUESTRE EL HORARIO EXACTO DE LA RESERVA
    */
+  // useEffect(() => {
+  //   if (activeEvent && activeEvent.cancha) {
+  //     obtenerHorarios(activeEvent.cancha, activeEvent.hora);
+  //   }
+  // }, [activeEvent]);
   useEffect(() => {
-    if (activeEvent && activeEvent.cancha) {
+    if (isDateModalOpen && formValues.cancha) {
+      obtenerHorarios(formValues.cancha, formValues.hora);
+    }
+  }, [isDateModalOpen]);
+  useEffect(() => {
+    if (
+      isDateModalOpen &&
+      activeEvent &&
+      activeEvent.cancha &&
+      activeEvent.hora
+    ) {
       obtenerHorarios(activeEvent.cancha, activeEvent.hora);
     }
-  }, [activeEvent]);
+  }, [isDateModalOpen]);
   //_-------------------------------------------------------------------------------------
   /**
    * TRABAJO LOS HORARIOS:
@@ -153,9 +168,20 @@ export const CalendarModal = ({ date, cliente }) => {
       }
 
       const fechaISO = new Date(fechaReferencia).toISOString();
+      console.log({
+        fecha: fechaISO,
+        cancha: canchaSeleccionada,
+        reservaId: activeEvent?.id || null,
+      });
       const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
         fecha: fechaISO,
         cancha: canchaSeleccionada,
+        reservaId: activeEvent?.id || null,
+      });
+      console.log({
+        fecha: fechaISO,
+        cancha: canchaSeleccionada,
+        reservaId: activeEvent?.id || null,
       });
 
       if (data.ok) {
@@ -535,7 +561,8 @@ export const CalendarModal = ({ date, cliente }) => {
               setHorariosDisponibles([]); //Limpia los horarios anteriores
 
               //Llamada al backend.
-              obtenerHorarios(nuevaCancha);
+              obtenerHorarios(nuevaCancha, formValues.hora);
+              // obtenerHorarios(nuevaCancha);
             }}
           >
             <option key="0" value="" disabled>
