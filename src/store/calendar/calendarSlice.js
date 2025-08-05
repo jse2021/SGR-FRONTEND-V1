@@ -37,18 +37,25 @@ export const calendarSlice = createSlice({
       }
     },
 
+    // onLoadEvents: (state, { payload = [] }) => {
+    //   state.isLoadingEvents = false;
+    //   /**
+    //    * VERIFICO SI EXISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE,
+    //    * LO INSERTO
+    //    */
+    //   payload.forEach((event) => {
+    //     const exists = state.events.some((dbEvent) => dbEvent.id === event.id);
+    //     if (!exists) {
+    //       state.events.push(event);
+    //     }
+    //   });
+    // },
+    /**
+     *REEMPLAZA ARRAY DE EVENTOS, AGREGANDO, Y ELIMINANDO LOS QUE ESTAN EN ESTADO INACTIVO
+     */
     onLoadEvents: (state, { payload = [] }) => {
       state.isLoadingEvents = false;
-      /**
-       * VERIFICO SI EXISTE EL EVENTO ANTES DE INSERTAR, SI NO EXISTE,
-       * LO INSERTO
-       */
-      payload.forEach((event) => {
-        const exists = state.events.some((dbEvent) => dbEvent.id === event.id);
-        if (!exists) {
-          state.events.push(event);
-        }
-      });
+      state.events = payload;
     },
 
     /**

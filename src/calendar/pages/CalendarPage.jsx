@@ -12,7 +12,8 @@ import "./CalendarPage.css";
 export const CalendarPage = () => {
   const { user } = useAuthStore();
   const { openDateModal } = useUiStore();
-  const { events, setActiveEvent, startLoadingEvents } = useCalendarStore();
+  const { events, setActiveEvent, startLoadingEvents, setNeedsRefreshFlag } =
+    useCalendarStore();
   const { activeEvent } = useCalendarStore();
   const { isDateModalOpen, closeDateModal } = useUiStore();
 
@@ -99,9 +100,15 @@ export const CalendarPage = () => {
   /**
    * LEVANTA TODOS LOS EVENTOS HACIA EL CALENDARIO
    */
+  // useEffect(() => {
+  //   startLoadingEvents();
+  // }, [startLoadingEvents()]);
   useEffect(() => {
     startLoadingEvents();
-  }, [startLoadingEvents()]);
+  }, [startLoadingEvents]);
+  // useEffect(() => {
+  //   startLoadingEvents();
+  // }, []);
 
   return (
     <>

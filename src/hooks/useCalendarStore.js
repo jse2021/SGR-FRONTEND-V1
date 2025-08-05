@@ -103,6 +103,7 @@ export const useCalendarStore = () => {
   /**
    * PROCESO DE ELIMINACION DE RESERVA
    */
+
   const startDeletingEvent = async () => {
     try {
       // await calendarApi.delete(`/reserva/${activeEvent.id}`); ANULO, ACTUALIZO NO ELIMINO
@@ -124,6 +125,7 @@ export const useCalendarStore = () => {
    * TRAIGO LOS EVENTOS DEL BACKEND PARA MOSTRAR EN PANTALLA
    * tiene que ser llamado en calendarPage
    */
+
   const startLoadingEvents = async () => {
     try {
       const { data } = await calendarApi.get("/reserva");

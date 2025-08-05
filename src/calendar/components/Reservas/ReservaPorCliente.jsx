@@ -12,6 +12,7 @@ import { BsPencil } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { useUiStore, useCalendarStore } from "../../../hooks";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const ReservaPorCliente = () => {
   const [results, setResults] = useState([]);
@@ -22,11 +23,15 @@ export const ReservaPorCliente = () => {
   const [apellidoCliente, setApellidoCliente] = useState("");
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
   const { events, activeEvent } = useSelector((state) => state.calendar);
-
+  const navigate = useNavigate();
   const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
   const { openDateModal } = useUiStore();
-  const { setActiveEvent, startDeletingEvent, startLoadingEvents } =
-    useCalendarStore();
+  const {
+    setActiveEvent,
+    startDeletingEvent,
+    startLoadingEvents,
+    setNeedsRefreshFlag,
+  } = useCalendarStore();
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
