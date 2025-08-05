@@ -508,6 +508,7 @@ export const CalendarModal = ({ date, cliente }) => {
             loadOptions={loadOptions}
             defaultOptions
             value={formValues.cliente}
+            isDisabled={!!activeEvent} //desactiva si es edición
             onChange={(value) =>
               onClienteChanged(
                 { target: { name: "cliente", value: value } },
