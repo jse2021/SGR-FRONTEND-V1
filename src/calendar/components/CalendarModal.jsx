@@ -379,7 +379,8 @@ export const CalendarModal = ({ date, cliente }) => {
       title: "",
       start: "",
       end: "",
-      cliente: "",
+      // cliente: "",
+      cliente: null,
       cancha: "",
       fecha: date,
       hora: "",
@@ -389,13 +390,14 @@ export const CalendarModal = ({ date, cliente }) => {
       monto_cancha: "",
       monto_sena: "",
     });
-
+    setDni("");
+    setActiveEvent(null);
     setIsSubmitting(true); // cuando estoy por mandar a backend, cambia estado de boton
     setFormSubmitted(true);
     const reservaGuardada = activeEvent;
     await startSavingEvent({ ...formValues, fecha: date, cliente: dni });
-
     closeDateModal();
+
     setFormSubmitted(false);
   };
   //---------------------------------------------------------------------------------------
