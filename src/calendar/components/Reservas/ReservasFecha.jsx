@@ -61,14 +61,23 @@ export const ReservasFecha = () => {
       setBusquedaRealizada(true);
     } catch (error) {
       console.error("Error al buscar reservas:", error);
+
+      // Si el backend responde 404 (sin resultados), limpiamos el estado
+      if (error.response?.status === 404) {
+        setResults([]);
+        setTotalPages(1);
+        setPage(1);
+      }
+
       setBusquedaRealizada(true);
     } finally {
       setIsLoading(false); // Finaliza carga
     }
   };
-  const handleBuscarReservas = (e) => {
+  const handleBuscarReservas = async (e) => {
     e.preventDefault();
-    fetchReservas(1); // siempre comenzamos desde la página 1
+    setBusquedaRealizada(true);
+    await fetchReservas(1); // siempre comenzamos desde la página 1
   };
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -127,7 +136,7 @@ export const ReservasFecha = () => {
       <Navbar />
       <h1 className="text-center my-4 mt-5">Reservas de la Fecha</h1>
       <div className="col-md-8 login-form-3">
-        <form onSubmit={handleBuscarReservas} className="form-fecha-container">
+        <form onSubmit={handleBuscarReservas}>
           {/* CONTENEDOR FLEX DE INPUTS */}
           <div className="form-row mb-3">
             <div className="form-group me-3">
@@ -161,101 +170,106 @@ export const ReservasFecha = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-dark w-100">
-            Buscar
-          </button>
-        </form>
-        {isLoading && (
-          <div className="text-center my-4">
-            <div className="spinner-border text-blac" role="status">
-              <span className="visually-hidden">Cargando...</span>
-            </div>
+          <div className="d-grid gap-2">
+            <input type="submit" className="btnSubmit" value="Buscar" />
           </div>
-        )}
 
-        <div className="table-responsive mt-4 shadow rounded">
-          {busquedaRealizada ? (
-            Array.isArray(results) && results.length > 0 ? (
-              <table className="table table-bordered table-hover table-striped align-middle text-center tabla-reserva-sm">
-                <thead className="table-dark text-uppercase">
-                  <tr className="bg-gray-200">
-                    <th className="border px-2 py-1">Cliente</th>
-                    <th className="border px-2 py-1">Hora</th>
-                    <th className="border px-2 py-1">Cancha</th>
-                    <th className="border px-2 py-1">Forma de Pago</th>
-                    <th className="border px-2 py-1">Estado de Pago</th>
-                    <th className="border px-2 py-1">Total</th>
-                    <th className="border px-2 py-1">Seña</th>
-                    <th className="border px-2 py-1">Observ.</th>
-                    <th className="border px-2 py-1"></th>
-                    <th className="border px-2 py-1"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.map((reserva) => (
-                    <tr key={reserva._id}>
-                      <td className="border px-4 py-2">
-                        {reserva.apellidoCliente} {reserva.nombreCliente}
-                      </td>
-                      <td className="border px-2 py-1">{reserva.hora}</td>
-                      <td className="border px-2 py-1">{reserva.cancha}</td>
-                      <td className="border px-2 py-1">{reserva.forma_pago}</td>
-                      <td className="border px-2 py-1">
-                        {reserva.estado_pago}
-                      </td>
-                      <td className="border px-2 py-1">
-                        ${reserva.monto_cancha}
-                      </td>
-                      <td className="border px-2 py-1">
-                        ${reserva.monto_sena}
-                      </td>
-                      <td className="border px-2 py-1">
-                        {reserva.observacion || "-"}
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-outline-primary btn-sm me-1"
-                          onClick={() => handleEditarReserva(reserva)}
-                          title="Editar reserva"
-                        >
-                          <BsPencil />
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleEliminarReserva(reserva)}
-                          title="Eliminar reserva"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className="mt-4 text-gray-600">
-                No se encontraron reservas para esa fecha y cancha.
-              </p>
-            )
-          ) : null}
-        </div>
-        <div className="d-flex justify-content-center mt-3">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              className={`btn btn-sm mx-1 ${
-                page === i + 1 ? "btn-primary" : "btn-outline-primary"
-              }`}
-              onClick={() => fetchReservas(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
+          {isLoading && (
+            <div className="text-center my-4">
+              <div className="spinner-border text-blac" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+          )}
+
+          <div className="table-responsive mt-4 shadow rounded">
+            {busquedaRealizada ? (
+              Array.isArray(results) && results.length > 0 ? (
+                <>
+                  <table className="table table-bordered table-hover table-striped align-middle text-center tabla-reserva-sm">
+                    <thead className="table-dark text-uppercase">
+                      <tr className="bg-gray-200">
+                        <th className="border px-2 py-1">Cliente</th>
+                        <th className="border px-2 py-1">Hora</th>
+                        <th className="border px-2 py-1">Cancha</th>
+                        <th className="border px-2 py-1">Forma de Pago</th>
+                        <th className="border px-2 py-1">Estado de Pago</th>
+                        <th className="border px-2 py-1">Total</th>
+                        <th className="border px-2 py-1">Seña</th>
+                        <th className="border px-2 py-1">Observ.</th>
+                        <th className="border px-2 py-1"></th>
+                        <th className="border px-2 py-1"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {results.map((reserva) => (
+                        <tr key={reserva._id}>
+                          <td className="border px-4 py-2">
+                            {reserva.apellidoCliente} {reserva.nombreCliente}
+                          </td>
+                          <td className="border px-2 py-1">{reserva.hora}</td>
+                          <td className="border px-2 py-1">{reserva.cancha}</td>
+                          <td className="border px-2 py-1">
+                            {reserva.forma_pago}
+                          </td>
+                          <td className="border px-2 py-1">
+                            {reserva.estado_pago}
+                          </td>
+                          <td className="border px-2 py-1">
+                            ${reserva.monto_cancha}
+                          </td>
+                          <td className="border px-2 py-1">
+                            ${reserva.monto_sena}
+                          </td>
+                          <td className="border px-2 py-1">
+                            {reserva.observacion || "-"}
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-outline-primary btn-sm me-1"
+                              onClick={() => handleEditarReserva(reserva)}
+                              title="Editar reserva"
+                            >
+                              <BsPencil />
+                            </button>
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleEliminarReserva(reserva)}
+                              title="Eliminar reserva"
+                            >
+                              <FaTrash />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="d-flex justify-content-center mt-3">
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i + 1}
+                        className={`btn btn-sm mx-1 ${
+                          page === i + 1 ? "btn-primary" : "btn-outline-primary"
+                        }`}
+                        onClick={() => fetchReservas(i + 1)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="mt-4 text-gray-600">
+                  No se encontraron reservas para esa fecha y cancha.
+                </p>
+              )
+            ) : null}
+          </div>
+        </form>
       </div>
-
+      {/* //-----------> */}
       <CalendarModal />
     </>
   );
