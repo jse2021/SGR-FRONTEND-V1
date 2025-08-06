@@ -131,11 +131,11 @@ export const CalendarModal = ({ date, cliente }) => {
   //     obtenerHorarios(activeEvent.cancha, activeEvent.hora);
   //   }
   // }, [activeEvent]);
-  useEffect(() => {
-    if (isDateModalOpen && formValues.cancha) {
-      obtenerHorarios(formValues.cancha, formValues.hora);
-    }
-  }, [isDateModalOpen]);
+  // useEffect(() => {
+  //   if (isDateModalOpen && formValues.cancha) {
+  //     obtenerHorarios(formValues.cancha, formValues.hora);
+  //   }
+  // }, [isDateModalOpen]);
   useEffect(() => {
     if (
       isDateModalOpen &&
@@ -167,19 +167,35 @@ export const CalendarModal = ({ date, cliente }) => {
         return;
       }
 
-      const fechaISO = new Date(fechaReferencia).toISOString();
-      console.log({
-        fecha: fechaISO,
-        cancha: canchaSeleccionada,
-        reservaId: activeEvent?.id || null,
-      });
+      // const fechaISO = new Date(fechaReferencia).toISOString();
+      // const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
+      //   fecha: fechaISO,
+      //   cancha: canchaSeleccionada,
+      //   reservaId: activeEvent?.id || null,
+      // });
+      let fechaCruda =
+        formValues.fecha || formValues.start || activeEvent?.start;
+
+      // Fallback de último recurso: usá la fecha actual si ninguna está seteada (modo creación sin selección)
+      if (!fechaCruda) {
+        fechaCruda = new Date();
+        console.warn(
+          "⚠️ No se encontró fecha en formValues, se usa fecha actual:",
+          fechaCruda
+        );
+      }
+
+      const fechaBase = new Date(fechaCruda);
+      if (isNaN(fechaBase)) {
+        console.error("❌ fechaBase no es válida:", fechaCruda);
+        return;
+      }
+
+      fechaBase.setUTCHours(3, 0, 0, 0);
+      const fechaFormateada = fechaBase.toISOString();
+
       const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
-        fecha: fechaISO,
-        cancha: canchaSeleccionada,
-        reservaId: activeEvent?.id || null,
-      });
-      console.log({
-        fecha: fechaISO,
+        fecha: fechaFormateada,
         cancha: canchaSeleccionada,
         reservaId: activeEvent?.id || null,
       });
@@ -438,7 +454,8 @@ export const CalendarModal = ({ date, cliente }) => {
         start: "",
         end: "",
         cancha: "",
-        fecha: date || "",
+        // fecha: date || "",-->borrado miercoles
+        fecha: "",
         hora: "",
         forma_pago: "",
         estado_pago: "",
@@ -478,8 +495,18 @@ export const CalendarModal = ({ date, cliente }) => {
         monto,
       });
       setDni(activeEvent.cliente); // para el envío correcto
+    } else {
+      //agrego para corregir crear
+      if (date) {
+        const fechaNormalizada = new Date(date);
+        fechaNormalizada.setUTCHours(3, 0, 0, 0);
+        setFormValues((prev) => ({
+          ...prev,
+          fecha: fechaNormalizada,
+        }));
+      }
     }
-  }, [isDateModalOpen, activeEvent]);
+  }, [isDateModalOpen, activeEvent, date]);
 
   //---------------------------------------------------------------------------------------
   /**
@@ -561,8 +588,8 @@ export const CalendarModal = ({ date, cliente }) => {
               setHorariosDisponibles([]); //Limpia los horarios anteriores
 
               //Llamada al backend.
-              obtenerHorarios(nuevaCancha, formValues.hora);
-              // obtenerHorarios(nuevaCancha);
+              // obtenerHorarios(nuevaCancha, formValues.hora);
+              obtenerHorarios(nuevaCancha);
             }}
           >
             <option key="0" value="" disabled>
