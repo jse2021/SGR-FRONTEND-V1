@@ -59,18 +59,13 @@ export const CalendarPage = () => {
    * DIA SELECCIONADO
    */
   const handleSelectSlot = (event) => {
-    // setDate(event.start);
-    // openDateModal();
-
     const selectedDate = new Date(event.start);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalizamos a solo fecha
-
     // No permitir agregar reservas fechas pasadas
     if (selectedDate < today) {
-      return; // Simplemente no hace nada si es fecha anterior
+      return;
     }
-
     setDate(selectedDate);
     openDateModal();
   };
@@ -100,15 +95,9 @@ export const CalendarPage = () => {
   /**
    * LEVANTA TODOS LOS EVENTOS HACIA EL CALENDARIO
    */
-  // useEffect(() => {
-  //   startLoadingEvents();
-  // }, [startLoadingEvents()]);
   useEffect(() => {
     startLoadingEvents();
   }, [startLoadingEvents]);
-  // useEffect(() => {
-  //   startLoadingEvents();
-  // }, []);
 
   return (
     <>
@@ -130,8 +119,6 @@ export const CalendarPage = () => {
             toolbar: CustomToolbar,
             agenda: {
               event: AgendaCustomEvent,
-
-              // time: () => null,
             },
           }}
           views={["month", "agenda"]}

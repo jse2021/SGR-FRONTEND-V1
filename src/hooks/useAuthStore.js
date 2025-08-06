@@ -45,7 +45,6 @@ export const useAuthStore = () => {
     email,
     password,
   }) => {
-    // dispatch(onChecking()); // generaba un bug al crear nuevo usuario
     try {
       const { data } = await calendarApi.post("/auth/new", {
         nombre,

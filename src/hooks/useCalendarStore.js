@@ -85,7 +85,7 @@ export const useCalendarStore = () => {
 
         const { data } = await calendarApi.post("/reserva", reservaConMontos);
         // Convertimos el evento antes de guardar en store
-        // const [nuevaReserva] = convertEventsToDateEvents([data.reserva]);
+
         dispatch(onAddNewEvent({ ...reservaConMontos, user, id: data._id }));
 
         Swal.fire({

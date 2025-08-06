@@ -126,16 +126,6 @@ export const CalendarModal = ({ date, cliente }) => {
    * PASO PARAMETROS A LA FUNCION OBTENER_HORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA,
    * EL MODAL MUESTRE EL HORARIO EXACTO DE LA RESERVA
    */
-  // useEffect(() => {
-  //   if (activeEvent && activeEvent.cancha) {
-  //     obtenerHorarios(activeEvent.cancha, activeEvent.hora);
-  //   }
-  // }, [activeEvent]);
-  // useEffect(() => {
-  //   if (isDateModalOpen && formValues.cancha) {
-  //     obtenerHorarios(formValues.cancha, formValues.hora);
-  //   }
-  // }, [isDateModalOpen]);
   useEffect(() => {
     if (
       isDateModalOpen &&
@@ -150,13 +140,13 @@ export const CalendarModal = ({ date, cliente }) => {
   /**
    * TRABAJO LOS HORARIOS:
    * PARA CREAR RESERVA: TRAIGO LOS HORARIOS DISPONIBLES
-   * PARA LA MODIFCACION: TRAIGO LOS HORARIOS DISPONIBLES, INCLUSO LA HORA DE LA RESERVA SELECCIONADA
+   * PARA LA MODIFICACION: TRAIGO LOS HORARIOS DISPONIBLES, INCLUSO LA HORA DE LA RESERVA SELECCIONADA
    */
   const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
     try {
       let fechaReferencia = date;
 
-      // Si no hay date (modo edición probablemente), tratamos de usar el de activeEvent
+      // Si no hay date (modo edición), tratamos de usar el de activeEvent
       if (!fechaReferencia && activeEvent && activeEvent.start) {
         fechaReferencia = activeEvent.start;
       }
@@ -167,27 +157,21 @@ export const CalendarModal = ({ date, cliente }) => {
         return;
       }
 
-      // const fechaISO = new Date(fechaReferencia).toISOString();
-      // const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
-      //   fecha: fechaISO,
-      //   cancha: canchaSeleccionada,
-      //   reservaId: activeEvent?.id || null,
-      // });
       let fechaCruda =
         formValues.fecha || formValues.start || activeEvent?.start;
 
-      // Fallback de último recurso: usá la fecha actual si ninguna está seteada (modo creación sin selección)
+      //usa la fecha actual si ninguna está seteada
       if (!fechaCruda) {
         fechaCruda = new Date();
         console.warn(
-          "⚠️ No se encontró fecha en formValues, se usa fecha actual:",
+          "No se encontró fecha en formValues, se usa fecha actual:",
           fechaCruda
         );
       }
 
       const fechaBase = new Date(fechaCruda);
       if (isNaN(fechaBase)) {
-        console.error("❌ fechaBase no es válida:", fechaCruda);
+        console.error("fechaBase no es válida:", fechaCruda);
         return;
       }
 
@@ -201,7 +185,6 @@ export const CalendarModal = ({ date, cliente }) => {
       });
 
       if (data.ok) {
-        // setHorariosDisponibles(data.horasDisponibles);// guardo las horas
         let horarios = data.horasDisponibles;
         // Si estamos editando y el horario actual no está, lo agregamos
         if (horarioActual && !horarios.includes(horarioActual)) {
