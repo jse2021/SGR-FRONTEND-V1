@@ -41,7 +41,7 @@ export const ReservasEliminadas = () => {
         new Date(reserva.fecha).toLocaleDateString("es-AR") || "-",
         reserva.nombre + " " + reserva.apellido || "-",
         `${reserva.cancha || 0}`,
-        `${reserva.estado || 0}`,
+        `${reserva.estadoPago}`,
         `$${reserva.monto_total || reserva.monto_sena || reserva.impago || 0}`,
       ]),
     });
