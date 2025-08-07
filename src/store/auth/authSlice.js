@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Recuperar usuario desde localStorage si existe
+// Obtener usuario guardado,incluso si recarga la página.
 const storedUser = localStorage.getItem("user");
 const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
 //Estado inicial según si hay usuario guardado
 const initialState = {
-  status: parsedUser ? "authenticated" : "checking", // 'authenticated','not-authenticated','checking'
+  status: parsedUser ? "authenticated" : "checking",
   user: parsedUser || {}, // Info del usuario logueado
   errorMessage: undefined,
 };

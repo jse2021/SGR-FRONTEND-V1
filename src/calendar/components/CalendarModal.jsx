@@ -78,7 +78,7 @@ export const CalendarModal = ({ date, cliente }) => {
       opcion.label.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
     );
 
-    callback(opcionesFiltradas);
+    callback(opcionesFiltradas); ///----->Devuelve ese resultado al AsyncSelect para mostrarlo.
   };
   //_-------------------------------------------------------------------------------------
 

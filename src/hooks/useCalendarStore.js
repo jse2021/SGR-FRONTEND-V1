@@ -16,12 +16,12 @@ import Swal from "sweetalert2";
  * DE ACA LLEGAMOS AL BACKEN Y RELIZAMOS LOS PROCESOS
  */
 export const useCalendarStore = () => {
-  const { events, activeEvent } = useSelector((state) => state.calendar);
-  const { user } = useSelector((state) => state.auth);
+  const { events, activeEvent } = useSelector((state) => state.calendar); //Estado actual de calendario
+  const { user } = useSelector((state) => state.auth); //estado actual de user
   const dispatch = useDispatch();
   //_----------------------------------------------------------------------------------------------
   /**
-   * TOMO LA INFO DEL STORE, Y DISPARO PARA TOMAR DEL CALENDAR PAGE
+   * Guarda en Redux cuál es la reserva seleccionada (por ejemplo, para editarla o borrarla).
    */
 
   const setActiveEvent = (calendarEvent) => {
@@ -29,7 +29,9 @@ export const useCalendarStore = () => {
   };
   //_----------------------------------------------------------------------------------------------
   /**
-   *  PROCESO DE GRABACION DEL EVENTO: PREFIERO HACER EL CALCULO DESDE FRONT, Y NO DE BACKEND
+   *  PROCESO DE GRABACION DEL EVENTO
+   * Una sola funcion para crear y editar
+   * si tiene ID editamos, si no tiene, creamos
    */
   const startSavingEvent = async (calendarEvent) => {
     try {
@@ -83,6 +85,8 @@ export const useCalendarStore = () => {
           monto_sena,
         };
 
+        //-----> Guardo y actualizo store
+
         const { data } = await calendarApi.post("/reserva", reservaConMontos);
         // Convertimos el evento antes de guardar en store
 
@@ -125,7 +129,6 @@ export const useCalendarStore = () => {
    * TRAIGO LOS EVENTOS DEL BACKEND PARA MOSTRAR EN PANTALLA
    * tiene que ser llamado en calendarPage
    */
-
   const startLoadingEvents = async () => {
     try {
       const { data } = await calendarApi.get("/reserva");

@@ -6,11 +6,12 @@ import { getEnvVariables } from "../helpers";
  */
 const { VITE_API_URL } = getEnvVariables();
 
+//Toda peticion, pasa por aca
 const calendarApi = axios.create({
-  baseURL: VITE_API_URL, // Base URL dinámica
+  baseURL: VITE_API_URL,
 });
 
-//configurar receptores: nos va a permitir interceptar peticiones que van o regresan del backend - necesario para mantener la autenticacion
+//--> Luego agregamos el token a cada peticion, que se encuentra guardado en el localStorage.
 calendarApi.interceptors.request.use((config) => {
   config.headers = {
     ...config.headers, //esparce todos los headers que vienen en config

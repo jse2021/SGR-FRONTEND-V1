@@ -7,6 +7,7 @@ export const CalendarApp = () => {
   return (
     /**
      * Pongo el store en contexto general, para que todo el appRouter lo consuma
+     * BrowserRouter: para manejar las rutas
      */
     <Provider store={store}>
       <BrowserRouter>

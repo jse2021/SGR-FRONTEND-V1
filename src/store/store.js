@@ -15,6 +15,10 @@ export const store = configureStore({
     cancha: canchaSlice.reducer,
     configuracion: configuracionSlice.reducer,
   },
+  /**
+   * Esto desactiva un warning que aparece cuando se guardan objetos no serializables en Redux
+   *  (por ejemplo: fechas, instancias de clases, etc.).
+   */
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

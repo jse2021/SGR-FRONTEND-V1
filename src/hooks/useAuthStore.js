@@ -10,7 +10,7 @@ import {
 import Swal from "sweetalert2";
 
 export const useAuthStore = () => {
-  const { status, user, errorMessage } = useSelector((state) => state.auth);
+  const { status, user, errorMessage } = useSelector((state) => state.auth); //el estado actual de autenticación desde Redux.
   const dispatch = useDispatch();
 
   /**
