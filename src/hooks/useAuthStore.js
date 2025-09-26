@@ -20,6 +20,7 @@ export const useAuthStore = () => {
     dispatch(onChecking());
     try {
       const { data } = await calendarApi.post("/auth", { user, password });
+      console.log(data);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token-init-date", new Date().getTime());
