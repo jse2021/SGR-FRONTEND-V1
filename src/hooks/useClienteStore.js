@@ -8,18 +8,23 @@ export const useClienteStore = () => {
   /**
    * REGISTRAR CLIENTES
    */
-  const startRegister = async ({ dni, nombre, apellido, email, celular }) => {
+  const startRegister = async ({ dni, nombre, apellido, email, telefono }) => {
     try {
-      const { data } = await calendarApi.post("cliente/crearCliente", {
+      const { data } = await calendarApi.post("cliente", {
         dni,
         nombre,
         apellido,
         email,
-        celular,
+        telefono,
       });
+      if (data?.ok === false) {
+        return {
+          ok: false,
+          msg: data?.msg || "No se pudo registrar el cliente",
+        };
+      }
       return { ok: true };
     } catch (error) {
-      console.error(error);
       const msg = error.response?.data?.msg;
       return { ok: false, msg };
     }

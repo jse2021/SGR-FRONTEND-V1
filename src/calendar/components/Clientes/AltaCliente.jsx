@@ -10,7 +10,7 @@ const registrarCliente = {
   registerNombre: "",
   registerApellido: "",
   registerEmail: "",
-  registerCelular: "",
+  registerTelefono: "",
 };
 
 export const AltaCliente = () => {
@@ -23,7 +23,7 @@ export const AltaCliente = () => {
     registerNombre,
     registerApellido,
     registerEmail,
-    registerCelular,
+    registerTelefono,
   } = formState;
 
   const dniClass = useMemo(() => {
@@ -46,10 +46,10 @@ export const AltaCliente = () => {
     return registerEmail.trim() !== "" ? "" : "is-invalid";
   }, [registerEmail, formSubmitted]);
 
-  const celularClass = useMemo(() => {
+  const telefonoClass = useMemo(() => {
     if (!formSubmitted) return "";
-    return registerCelular.trim() !== "" ? "" : "is-invalid";
-  }, [registerCelular, formSubmitted]);
+    return registerTelefono.trim() !== "" ? "" : "is-invalid";
+  }, [registerTelefono, formSubmitted]);
 
   useEffect(() => {
     document.getElementById("dni")?.focus();
@@ -65,7 +65,7 @@ export const AltaCliente = () => {
       registerNombre.trim() === "" ||
       registerApellido.trim() === "" ||
       registerEmail.trim() === "" ||
-      registerCelular.trim() === ""
+      registerTelefono.trim() === ""
     )
       return;
 
@@ -74,7 +74,7 @@ export const AltaCliente = () => {
       nombre: registerNombre,
       apellido: registerApellido,
       email: registerEmail,
-      celular: registerCelular,
+      telefono: registerTelefono,
     });
 
     if (!result.ok) {
@@ -129,7 +129,7 @@ export const AltaCliente = () => {
           <div className="form-group mb-2">
             <input
               id="email"
-              type="Email"
+              type="email"
               className={`form-control ${emailClass}`}
               placeholder="Email"
               name="registerEmail"
@@ -139,12 +139,13 @@ export const AltaCliente = () => {
           </div>
           <div className="form-group mb-2">
             <input
-              type="number"
-              className={`form-control ${celularClass}`}
-              placeholder="Celular"
-              name="registerCelular"
-              value={registerCelular}
+              type="tel"
+              className={`form-control ${telefonoClass}`}
+              placeholder="Telefono"
+              name="registerTelefono"
+              value={registerTelefono}
               onChange={onInputChange}
+              inputMode="numeric"
             />
           </div>
           <div className="d-grid gap-2">

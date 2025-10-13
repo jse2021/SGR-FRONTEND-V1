@@ -53,7 +53,7 @@ export const ModalCanchas = () => {
 
     try {
       const { data } = await calendarApi.put(
-        `/cancha/actualizar/${formValues.id}`,
+        `/cancha/${formValues.id}`,
         datosEnviar
       );
 

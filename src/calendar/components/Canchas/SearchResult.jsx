@@ -22,7 +22,7 @@ export const SearchResult = ({ result, onDeleteCancha }) => {
 
     if (confirmacion.isConfirmed) {
       try {
-        await calendarApi.delete(`/cancha/${result.id}`);
+        await calendarApi.put(`/cancha/eliminarCancha/${result.id}`);
         onDeleteCancha(result.id);
         Swal.fire(
           "Eliminada",

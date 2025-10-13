@@ -22,7 +22,7 @@ export const SearchResult = ({ result, onDeleteCliente }) => {
 
     if (confirmacion.isConfirmed) {
       try {
-        await calendarApi.delete(`/cliente/${result.id}`);
+        await calendarApi.put(`/cliente/eliminar/${result.id}`);
         onDeleteCliente(result.id);
         Swal.fire(
           "Eliminado",
@@ -70,7 +70,7 @@ export const SearchResult = ({ result, onDeleteCliente }) => {
         <td className="search-result">{result.nombre}</td>
         <td className="search-result">{result.apellido}</td>
         <td className="search-result">{result.email}</td>
-        <td className="search-result">{result.celular}</td>
+        <td className="search-result">{result.telefono}</td>
         <td>
           <button
             type="button"

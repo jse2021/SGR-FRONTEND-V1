@@ -58,6 +58,7 @@ export const PrecioCancha = () => {
     cargarCanchasConPrecios();
   }, []);
   //-----------------------------------------------------------------------------
+
   const registerSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
@@ -73,8 +74,8 @@ export const PrecioCancha = () => {
 
     const { ok, msg } = await startRegister({
       nombre: registerNombre,
-      monto_cancha: precioCancha,
-      monto_sena: precioSena,
+      monto_cancha: Number(precioCancha),
+      monto_sena: Number(precioSena),
     });
 
     if (ok) {
@@ -137,8 +138,9 @@ export const PrecioCancha = () => {
                     className="form-select"
                     value={canchaSeleccionada}
                     onChange={async (e) => {
-                      const idSeleccionado = e.target.value;
+                      const idSeleccionado = Number(e.target.value);
                       setCanchaSeleccionada(idSeleccionado);
+
                       const canchaSeleccionadaObj = canchas.find(
                         (c) => c.id === idSeleccionado
                       );

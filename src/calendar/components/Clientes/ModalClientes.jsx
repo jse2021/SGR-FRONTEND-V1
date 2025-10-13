@@ -26,7 +26,7 @@ export const ModalClientes = () => {
     nombre: "",
     apellido: "",
     email: "",
-    celular: "",
+    telefono: "",
   });
   /**
    * CARGO LOS DATOS CUANDO ABRO MODAL
@@ -61,7 +61,7 @@ export const ModalClientes = () => {
 
     try {
       const { data } = await calendarApi.put(
-        `/cliente/actualizar/${formValues.id}`,
+        `/cliente/${formValues.id}`,
         datosEnviar
       );
 
@@ -134,13 +134,13 @@ export const ModalClientes = () => {
           />
         </div>
         <div className="form-group mb-1">
-          <label>Celular</label>
+          <label>Telefono</label>
           <input
             type="number"
             className="form-control"
-            placeholder="Celular"
-            name="celular"
-            value={formValues.celular}
+            placeholder="Telefono"
+            name="telefono"
+            value={formValues.telefono}
             onChange={handleInputChange}
           />
         </div>

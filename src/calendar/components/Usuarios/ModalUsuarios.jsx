@@ -147,6 +147,7 @@ export const ModalUsuarios = () => {
             placeholder="Usuario"
             name="user"
             value={formValues.user}
+            disabled
             onChange={handleInputChange}
           />
         </div>

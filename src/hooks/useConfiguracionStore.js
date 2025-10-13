@@ -6,11 +6,13 @@ export const useConfiguracionStore = () => {
 
   const startRegister = async ({ nombre, monto_cancha, monto_sena }) => {
     try {
-      const { data } = await calendarApi.post("/configuracion/crearMonto", {
+      const { data } = await calendarApi.post("/configuracion", {
         nombre,
         monto_cancha,
         monto_sena,
       });
+      console.log(nombre, monto_cancha, monto_sena);
+      console.log(data);
       return {
         ok: true,
         msg: "Precios registrados correctamente",
