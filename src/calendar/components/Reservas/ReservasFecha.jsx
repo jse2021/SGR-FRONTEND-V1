@@ -10,6 +10,21 @@ import { FaTrash } from "react-icons/fa";
 import { useCalendarStore, useUiStore } from "../../../hooks";
 import { CalendarModal } from "../CalendarModal";
 
+// Normaliza una reserva para el modal: DNI como string, cancha como nombre, hora como string
+function mapToModal(reserva) {
+  const dni = reserva?.cliente?.dni ?? reserva?.cliente ?? "";
+  const canchaName =
+    reserva?.cancha?.nombre ?? reserva?.cancha ?? reserva?.title ?? "";
+  const hora = reserva?.hora ?? "";
+
+  return {
+    ...reserva,
+    cliente: String(dni), // el modal espera DNI
+    cancha: String(canchaName), // el modal espera nombre de la cancha
+    hora: String(hora),
+  };
+}
+
 export const ReservasFecha = () => {
   const [cancha, setCancha] = useState([]);
   const [fechaIni, setFechaIni] = useState(null);
@@ -52,12 +67,16 @@ export const ReservasFecha = () => {
       setIsLoading(true);
       const desdeStr = fechaDesde.toISOString().split("T")[0];
       const { data } = await calendarApi.get(
-        `/reserva/${desdeStr}/${canchaSeleccionada}?page=${pageToFetch}&limit=5`
+        `/reserva/${desdeStr}/${encodeURIComponent(canchaSeleccionada)}`,
+        { params: { page: pageToFetch, limit: 5 } }
       );
 
-      setResults(data.reservasFecha);
-      setTotalPages(data.totalPages);
-      setPage(data.page);
+      // setResults(data.reservasFecha);
+      // setTotalPages(data.totalPages);
+      // setPage(data.page);
+      setResults(data.reservas || []);
+      setTotalPages(data.pages || 1);
+      setPage(data.page || pageToFetch);
       setBusquedaRealizada(true);
     } catch (error) {
       console.error("Error al buscar reservas:", error);
@@ -85,7 +104,8 @@ export const ReservasFecha = () => {
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
    */
   const handleEditarReserva = (reserva) => {
-    setActiveEvent(reserva); // setear en el store qué reserva se va a editar
+    // setActiveEvent(reserva); // setear en el store qué reserva se va a editar
+    setActiveEvent(mapToModal(reserva));
     openDateModal(); // sin argumento
   };
   //--------------------------------------------------------------------------------------------------------------------------------------------------

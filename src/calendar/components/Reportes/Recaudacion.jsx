@@ -79,10 +79,11 @@ export const Recaudacion = () => {
     try {
       setIsLoading(true);
       const { data } = await calendarApi.get(
-        `/reserva/recaudacion/${cancha}/${fechaInicioISO}/${fechaFinISO}?page=${pagina}&limit=10`
+        `/reserva/recaudacionFP/${cancha}/${fechaInicioISO}/${fechaFinISO}?page=${pagina}&limit=10`
       );
 
       setResultados(data.resultados || []);
+      console.log(data.resultados);
       setTotalPaginas(data.totalPaginas || 1);
       setPaginaActual(pagina);
       setBusquedaRealizada(true);

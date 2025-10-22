@@ -14,6 +14,21 @@ import { useUiStore, useCalendarStore } from "../../../hooks";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+// Normaliza una reserva para el modal: DNI como string, cancha como nombre, hora como string
+function mapToModal(reserva) {
+  const dni = reserva?.cliente?.dni ?? reserva?.cliente ?? "";
+  const canchaName =
+    reserva?.cancha?.nombre ?? reserva?.cancha ?? reserva?.title ?? "";
+  const hora = reserva?.hora ?? "";
+
+  return {
+    ...reserva,
+    cliente: String(dni), // el modal espera DNI
+    cancha: String(canchaName), // el modal espera nombre de la cancha
+    hora: String(hora),
+  };
+}
+
 export const ReservaPorCliente = () => {
   const [results, setResults] = useState([]);
   const [opciones, setOpciones] = useState([]);
@@ -49,6 +64,7 @@ export const ReservaPorCliente = () => {
         value: clientes.dni,
         label: `${clientes.dni} - ${clientes.apellido} ${clientes.nombre}`,
       }));
+
       //almacena los clientes
       setOpciones(opciones);
     };
@@ -87,7 +103,7 @@ export const ReservaPorCliente = () => {
       Swal.fire("Atención", "Se encontraron campos incompletos", "warning");
       return;
     }
-
+    console.log(dni, fechaDesde, fechaHasta);
     if (fechaDesde > fechaHasta) {
       Swal.fire(
         "Atención",
@@ -101,14 +117,15 @@ export const ReservaPorCliente = () => {
 
     try {
       setIsLoading(true);
+
       const { data } = await calendarApi.get(
-        `/reserva/${dni}/${desdeStr}/${hastaStr}?page=${pageToFetch}&limit=5`
+        `/reserva/${dni}/${desdeStr}/${hastaStr}`,
+        { params: { page: pageToFetch, limit: 2 } }
       );
 
-      setResults(data.reservasCliente);
-      console.log(data.reservasCliente);
-      setTotalPages(data.totalPages);
-      setCurrentPage(pageToFetch); // actualizar después del fetch
+      setResults(data.reservas || []);
+      setTotalPages(data.pages || 1); // total de páginas
+      setCurrentPage(data.page || pageToFetch); // página actual
     } catch (error) {
       console.error("Error al buscar reservas:", error);
     } finally {
@@ -131,7 +148,8 @@ export const ReservaPorCliente = () => {
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
    */
   const handleEditarReserva = (reserva) => {
-    setActiveEvent(reserva); // setear en el store qué reserva se va a editar
+    // setActiveEvent(reserva); // setear en el store qué reserva se va a editar
+    setActiveEvent(mapToModal(reserva));
     openDateModal(); // sin argumento
   };
   //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -152,7 +170,6 @@ export const ReservaPorCliente = () => {
     if (confirmacion.isConfirmed) {
       try {
         // Eliminar en backend
-        // await calendarApi.delete(`/reserva/${reserva.id}`); ANULO , POR PUT
         await calendarApi.put(`/reserva/eliminar/${reserva.id}`);
 
         // Eliminar en la tabla local sin recargar

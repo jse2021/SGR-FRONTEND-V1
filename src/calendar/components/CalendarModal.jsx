@@ -11,8 +11,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import es from "date-fns/locale/es";
 import { useCalendarStore, useUiStore } from "../../hooks";
-import { InputCliente } from "./Components Modal/Cliente/InputCliente";
-import { ListaCliente } from "./Components Modal/Cliente/ListaCliente";
+// import { InputCliente } from "./Components Modal/Cliente/InputCliente";
+// import { ListaCliente } from "./Components Modal/Cliente/ListaCliente";
 import { calendarApi } from "../../api";
 import "../../calendar/components/CalendarModal.css";
 
@@ -275,57 +275,69 @@ export const CalendarModal = ({ date, cliente }) => {
   /**
    * AL LEVANTAR NUEVAMENTE EL MODAL, TRAIGO EL CLIENTE COMO OBJETO (VALUE:LABEL)
    */
+
   useEffect(() => {
-    if (activeEvent) {
-      let monto = 0;
+    if (!activeEvent) return;
 
-      switch (activeEvent.estado_pago) {
-        case "TOTAL":
-          monto = activeEvent.monto_cancha || 0;
-
-          break;
-        case "SEÑA":
-          monto = activeEvent.monto_sena || 0;
-
-          break;
-        case "IMPAGO":
-        default:
-          monto = 0;
-      }
-
-      let fechaParsed = new Date(activeEvent.start);
-      // Si la fecha no es válida, formateamos manualmente
-      if (isNaN(fechaParsed.getTime())) {
-        const dateString = new Date(activeEvent.start).toLocaleDateString(
-          "es-AR",
-          {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          }
-        );
-
-        fechaParsed = new Date();
-      }
-      setFormValues({
-        ...activeEvent,
-        fecha: fechaParsed,
-        cliente: {
-          value: activeEvent.id,
-          label:
-            activeEvent.cliente +
-            "-" +
-            activeEvent.apellidoCliente +
-            " " +
-            activeEvent.nombreCliente,
-        },
-        hora: activeEvent.hora || "",
-        monto,
-      });
-
-      setDni(activeEvent.cliente);
+    // monto según estado de pago
+    let monto = 0;
+    switch (activeEvent.estado_pago) {
+      case "TOTAL":
+        monto = activeEvent.monto_cancha || 0;
+        break;
+      case "SEÑA":
+        monto = activeEvent.monto_sena || 0;
+        break;
+      case "IMPAGO":
+      default:
+        monto = 0;
     }
-  }, [activeEvent]);
+
+    // fecha defensiva (toma fechaCopia | fecha | start)
+    const rawDate =
+      activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
+    let fechaParsed = new Date(rawDate);
+    if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
+
+    // normalizo DNI y cancha a string (por si vienen como objeto)
+    const dniStr =
+      typeof activeEvent.cliente === "object"
+        ? activeEvent.cliente?.dni ?? activeEvent._cliente?.dni ?? ""
+        : activeEvent.cliente ?? "";
+
+    let canchaStr =
+      typeof activeEvent.cancha === "object"
+        ? activeEvent.cancha?.nombre ?? ""
+        : activeEvent.cancha ?? "";
+
+    // Fallback: si no vino el nombre pero sí el id, resolvemos por el array "cancha"
+    if (!canchaStr && activeEvent.canchaId && Array.isArray(cancha)) {
+      const found = cancha.find(
+        (c) => Number(c.id) === Number(activeEvent.canchaId)
+      );
+      if (found) canchaStr = found.nombre;
+    }
+
+    // el AsyncSelect de cliente espera { value, label } y value debe ser el DNI
+    const clienteValue = {
+      value: dniStr,
+      label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
+        activeEvent.nombreCliente ?? ""
+      }`.trim(),
+    };
+
+    setFormValues({
+      ...activeEvent,
+      fecha: fechaParsed,
+      cliente: clienteValue, // ← value = DNI (no id de reserva)
+      cancha: canchaStr, // ← string (no objeto)
+      hora: activeEvent.hora || "",
+      monto,
+    });
+
+    setDni(dniStr); // ← guardo el DNI en string para el submit
+  }, [activeEvent, cancha]);
+
   //_-------------------------------------------------------------------------------------
   /*
    * MANEJO DEL CAMBIO DE ESTADO DE LOS COMPONENTES:TAMBIEN EL CAMBIO DE ESTADO DE ESTADO DE PAGO E INPUT MONTO
@@ -429,15 +441,14 @@ export const CalendarModal = ({ date, cliente }) => {
   /**
    * EVITO QUE SE CARGUEN LOS DATOS ANTERIORES AL ABRIR NUEVAMENTE EL MODAL
    */
+
   useEffect(() => {
     if (!isDateModalOpen) {
-      // Cuando se cierra, limpiamos
       setFormValues({
         title: "",
         start: "",
         end: "",
         cancha: "",
-        // fecha: date || "",-->borrado miercoles
         fecha: "",
         hora: "",
         forma_pago: "",
@@ -447,49 +458,52 @@ export const CalendarModal = ({ date, cliente }) => {
         monto_cancha: "",
         monto_sena: "",
       });
-      return;
+      setDni("");
+    }
+  }, [isDateModalOpen]);
+  useEffect(() => {
+    if (!isDateModalOpen || !activeEvent) return;
+
+    // 1) monto
+    let monto = 0;
+    if (activeEvent.estado_pago === "TOTAL") {
+      monto = Number(activeEvent.monto_cancha || 0);
+    } else if (activeEvent.estado_pago === "SEÑA") {
+      monto = Number(activeEvent.monto_sena || 0);
     }
 
-    // Cuando se abre: si hay evento activo, es edición
-    if (isDateModalOpen && activeEvent) {
-      const fechaParsed = new Date(activeEvent.start);
-      const clienteValue = {
-        value: activeEvent.id,
-        label: `${activeEvent.cliente}-${activeEvent.apellidoCliente} ${activeEvent.nombreCliente}`,
-      };
+    // 2) fecha defensiva (fechaCopia | fecha | start)
+    const rawDate =
+      activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
+    let fechaParsed = new Date(rawDate);
+    if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
 
-      let monto = 0;
-      switch (activeEvent.estado_pago) {
-        case "TOTAL":
-          monto = activeEvent.monto_cancha || 0;
-          break;
-        case "SEÑA":
-          monto = activeEvent.monto_sena || 0;
-          break;
-        default:
-          monto = 0;
-      }
+    // 3) ya vienen normalizados por mapToModal
+    const dniStr = String(activeEvent.cliente ?? "");
+    const canchaStr = String(activeEvent.cancha ?? "");
 
-      setFormValues({
-        ...activeEvent,
-        fecha: isNaN(fechaParsed.getTime()) ? new Date() : fechaParsed,
-        cliente: clienteValue,
-        hora: activeEvent.hora || "",
-        monto,
-      });
-      setDni(activeEvent.cliente); // para el envío correcto
-    } else {
-      //agrego para corregir crear
-      if (date) {
-        const fechaNormalizada = new Date(date);
-        fechaNormalizada.setUTCHours(3, 0, 0, 0);
-        setFormValues((prev) => ({
-          ...prev,
-          fecha: fechaNormalizada,
-        }));
-      }
+    // 4) setear form
+    setFormValues({
+      ...activeEvent,
+      fecha: fechaParsed,
+      cliente: {
+        value: dniStr,
+        label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
+          activeEvent.nombreCliente ?? ""
+        }`.trim(),
+      },
+      cancha: canchaStr,
+      hora: activeEvent.hora || "",
+      monto,
+    });
+
+    setDni(dniStr);
+
+    // 5) horarios
+    if (canchaStr) {
+      obtenerHorarios(canchaStr, activeEvent.hora || null);
     }
-  }, [isDateModalOpen, activeEvent, date]);
+  }, [isDateModalOpen, activeEvent]);
 
   //---------------------------------------------------------------------------------------
   /**

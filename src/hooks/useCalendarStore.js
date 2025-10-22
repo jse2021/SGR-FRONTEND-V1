@@ -8,7 +8,7 @@ import {
   onLogin,
 } from "../store";
 import { calendarApi } from "../api";
-import { convertEventsToDateEvents } from "../helpers";
+import { convertEventsToDateEvents, sanitizeReservaUpdate } from "../helpers";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
@@ -35,19 +35,22 @@ export const useCalendarStore = () => {
    */
   const startSavingEvent = async (calendarEvent) => {
     try {
-      // con este if evito que fecha vaya como null a la bd
-      if (!calendarEvent.fecha && calendarEvent.fechaCopia) {
-        calendarEvent.fecha = calendarEvent.fechaCopia;
-      }
-
       if (calendarEvent.id) {
+        if (!calendarEvent.fecha && calendarEvent.fechaCopia) {
+          calendarEvent.fecha = calendarEvent.fechaCopia;
+        }
+
+        const payload = sanitizeReservaUpdate(calendarEvent);
+
         const { data } = await calendarApi.put(
           `/reserva/${calendarEvent.id}`,
-          calendarEvent
+          payload
         );
-        //Convertir fechas recibidas del backend para evitar Invalid Date
+
         const [eventoActualizado] = convertEventsToDateEvents([data.reserva]);
-        dispatch(onUpdateEvent({ ...calendarEvent, user }));
+        dispatch(
+          onUpdateEvent({ ...calendarEvent, ...eventoActualizado, user })
+        );
 
         Swal.fire({
           icon: "success",
@@ -55,6 +58,7 @@ export const useCalendarStore = () => {
           showConfirmButton: false,
           timer: 1000,
         });
+        return;
       } else {
         // Proceso de cálculo previo al envío
         let monto_cancha = 0;
@@ -84,13 +88,17 @@ export const useCalendarStore = () => {
           monto_cancha,
           monto_sena,
         };
+        console.log({ reservaConMontos });
 
         //-----> Guardo y actualizo store
 
         const { data } = await calendarApi.post("/reserva", reservaConMontos);
+
         // Convertimos el evento antes de guardar en store
 
-        dispatch(onAddNewEvent({ ...reservaConMontos, user, id: data._id }));
+        dispatch(
+          onAddNewEvent({ ...reservaConMontos, user, id: data.reserva.id })
+        );
 
         Swal.fire({
           icon: "success",
@@ -132,6 +140,7 @@ export const useCalendarStore = () => {
   const startLoadingEvents = async () => {
     try {
       const { data } = await calendarApi.get("/reserva");
+
       // const events = convertEventsToDateEvents(data.reservas);
       const eventosActivos = data.reservas.filter(
         (r) => r.estado === "activo" || !r.estado

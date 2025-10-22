@@ -107,7 +107,7 @@ export const PrecioCancha = () => {
           monto_sena: precioSena,
         }
       );
-
+      console.log(data);
       if (data.ok) {
         Swal.fire("Actualizado", "Precios actualizados con éxito", "success");
 

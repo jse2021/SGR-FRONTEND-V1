@@ -3,6 +3,7 @@ const AgendaCustomEvent = ({ event }) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+  const { apellidoCliente, nombreCliente, canchas, fecha, fechaCopia } = event;
 
   const cliente =
     (event.nombreCliente || "") + " " + (event.apellidoCliente || "");
