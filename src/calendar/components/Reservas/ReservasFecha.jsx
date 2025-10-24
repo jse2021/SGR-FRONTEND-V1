@@ -24,6 +24,16 @@ function mapToModal(reserva) {
     hora: String(hora),
   };
 }
+// Convierte la reserva para la tabla: cancha como nombre siempre
+const mapToRow = (r, dict) => ({
+  ...r,
+  // prioriza objeto.cancha.nombre, luego string cancha,
+  // y como fallback usa el nombre por id desde el diccionario
+  cancha: String(r?.cancha?.nombre ?? r?.cancha ?? dict?.[Number(r.canchaId)] ?? ""),
+  // por si viene cliente como objeto
+  cliente: String(r?.cliente?.dni ?? r?.cliente ?? ""),
+});
+
 
 export const ReservasFecha = () => {
   const [cancha, setCancha] = useState([]);
@@ -41,6 +51,20 @@ export const ReservasFecha = () => {
   const [totalPages, setTotalPages] = useState(1); // Total de páginas (viene del backend)
   const [isLoading, setIsLoading] = useState(false);
 
+const [canchaById, setCanchaById] = useState({});
+
+useEffect(() => {
+  // Trae canchas activas con id y nombre
+  calendarApi.get('/cancha')
+    .then(({ data }) => {
+      // data.canchas => [{ id, nombre, ... }]
+      const dict = Object.fromEntries(
+        (data.canchas || []).map(c => [Number(c.id), c.nombre])
+      );
+      setCanchaById(dict);
+    })
+    .catch(() => setCanchaById({}));
+}, []);
   async function fetchData() {
     const { data } = await calendarApi.get("/cancha");
     if (data.canchas instanceof Array) {
@@ -71,10 +95,10 @@ export const ReservasFecha = () => {
         { params: { page: pageToFetch, limit: 5 } }
       );
 
-      // setResults(data.reservasFecha);
-      // setTotalPages(data.totalPages);
-      // setPage(data.page);
-      setResults(data.reservas || []);
+     // usar el diccionario como fallback
+const rows = (data.reservas || []).map(r => mapToRow(r, canchaById));
+      console.log(rows)
+      setResults(rows);
       setTotalPages(data.pages || 1);
       setPage(data.page || pageToFetch);
       setBusquedaRealizada(true);
@@ -104,9 +128,8 @@ export const ReservasFecha = () => {
    * FUNCION PARA LLAMAR AL MODAL - EDITAR
    */
   const handleEditarReserva = (reserva) => {
-    // setActiveEvent(reserva); // setear en el store qué reserva se va a editar
     setActiveEvent(mapToModal(reserva));
-    openDateModal(); // sin argumento
+    openDateModal();
   };
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   /**
@@ -223,7 +246,9 @@ export const ReservasFecha = () => {
                     </thead>
                     <tbody>
                       {results.map((reserva) => (
+                        
                         <tr key={reserva._id}>
+                        
                           <td className="border px-4 py-2">
                             {reserva.apellidoCliente} {reserva.nombreCliente}
                           </td>

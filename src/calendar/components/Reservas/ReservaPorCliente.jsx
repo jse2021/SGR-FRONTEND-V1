@@ -123,6 +123,7 @@ export const ReservaPorCliente = () => {
         { params: { page: pageToFetch, limit: 2 } }
       );
 
+      console.log(data.reservas)
       setResults(data.reservas || []);
       setTotalPages(data.pages || 1); // total de páginas
       setCurrentPage(data.page || pageToFetch); // página actual

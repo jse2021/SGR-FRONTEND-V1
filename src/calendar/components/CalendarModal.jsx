@@ -8,11 +8,8 @@ import AsyncSelect from "react-select/async";
 import Modal from "react-modal";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import es from "date-fns/locale/es";
 import { useCalendarStore, useUiStore } from "../../hooks";
-// import { InputCliente } from "./Components Modal/Cliente/InputCliente";
-// import { ListaCliente } from "./Components Modal/Cliente/ListaCliente";
 import { calendarApi } from "../../api";
 import "../../calendar/components/CalendarModal.css";
 
@@ -53,6 +50,38 @@ export const CalendarModal = ({ date, cliente }) => {
 
   const [horariosDisponibles, setHorariosDisponibles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false); // manejo de boton guardar
+
+  // --------------------------NUEVO METODO--->
+function normalizeFromEvent(evt, canchasList = []) {
+  const rawDate = evt?.fechaCopia || evt?.fecha || evt?.start;
+  let fecha = new Date(rawDate);
+  if (isNaN(fecha.getTime())) fecha = new Date();
+
+  const dniStr = typeof evt?.cliente === "object"
+    ? (evt?.cliente?.dni ?? evt?._cliente?.dni ?? "")
+    : (evt?.cliente ?? "");
+
+  let canchaStr = typeof evt?.cancha === "object"
+    ? (evt?.cancha?.nombre ?? "")
+    : (evt?.cancha ?? "");
+
+  if (!canchaStr) canchaStr = evt?.title ?? "";
+
+  if (!canchaStr && evt?.canchaId && Array.isArray(canchasList)) {
+    const found = canchasList.find(c => Number(c.id) === Number(evt.canchaId));
+    if (found) canchaStr = found.nombre;
+  }
+
+  const horaStr = String(evt?.hora ?? "").padStart(5, "0");
+
+  let monto = 0;
+  switch (evt?.estado_pago) {
+    case "TOTAL": monto = evt?.monto_cancha || 0; break;
+    case "SEÑA":  monto = evt?.monto_sena   || 0; break;
+    default:      monto = 0;
+  }
+  return { fecha, dniStr, canchaStr, horaStr, monto };
+}
 
   /**
    * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
@@ -275,68 +304,98 @@ export const CalendarModal = ({ date, cliente }) => {
   /**
    * AL LEVANTAR NUEVAMENTE EL MODAL, TRAIGO EL CLIENTE COMO OBJETO (VALUE:LABEL)
    */
-
   useEffect(() => {
-    if (!activeEvent) return;
+  if (!isDateModalOpen || !activeEvent) return;
 
-    // monto según estado de pago
-    let monto = 0;
-    switch (activeEvent.estado_pago) {
-      case "TOTAL":
-        monto = activeEvent.monto_cancha || 0;
-        break;
-      case "SEÑA":
-        monto = activeEvent.monto_sena || 0;
-        break;
-      case "IMPAGO":
-      default:
-        monto = 0;
-    }
+  const { fecha, dniStr, canchaStr, horaStr, monto } =
+    normalizeFromEvent(activeEvent, cancha /* tu array de canchas */);
 
-    // fecha defensiva (toma fechaCopia | fecha | start)
-    const rawDate =
-      activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
-    let fechaParsed = new Date(rawDate);
-    if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
+  const clienteValue = {
+    value: dniStr,
+    label: `${dniStr}-${activeEvent?.apellidoCliente ?? ""} ${activeEvent?.nombreCliente ?? ""}`.trim(),
+  };
 
-    // normalizo DNI y cancha a string (por si vienen como objeto)
-    const dniStr =
-      typeof activeEvent.cliente === "object"
-        ? activeEvent.cliente?.dni ?? activeEvent._cliente?.dni ?? ""
-        : activeEvent.cliente ?? "";
+  setFormValues(prev => ({
+    ...prev,
+    ...activeEvent,
+    fecha,
+    cliente: clienteValue,
+    cancha: canchaStr,
+    hora: horaStr,
+    monto,
+  }));
 
-    let canchaStr =
-      typeof activeEvent.cancha === "object"
-        ? activeEvent.cancha?.nombre ?? ""
-        : activeEvent.cancha ?? "";
+  setDni(dniStr);
 
-    // Fallback: si no vino el nombre pero sí el id, resolvemos por el array "cancha"
-    if (!canchaStr && activeEvent.canchaId && Array.isArray(cancha)) {
-      const found = cancha.find(
-        (c) => Number(c.id) === Number(activeEvent.canchaId)
-      );
-      if (found) canchaStr = found.nombre;
-    }
+  if (canchaStr && !isNaN(fecha.getTime())) {
+    // Usa la función que ya tienes para cargar horarios (ajusta el nombre si difiere)
+    obtenerHorarios(canchaStr, horaStr);
+    // o cargarHorasDisponibles({ fecha, cancha: canchaStr, reservaId: activeEvent?.id })
+  }
+}, [isDateModalOpen, activeEvent, cancha]);
 
-    // el AsyncSelect de cliente espera { value, label } y value debe ser el DNI
-    const clienteValue = {
-      value: dniStr,
-      label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
-        activeEvent.nombreCliente ?? ""
-      }`.trim(),
-    };
 
-    setFormValues({
-      ...activeEvent,
-      fecha: fechaParsed,
-      cliente: clienteValue, // ← value = DNI (no id de reserva)
-      cancha: canchaStr, // ← string (no objeto)
-      hora: activeEvent.hora || "",
-      monto,
-    });
+  // useEffect(() => {
+  //   if (!activeEvent) return;
 
-    setDni(dniStr); // ← guardo el DNI en string para el submit
-  }, [activeEvent, cancha]);
+  //   // monto según estado de pago
+  //   let monto = 0;
+  //   switch (activeEvent.estado_pago) {
+  //     case "TOTAL":
+  //       monto = activeEvent.monto_cancha || 0;
+  //       break;
+  //     case "SEÑA":
+  //       monto = activeEvent.monto_sena || 0;
+  //       break;
+  //     case "IMPAGO":
+  //     default:
+  //       monto = 0;
+  //   }
+
+  //   // fecha defensiva (toma fechaCopia | fecha | start)
+  //   const rawDate =
+  //     activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
+  //   let fechaParsed = new Date(rawDate);
+  //   if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
+
+  //   // normalizo DNI y cancha a string (por si vienen como objeto)
+  //   const dniStr =
+  //     typeof activeEvent.cliente === "object"
+  //       ? activeEvent.cliente?.dni ?? activeEvent._cliente?.dni ?? ""
+  //       : activeEvent.cliente ?? "";
+
+  //   let canchaStr =
+  //     typeof activeEvent.cancha === "object"
+  //       ? activeEvent.cancha?.nombre ?? ""
+  //       : activeEvent.cancha ?? "";
+
+  //   // Fallback: si no vino el nombre pero sí el id, resolvemos por el array "cancha"
+  //   if (!canchaStr && activeEvent.canchaId && Array.isArray(cancha)) {
+  //     const found = cancha.find(
+  //       (c) => Number(c.id) === Number(activeEvent.canchaId)
+  //     );
+  //     if (found) canchaStr = found.nombre;
+  //   }
+
+  //   // el AsyncSelect de cliente espera { value, label } y value debe ser el DNI
+  //   const clienteValue = {
+  //     value: dniStr,
+  //     label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
+  //       activeEvent.nombreCliente ?? ""
+  //     }`.trim(),
+  //   };
+
+  //   setFormValues({
+  //     ...activeEvent,
+  //     fecha: fechaParsed,
+  //     cliente: clienteValue, // ← value = DNI (no id de reserva)
+  //     cancha: canchaStr, // ← string (no objeto)
+  //     hora: activeEvent.hora || "",
+  //     monto,
+  //   });
+
+  //   setDni(dniStr); // ← guardo el DNI en string para el submit
+  // }, [activeEvent, cancha]);
 
   //_-------------------------------------------------------------------------------------
   /*
@@ -461,49 +520,50 @@ export const CalendarModal = ({ date, cliente }) => {
       setDni("");
     }
   }, [isDateModalOpen]);
-  useEffect(() => {
-    if (!isDateModalOpen || !activeEvent) return;
+  // useEffect(() => {
+  //   if (!isDateModalOpen || !activeEvent) return;
 
-    // 1) monto
-    let monto = 0;
-    if (activeEvent.estado_pago === "TOTAL") {
-      monto = Number(activeEvent.monto_cancha || 0);
-    } else if (activeEvent.estado_pago === "SEÑA") {
-      monto = Number(activeEvent.monto_sena || 0);
-    }
+  //   // 1) monto
+  //   let monto = 0;
+  //   if (activeEvent.estado_pago === "TOTAL") {
+  //     monto = Number(activeEvent.monto_cancha || 0);
+  //   } else if (activeEvent.estado_pago === "SEÑA") {
+  //     monto = Number(activeEvent.monto_sena || 0);
+  //   }
 
-    // 2) fecha defensiva (fechaCopia | fecha | start)
-    const rawDate =
-      activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
-    let fechaParsed = new Date(rawDate);
-    if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
+  //   // 2) fecha defensiva (fechaCopia | fecha | start)
+  //   const rawDate =
+  //     activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
+  //   let fechaParsed = new Date(rawDate);
+  //   if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
 
-    // 3) ya vienen normalizados por mapToModal
-    const dniStr = String(activeEvent.cliente ?? "");
-    const canchaStr = String(activeEvent.cancha ?? "");
+  //   // 3) ya vienen normalizados por mapToModal
+  //   const dniStr = String(activeEvent.cliente ?? "");
+  //   const canchaStr = String(activeEvent.cancha ?? "");
 
-    // 4) setear form
-    setFormValues({
-      ...activeEvent,
-      fecha: fechaParsed,
-      cliente: {
-        value: dniStr,
-        label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
-          activeEvent.nombreCliente ?? ""
-        }`.trim(),
-      },
-      cancha: canchaStr,
-      hora: activeEvent.hora || "",
-      monto,
-    });
+  //   // 4) setear form
+  //   setFormValues({
+  //     ...activeEvent,
+  //     fecha: fechaParsed,
+  //     cliente: {
+  //       value: dniStr,
+  //       label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
+  //         activeEvent.nombreCliente ?? ""
+  //       }`.trim(),
+  //     },
+  //     cancha: canchaStr,
+  //     hora: activeEvent.hora || "",
+  //     monto,
+  //   });
 
-    setDni(dniStr);
+  //   setDni(dniStr);
 
-    // 5) horarios
-    if (canchaStr) {
-      obtenerHorarios(canchaStr, activeEvent.hora || null);
-    }
-  }, [isDateModalOpen, activeEvent]);
+  //   // 5) horarios
+  //   if (canchaStr) {
+  //     obtenerHorarios(canchaStr, activeEvent.hora || null);
+      
+  //   }
+  // }, [isDateModalOpen, activeEvent]);
 
   //---------------------------------------------------------------------------------------
   /**
