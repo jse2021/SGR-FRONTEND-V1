@@ -171,68 +171,37 @@ function normalizeFromEvent(evt, canchasList = []) {
    * PARA CREAR RESERVA: TRAIGO LOS HORARIOS DISPONIBLES
    * PARA LA MODIFICACION: TRAIGO LOS HORARIOS DISPONIBLES, INCLUSO LA HORA DE LA RESERVA SELECCIONADA
    */
-  const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
-    try {
-      let fechaReferencia = date;
+  // CalendarModal.jsx
+const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
+  try {
+    let fechaCruda = formValues.fecha || formValues.start || activeEvent?.start || date;
 
-      // Si no hay date (modo edición), tratamos de usar el de activeEvent
-      if (!fechaReferencia && activeEvent && activeEvent.start) {
-        fechaReferencia = activeEvent.start;
+    // Normalizamos YYYY-MM-DD SIN tocar horas
+    const d = new Date(fechaCruda);
+    const fechaYMD = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+
+    const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
+      fecha: fechaYMD,
+      cancha: canchaSeleccionada,
+      reservaId: activeEvent?.id ?? undefined,
+    });
+
+    if (data.ok) {
+      let horarios = data.horasDisponibles;
+      if (horarioActual && !horarios.includes(horarioActual)) {
+        horarios = [...horarios, horarioActual].sort();
       }
-
-      // Validamos si tenemos una fecha final
-      if (!fechaReferencia) {
-        console.warn("Fecha no proporcionada ni al crear ni al editar");
-        return;
-      }
-
-      let fechaCruda =
-        formValues.fecha || formValues.start || activeEvent?.start;
-
-      //usa la fecha actual si ninguna está seteada
-      if (!fechaCruda) {
-        fechaCruda = new Date();
-        console.warn(
-          "No se encontró fecha en formValues, se usa fecha actual:",
-          fechaCruda
-        );
-      }
-
-      const fechaBase = new Date(fechaCruda);
-      if (isNaN(fechaBase)) {
-        console.error("fechaBase no es válida:", fechaCruda);
-        return;
-      }
-
-      fechaBase.setUTCHours(3, 0, 0, 0);
-      const fechaFormateada = fechaBase.toISOString();
-
-      const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
-        fecha: fechaFormateada,
-        cancha: canchaSeleccionada,
-        reservaId: activeEvent?.id || null,
-      });
-
-      if (data.ok) {
-        let horarios = data.horasDisponibles;
-        // Si estamos editando y el horario actual no está, lo agregamos
-        if (horarioActual && !horarios.includes(horarioActual)) {
-          horarios = [...horarios, horarioActual].sort(); // ordenado
-        }
-
-        setHorariosDisponibles(horarios);
-      } else {
-        Swal.fire(
-          "Error",
-          "No se pudieron obtener los horarios disponibles",
-          "error"
-        );
-      }
-    } catch (error) {
-      console.error("Error al obtener horarios:", error);
-      Swal.fire("Error", "Error al obtener horarios disponibles", "error");
+      setHorariosDisponibles(horarios);
+    } else {
+      Swal.fire("Error", "No se pudieron obtener los horarios disponibles", "error");
     }
-  };
+  } catch (err) {
+    console.error("Error al obtener horarios:", err);
+    Swal.fire("Error", "Error al obtener horarios disponibles", "error");
+  }
+};
+
+
   //---------------------------------------------------------------------------------------
   /**
    * TRABAJO MONTOS: OBTENGO LOS MONTOS SEGUN CANCHA SELECCIONADA
@@ -333,70 +302,6 @@ function normalizeFromEvent(evt, canchasList = []) {
     // o cargarHorasDisponibles({ fecha, cancha: canchaStr, reservaId: activeEvent?.id })
   }
 }, [isDateModalOpen, activeEvent, cancha]);
-
-
-  // useEffect(() => {
-  //   if (!activeEvent) return;
-
-  //   // monto según estado de pago
-  //   let monto = 0;
-  //   switch (activeEvent.estado_pago) {
-  //     case "TOTAL":
-  //       monto = activeEvent.monto_cancha || 0;
-  //       break;
-  //     case "SEÑA":
-  //       monto = activeEvent.monto_sena || 0;
-  //       break;
-  //     case "IMPAGO":
-  //     default:
-  //       monto = 0;
-  //   }
-
-  //   // fecha defensiva (toma fechaCopia | fecha | start)
-  //   const rawDate =
-  //     activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
-  //   let fechaParsed = new Date(rawDate);
-  //   if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
-
-  //   // normalizo DNI y cancha a string (por si vienen como objeto)
-  //   const dniStr =
-  //     typeof activeEvent.cliente === "object"
-  //       ? activeEvent.cliente?.dni ?? activeEvent._cliente?.dni ?? ""
-  //       : activeEvent.cliente ?? "";
-
-  //   let canchaStr =
-  //     typeof activeEvent.cancha === "object"
-  //       ? activeEvent.cancha?.nombre ?? ""
-  //       : activeEvent.cancha ?? "";
-
-  //   // Fallback: si no vino el nombre pero sí el id, resolvemos por el array "cancha"
-  //   if (!canchaStr && activeEvent.canchaId && Array.isArray(cancha)) {
-  //     const found = cancha.find(
-  //       (c) => Number(c.id) === Number(activeEvent.canchaId)
-  //     );
-  //     if (found) canchaStr = found.nombre;
-  //   }
-
-  //   // el AsyncSelect de cliente espera { value, label } y value debe ser el DNI
-  //   const clienteValue = {
-  //     value: dniStr,
-  //     label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
-  //       activeEvent.nombreCliente ?? ""
-  //     }`.trim(),
-  //   };
-
-  //   setFormValues({
-  //     ...activeEvent,
-  //     fecha: fechaParsed,
-  //     cliente: clienteValue, // ← value = DNI (no id de reserva)
-  //     cancha: canchaStr, // ← string (no objeto)
-  //     hora: activeEvent.hora || "",
-  //     monto,
-  //   });
-
-  //   setDni(dniStr); // ← guardo el DNI en string para el submit
-  // }, [activeEvent, cancha]);
-
   //_-------------------------------------------------------------------------------------
   /*
    * MANEJO DEL CAMBIO DE ESTADO DE LOS COMPONENTES:TAMBIEN EL CAMBIO DE ESTADO DE ESTADO DE PAGO E INPUT MONTO
@@ -517,53 +422,9 @@ function normalizeFromEvent(evt, canchasList = []) {
         monto_cancha: "",
         monto_sena: "",
       });
-      setDni("");
+      // setDni("");
     }
   }, [isDateModalOpen]);
-  // useEffect(() => {
-  //   if (!isDateModalOpen || !activeEvent) return;
-
-  //   // 1) monto
-  //   let monto = 0;
-  //   if (activeEvent.estado_pago === "TOTAL") {
-  //     monto = Number(activeEvent.monto_cancha || 0);
-  //   } else if (activeEvent.estado_pago === "SEÑA") {
-  //     monto = Number(activeEvent.monto_sena || 0);
-  //   }
-
-  //   // 2) fecha defensiva (fechaCopia | fecha | start)
-  //   const rawDate =
-  //     activeEvent.fechaCopia || activeEvent.fecha || activeEvent.start;
-  //   let fechaParsed = new Date(rawDate);
-  //   if (isNaN(fechaParsed.getTime())) fechaParsed = new Date();
-
-  //   // 3) ya vienen normalizados por mapToModal
-  //   const dniStr = String(activeEvent.cliente ?? "");
-  //   const canchaStr = String(activeEvent.cancha ?? "");
-
-  //   // 4) setear form
-  //   setFormValues({
-  //     ...activeEvent,
-  //     fecha: fechaParsed,
-  //     cliente: {
-  //       value: dniStr,
-  //       label: `${dniStr}-${activeEvent.apellidoCliente ?? ""} ${
-  //         activeEvent.nombreCliente ?? ""
-  //       }`.trim(),
-  //     },
-  //     cancha: canchaStr,
-  //     hora: activeEvent.hora || "",
-  //     monto,
-  //   });
-
-  //   setDni(dniStr);
-
-  //   // 5) horarios
-  //   if (canchaStr) {
-  //     obtenerHorarios(canchaStr, activeEvent.hora || null);
-      
-  //   }
-  // }, [isDateModalOpen, activeEvent]);
 
   //---------------------------------------------------------------------------------------
   /**

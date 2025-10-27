@@ -76,7 +76,7 @@ export const FormaPago = () => {
   const formasPago = [
     { label: "EFECTIVO", value: "EFECTIVO" },
     { label: "TRANSFERENCIA", value: "TRANSFERENCIA" },
-    { label: "DÉBITO", value: "DÉBITO" },
+    { label: "DEBITO", value: "DEBITO" },
     { label: "TARJETA", value: "TARJETA" },
     { label: "SIN OPERACION", value: "SO" },
     { label: "TODAS", value: "TODAS" },
