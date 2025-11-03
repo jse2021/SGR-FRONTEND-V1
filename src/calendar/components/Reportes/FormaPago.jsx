@@ -17,8 +17,7 @@ const fmtFecha = (raw) => {
 const fmtCliente = (r) =>
   [r?.apellidoCliente, r?.nombreCliente].filter(Boolean).join(" ") ||
   (r?.cliente ?? "-");
-const fmtCancha = (r) => r?.cancha || (r?.canchaId ? `${r.title}` : "-");
-
+  
 /** Normaliza strings tipo “DÉBITO” -> “DEBITO” */
 const sinTildes = (s = "") =>
   s
@@ -33,22 +32,24 @@ export const FormaPago = () => {
     cancha: "",
     forma_pago: "",
     estado_pago: "",
-  });
+  });//lo que elige el usuario en la UI
 
   /** Resultados + paginación */
-  const [resultados, setResultados] = useState([]);
-  const [paginaActual, setPaginaActual] = useState(1);
-  const [totalPaginas, setTotalPaginas] = useState(1);
-  const [busquedaRealizada, setBusquedaRealizada] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [resultados, setResultados] = useState([]);//las filas que pinta la tabla.
+  const [paginaActual, setPaginaActual] = useState(1);//controla la paginacion
+  const [totalPaginas, setTotalPaginas] = useState(1);//controla la paginacion
+  const [busquedaRealizada, setBusquedaRealizada] = useState(false);//decide si mostrar la tabla (o el mensaje de “no hay resultados”).
+  const [isLoading, setIsLoading] = useState(false);//deshabilita el botón y cambia el texto a “Buscando…”.
   const [totales, setTotales] = useState({
     monto_cancha: 0,
     monto_sena: 0,
     monto_deuda: 0,
     total: 0,
-  });
+  });//el pie con Total, Seña y Deuda (lo manda el backend).
+
 
   /** Canchas (desde /configuracion) */
+  //**->Guarda nombre como value, porque la ruta backend espera nombre de cancha (no ID). */
   const loadCanchas = async () => {
     try {
       const { data } = await calendarApi.get("/configuracion");
@@ -90,7 +91,7 @@ export const FormaPago = () => {
 
     setIsLoading(true);
 
-    // 2) Fecha a YYYY-MM-DD
+    // 2) Fecha a YYYY-MM-DD ---> No mando ISO completo
     const f = new Date(fecha);
     const y = f.getFullYear();
     const m = String(f.getMonth() + 1).padStart(2, "0");
