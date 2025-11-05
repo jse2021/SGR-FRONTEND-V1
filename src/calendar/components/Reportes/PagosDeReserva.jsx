@@ -9,6 +9,8 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 
+
+
 export const PagosDeReserva = () => {
   const [form, setForm] = useState({
     fechaInicio: null,
@@ -25,27 +27,8 @@ export const PagosDeReserva = () => {
     { label: "SEÑA", value: "SEÑA" },
     { label: "IMPAGO", value: "IMPAGO" },
   ];
-  const exportarPDF = () => {
-    if (resultados.length === 0) return;
 
-    const doc = new jsPDF();
 
-    doc.text("Reporte de Reservas", 14, 15);
-
-    autoTable(doc, {
-      startY: 20,
-      head: [["Fecha", "Cliente", "Cancha", "Estado", "Monto"]],
-      body: resultados.map((reserva) => [
-        new Date(reserva.fecha).toLocaleDateString("es-AR") || "-",
-        reserva.nombre + " " + reserva.apellido || "-",
-        `${reserva.cancha || 0}`,
-        `${reserva.estado || 0}`,
-        `$${reserva.monto_total || reserva.monto_sena || reserva.impago || 0}`,
-      ]),
-    });
-
-    doc.save("reservas.pdf");
-  };
   //**MANEJO POR SEPARADO PARA TRABAJAR LA PAGINACION */
   const fetchResultados = async (pagina = 1) => {
     const { fechaInicio, fechaFin, estado_pago } = form;
