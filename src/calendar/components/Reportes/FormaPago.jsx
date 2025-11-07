@@ -17,7 +17,7 @@ const fmtFecha = (raw) => {
 const fmtCliente = (r) =>
   [r?.apellidoCliente, r?.nombreCliente].filter(Boolean).join(" ") ||
   (r?.cliente ?? "-");
-  
+
 /** Normaliza strings tipo “DÉBITO” -> “DEBITO” */
 const sinTildes = (s = "") =>
   s
@@ -32,21 +32,20 @@ export const FormaPago = () => {
     cancha: "",
     forma_pago: "",
     estado_pago: "",
-  });//lo que elige el usuario en la UI
+  }); //lo que elige el usuario en la UI
 
   /** Resultados + paginación */
-  const [resultados, setResultados] = useState([]);//las filas que pinta la tabla.
-  const [paginaActual, setPaginaActual] = useState(1);//controla la paginacion
-  const [totalPaginas, setTotalPaginas] = useState(1);//controla la paginacion
-  const [busquedaRealizada, setBusquedaRealizada] = useState(false);//decide si mostrar la tabla (o el mensaje de “no hay resultados”).
-  const [isLoading, setIsLoading] = useState(false);//deshabilita el botón y cambia el texto a “Buscando…”.
+  const [resultados, setResultados] = useState([]); //las filas que pinta la tabla.
+  const [paginaActual, setPaginaActual] = useState(1); //controla la paginacion
+  const [totalPaginas, setTotalPaginas] = useState(1); //controla la paginacion
+  const [busquedaRealizada, setBusquedaRealizada] = useState(false); //decide si mostrar la tabla (o el mensaje de “no hay resultados”).
+  const [isLoading, setIsLoading] = useState(false); //deshabilita el botón y cambia el texto a “Buscando…”.
   const [totales, setTotales] = useState({
     monto_cancha: 0,
     monto_sena: 0,
     monto_deuda: 0,
     total: 0,
-  });//el pie con Total, Seña y Deuda (lo manda el backend).
-
+  }); //el pie con Total, Seña y Deuda (lo manda el backend).
 
   /** Canchas (desde /configuracion) */
   //**->Guarda nombre como value, porque la ruta backend espera nombre de cancha (no ID). */
@@ -99,8 +98,8 @@ export const FormaPago = () => {
     const fechaYMD = `${y}-${m}-${d}`;
 
     // 3) Normalizaciones
-    const canchaParam = encodeURIComponent(cancha || "TODAS"); 
-    const formaParam = sinTildes(forma_pago || "TODAS"); 
+    const canchaParam = encodeURIComponent(cancha || "TODAS");
+    const formaParam = sinTildes(forma_pago || "TODAS");
     const estadoParam = sinTildes(estado_pago || "TODAS");
 
     // 4) URL (ruta acordada con backend)
@@ -116,11 +115,16 @@ export const FormaPago = () => {
       const pages = Number(data?.pages ?? 1);
 
       setResultados(reservas);
-      console.log(reservas)
+      console.log(reservas);
       setPaginaActual(page);
       setTotalPaginas(pages);
       setTotales(
-        data?.totales || { monto_cancha: 0, monto_sena: 0, monto_deuda: 0, total: 0 }
+        data?.totales || {
+          monto_cancha: 0,
+          monto_sena: 0,
+          monto_deuda: 0,
+          total: 0,
+        }
       );
       setBusquedaRealizada(true);
     } catch (error) {
@@ -213,7 +217,11 @@ export const FormaPago = () => {
                 loadOptions={loadCanchas}
                 defaultOptions
                 placeholder="Cancha"
-                value={form.cancha ? { label: form.cancha, value: form.cancha } : null}
+                value={
+                  form.cancha
+                    ? { label: form.cancha, value: form.cancha }
+                    : null
+                }
                 onChange={(opt) =>
                   setForm((p) => ({ ...p, cancha: opt?.value || "" }))
                 }
@@ -227,8 +235,12 @@ export const FormaPago = () => {
                 className="w-100"
                 options={formasPago}
                 placeholder="Forma de pago"
-                value={formasPago.find((o) => o.value === form.forma_pago) || null}
-                onChange={(o) => setForm((p) => ({ ...p, forma_pago: o?.value || "" }))}
+                value={
+                  formasPago.find((o) => o.value === form.forma_pago) || null
+                }
+                onChange={(o) =>
+                  setForm((p) => ({ ...p, forma_pago: o?.value || "" }))
+                }
               />
             </div>
 
@@ -239,8 +251,12 @@ export const FormaPago = () => {
                 className="w-100"
                 options={estadosPago}
                 placeholder="Estado de pago"
-                value={estadosPago.find((o) => o.value === form.estado_pago) || null}
-                onChange={(o) => setForm((p) => ({ ...p, estado_pago: o?.value || "" }))}
+                value={
+                  estadosPago.find((o) => o.value === form.estado_pago) || null
+                }
+                onChange={(o) =>
+                  setForm((p) => ({ ...p, estado_pago: o?.value || "" }))
+                }
               />
             </div>
           </div>
@@ -278,7 +294,11 @@ export const FormaPago = () => {
                       <tr key={r.id}>
                         <td>{fmtFecha(r.fechaCopia || r.fecha || r.start)}</td>
                         <td>{fmtCliente(r)}</td>
-                      <td>{typeof r.cancha === "string" ? r.cancha : r.cancha?.nombre || ""}</td>
+                        <td>
+                          {typeof r.cancha === "string"
+                            ? r.cancha
+                            : r.cancha?.nombre || ""}
+                        </td>
 
                         <td>{r.forma_pago ?? "-"}</td>
                         <td>{r.estado_pago ?? "-"}</td>
@@ -297,16 +317,16 @@ export const FormaPago = () => {
                 {/* Totales (si vienen) */}
                 <div className="d-flex gap-3 justify-content-end mb-2 px-2">
                   <span>
-                    <strong>Total:</strong>{" "}
-                    ${Number(totales.total || 0).toLocaleString("es-AR")}
+                    <strong>Total:</strong> $
+                    {Number(totales.total || 0).toLocaleString("es-AR")}
                   </span>
                   <span>
-                    <strong>Seña:</strong>{" "}
-                    ${Number(totales.monto_sena || 0).toLocaleString("es-AR")}
+                    <strong>Seña:</strong> $
+                    {Number(totales.monto_sena || 0).toLocaleString("es-AR")}
                   </span>
                   <span>
-                    <strong>Deuda:</strong>{" "}
-                    ${Number(totales.monto_deuda || 0).toLocaleString("es-AR")}
+                    <strong>Deuda:</strong> $
+                    {Number(totales.monto_deuda || 0).toLocaleString("es-AR")}
                   </span>
                 </div>
 
@@ -331,7 +351,10 @@ export const FormaPago = () => {
                   </div>
                 )}
 
-                <button className="btn btn-danger mb-3 ms-2" onClick={exportarPDF}>
+                <button
+                  className="btn btn-danger mb-3 ms-2"
+                  onClick={exportarPDF}
+                >
                   Exportar a PDF
                 </button>
               </>

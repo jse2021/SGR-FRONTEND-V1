@@ -9,8 +9,6 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 
-
-
 export const PagosDeReserva = () => {
   const [form, setForm] = useState({
     fechaInicio: null,
@@ -18,62 +16,124 @@ export const PagosDeReserva = () => {
     estado_pago: "",
   });
   const [resultados, setResultados] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [busquedaRealizada, setBusquedaRealizada] = useState(false);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const [busquedaRealizada, setBusquedaRealizada] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const estadosPago = [
     { label: "TOTAL", value: "TOTAL" },
     { label: "SEÑA", value: "SEÑA" },
     { label: "IMPAGO", value: "IMPAGO" },
   ];
 
+  // helper local para formatear a YYYY-MM-DD
+  const toYMD = (d) => {
+    const f = new Date(d);
+    const y = f.getFullYear();
+    const m = String(f.getMonth() + 1).padStart(2, "0");
+    const day = String(f.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
 
   //**MANEJO POR SEPARADO PARA TRABAJAR LA PAGINACION */
   const fetchResultados = async (pagina = 1) => {
-    const { fechaInicio, fechaFin, estado_pago } = form;
-    //Validación obligatoria de fecha
-    if (!fechaInicio || !fechaFin || !estado_pago) {
-      Swal.fire(
-        "Campos requeridos",
-        "Completa todas las fechas y cancha",
-        "warning"
-      );
+    // OJO: aquí usamos los mismos nombres que en el state
+    const { estado_pago, fechaInicio, fechaFin } = form;
+
+    // viste que antes salía "SEÑA undefined ..." ? era por esto :)
+    // console.log(estado_pago, fechaInicio, fechaFin);
+
+    // Validación mínima
+    if (!estado_pago || !fechaInicio || !fechaFin) {
+      Swal.fire("Atención", "Todos los campos son obligatorios", "warning");
       return;
     }
 
-    const fechaInicioISO = new Date(fechaInicio).toISOString();
-    const fechaFinISO = new Date(fechaFin).toISOString();
-
-    //Valores por defecto para filtros
-    const estadoPagoSeleccionado = estado_pago || "TODAS";
+    setIsLoading(true);
 
     try {
-      setIsLoading(true);
-      const { data } = await calendarApi.get(
-        `/reserva/estadoReservas/${estadoPagoSeleccionado}/${fechaInicioISO}/${fechaFinISO}?page=${pagina}&limit=10`
-      );
+      // Fechas a YYYY-MM-DD (lo que espera el backend)
+      const fIni = toYMD(fechaInicio);
+      const fFin = toYMD(fechaFin);
 
-      setResultados(data.reservasFormateadas || []);
-      setTotalPaginas(data.totalPages || 1);
-      setPaginaActual(pagina);
+      // Importante: codificamos el estado por la Ñ de "SEÑA"
+      const estadoURL = encodeURIComponent(estado_pago);
+
+      const url = `reserva/estadoReservas/${estadoURL}/${fIni}/${fFin}?page=${pagina}&limit=5`;
+
+      const { data } = await calendarApi.get(url);
+
+      console.log(data);
+
+      const reservas = Array.isArray(data?.reservas) ? data.reservas : [];
+      const page = Number(data?.page ?? pagina);
+      const pages = Number(data?.pages ?? 1);
+
+      setResultados(reservas);
+      setPaginaActual(page);
+      setTotalPaginas(pages);
       setBusquedaRealizada(true);
     } catch (error) {
-      console.error("Error al obtener recaudación", error);
-      setResultados([]);
-      setBusquedaRealizada(true);
+      console.error("Error al buscar reservas:", error);
+      if (error?.response?.status === 404) {
+        setResultados([]);
+        setPaginaActual(1);
+        setTotalPaginas(1);
+        setBusquedaRealizada(true);
+      } else {
+        Swal.fire("Error", "No se pudieron obtener las reservas", "error");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
   /**IMPLEMENTO BUSCAR */
-  const handleBuscar = async (e) => {
+  const handleBuscar = (e) => {
     e.preventDefault();
-    await fetchResultados(1);
+    fetchResultados(1);
   };
+
   /**PARA LA PAGINACION */
-  const handlePageChange = async (pagina) => {
-    await fetchResultados(pagina);
+  const handlePageChange = (nuevaPagina) => {
+    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+      fetchResultados(nuevaPagina);
+    }
+  };
+
+  /** Exportar a PDF (usa la tabla actual) */
+  const exportarPDF = () => {
+    if (!resultados.length) return;
+    const doc = new jsPDF();
+    doc.text("Reporte de Reservas (Formas de Pago)", 14, 15);
+
+    autoTable(doc, {
+      startY: 20,
+      head: [
+        [
+          "Fecha",
+          "Cliente",
+          "Cancha",
+          "Forma Pago",
+          "Estado",
+          "Total",
+          "Seña",
+          "Usuario",
+        ],
+      ],
+      body: resultados.map((r) => [
+        fmtFecha(r.fechaCopia || r.fecha || r.start),
+        fmtCliente(r),
+        typeof r.cancha === "string" ? r.cancha : r.cancha?.nombre || "",
+        r.forma_pago ?? "-",
+        r.estado_pago ?? "-",
+        `$${Number(r.monto_cancha || 0).toLocaleString("es-AR")}`,
+        `$${Number(r.monto_sena || 0).toLocaleString("es-AR")}`,
+        r.user ?? r.usuario ?? "-",
+      ]),
+    });
+
+    doc.save("reporte-reservas.pdf");
   };
   return (
     <>
@@ -157,21 +217,44 @@ export const PagosDeReserva = () => {
                       {resultados.map((reserva, index) => (
                         <tr key={index}>
                           <td className="border px-2 py-1">
-                            {" "}
-                            {new Date(reserva.fecha).toLocaleDateString(
-                              "es-AR"
-                            )}
+                            {new Date(
+                              reserva.fechaCopia ||
+                                reserva.fecha ||
+                                reserva.start
+                            ).toLocaleDateString("es-AR")}
                           </td>
+
                           <td className="border px-2 py-1">
-                            {reserva.nombre + ` ` + reserva.apellido}
+                            {`${
+                              reserva.cliente?.nombre ??
+                              reserva.nombreCliente ??
+                              ""
+                            } ${
+                              reserva.cliente?.apellido ??
+                              reserva.apellidoCliente ??
+                              ""
+                            }`.trim() || "-"}
                           </td>
-                          <td className="border px-2 py-1">{reserva.cancha}</td>
-                          <td className="border px-2 py-1">{reserva.estado}</td>
+
+                          <td className="border px-2 py-1">
+                            {reserva.cancha?.nombre ??
+                              reserva.canchaNombre ??
+                              reserva.cancha ??
+                              "-"}
+                          </td>
+
+                          <td className="border px-2 py-1">
+                            {reserva.estado_pago ?? reserva.estado ?? "-"}
+                          </td>
+
                           <td className="border px-2 py-1">
                             $
-                            {reserva.monto_sena ||
-                              reserva.monto_total ||
-                              reserva.impago}
+                            {(reserva.estado_pago === "TOTAL"
+                              ? Number(reserva.monto_cancha || 0)
+                              : reserva.estado_pago === "SEÑA"
+                              ? Number(reserva.monto_sena || 0)
+                              : 0
+                            ).toLocaleString("es-AR")}
                           </td>
                         </tr>
                       ))}
