@@ -165,6 +165,7 @@ function normalizeFromEvent(evt, canchasList = []) {
       obtenerHorarios(activeEvent.cancha, activeEvent.hora);
     }
   }, [isDateModalOpen]);
+  
   //_-------------------------------------------------------------------------------------
   /**
    * TRABAJO LOS HORARIOS:
