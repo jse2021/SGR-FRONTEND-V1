@@ -9,6 +9,15 @@ import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+// helper local para YYYY-MM-DD
+const toYMD = (d) => {
+  const f = new Date(d);
+  const y = f.getFullYear();
+  const m = String(f.getMonth() + 1).padStart(2, "0");
+  const day = String(f.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
 export const Recaudacion = () => {
   const [form, setForm] = useState({
     fechaInicio: null,
@@ -20,29 +29,6 @@ export const Recaudacion = () => {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const exportarPDF = () => {
-    if (resultados.length === 0) return;
-
-    const doc = new jsPDF();
-
-    doc.text("Reporte de Reservas", 14, 15);
-
-    autoTable(doc, {
-      startY: 20,
-      head: [
-        ["Fecha", "Cancha", "Total Consolidado", "Total Señas", "Total Deuda"],
-      ],
-      body: resultados.map((reserva) => [
-        reserva.Fecha || "-",
-        reserva.Cancha || "-",
-        `$${reserva.monto_consolidado || 0}`,
-        `$${reserva.senas_consolidadas || 0}`,
-        `$${reserva.monto_deuda || 0}`,
-      ]),
-    });
-
-    doc.save("reservas.pdf");
-  };
 
   //**TRAIGO LAS CANCHAS QUE TIENEN PRECIOS */
   const loadCanchas = async () => {
@@ -73,19 +59,27 @@ export const Recaudacion = () => {
       return;
     }
 
-    const fechaInicioISO = new Date(fechaInicio).toISOString();
-    const fechaFinISO = new Date(fechaFin).toISOString();
+    const fIni = toYMD(fechaInicio);
+    const fFin = toYMD(fechaFin);
+    const canchaURL = encodeURIComponent(cancha);
 
     try {
       setIsLoading(true);
+
       const { data } = await calendarApi.get(
-        `/reserva/recaudacionFP/${cancha}/${fechaInicioISO}/${fechaFinISO}?page=${pagina}&limit=10`
+        `/reserva/recaudacion/${canchaURL}/${fIni}/${fFin}?page=${pagina}&limit=10`
       );
 
-      setResultados(data.resultados || []);
-      console.log(data.resultados);
-      setTotalPaginas(data.totalPaginas || 1);
-      setPaginaActual(pagina);
+      // Preferimos 'resultados' (alias generado en backend). Si no, cae en 'resumenDiario'.
+      const filas = Array.isArray(data?.resultados)
+        ? data.resultados
+        : Array.isArray(data?.resumenDiario)
+        ? data.resumenDiario
+        : [];
+
+      setResultados(filas);
+      setTotalPaginas(Number(data?.pages ?? 1));
+      setPaginaActual(Number(data?.page ?? pagina));
       setBusquedaRealizada(true);
     } catch (error) {
       console.error("Error al obtener recaudación", error);
@@ -105,6 +99,36 @@ export const Recaudacion = () => {
   // Paginación
   const handlePageChange = async (pagina) => {
     await fetchResultados(pagina);
+  };
+
+  const exportarPDF = () => {
+    if (resultados.length === 0) return;
+    console.log(resultados);
+
+    const doc = new jsPDF();
+
+    doc.text("Reporte de Reservas", 14, 15);
+
+    autoTable(doc, {
+      startY: 20,
+      head: [
+        ["Fecha", "Cancha", "Total Consolidado", "Total Señas", "Total Deuda"],
+      ],
+      body: resultados.map((reserva) => [
+        new Intl.DateTimeFormat("es-AR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          timeZone: "UTC",
+        }).format(new Date(reserva.Fecha)),
+        reserva.Cancha || "-",
+        `$${Number(reserva.monto_consolidado || 0).toLocaleString("es-AR")}`,
+        `$${Number(reserva.senas_consolidadas || 0).toLocaleString("es-AR")}`,
+        `$${Number(reserva.monto_deuda || 0).toLocaleString("es-AR")}`,
+      ]),
+    });
+
+    doc.save("reservas.pdf");
   };
 
   return (

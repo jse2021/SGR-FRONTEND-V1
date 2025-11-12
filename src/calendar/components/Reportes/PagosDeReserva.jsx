@@ -122,8 +122,10 @@ export const PagosDeReserva = () => {
         ],
       ],
       body: resultados.map((r) => [
-        fmtFecha(r.fechaCopia || r.fecha || r.start),
-        fmtCliente(r),
+        new Date(r.fechaCopia || r.fecha || r.start).toLocaleDateString(
+          "es-AR"
+        ),
+        r.nombreCliente + " " + r.apellidoCliente,
         typeof r.cancha === "string" ? r.cancha : r.cancha?.nombre || "",
         r.forma_pago ?? "-",
         r.estado_pago ?? "-",
