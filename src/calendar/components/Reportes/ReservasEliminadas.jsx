@@ -9,6 +9,15 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 
+const toYMD = (d) => {
+  const f = new Date(d);
+  const y = f.getFullYear();
+  const m = String(f.getMonth() + 1).padStart(2, "0");
+  const day = String(f.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
+
 export const ReservasEliminadas = () => {
   const [form, setForm] = useState({
     fechaInicio: null,
@@ -51,6 +60,7 @@ export const ReservasEliminadas = () => {
   //**MANEJO POR SEPARADO PARA TRABAJAR LA PAGINACION */
   const fetchResultados = async (pagina = 1) => {
     const { fechaInicio, fechaFin, estado_pago } = form;
+
     //Validación obligatoria de fecha
     if (!fechaInicio || !fechaFin || !estado_pago) {
       Swal.fire(
@@ -61,8 +71,9 @@ export const ReservasEliminadas = () => {
       return;
     }
 
-    const fechaInicioISO = new Date(fechaInicio).toISOString();
-    const fechaFinISO = new Date(fechaFin).toISOString();
+    const fechaInicioISO = toYMD(fechaInicio);
+    const fechaFinISO = toYMD(fechaFin);
+
 
     //Valores por defecto para filtros
     const estadoPagoSeleccionado = estado_pago || "TODAS";
@@ -70,9 +81,9 @@ export const ReservasEliminadas = () => {
     try {
       setIsLoading(true);
       const { data } = await calendarApi.get(
-        `/reserva/reservasEliminadas/${estadoPagoSeleccionado}/${fechaInicioISO}/${fechaFinISO}?page=${pagina}&limit=10`
+        `/reserva/eliminadas/${estadoPagoSeleccionado}/${fechaInicioISO}/${fechaFinISO}?page=${pagina}&limit=10`
       );
-
+      console.log(data.reservasFormateadas)
       setResultados(data.reservasFormateadas || []);
       setTotalPaginas(data.totalPages || 1);
       setPaginaActual(pagina);
@@ -172,6 +183,7 @@ export const ReservasEliminadas = () => {
                         <th className="border px-2 py-1">Estado</th>
                         <th className="border px-2 py-1">Monto</th>
                         <th className="border px-2 py-1">Usuario</th>
+                        <th className="border px-2 py-1">Fecha Elim.</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -199,6 +211,19 @@ export const ReservasEliminadas = () => {
                           </td>
                           <td className="border px-2 py-1">
                             {reserva.usuario}
+                          </td>
+                           <td className="border px-2 py-1">
+                            {reserva.eliminadaEn
+                              ? new Intl.DateTimeFormat("es-AR", {
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                  timeZone: "America/Argentina/Buenos_Aires",
+                                }).format(new Date(reserva.eliminadaEn))
+                              : "-"}
                           </td>
                         </tr>
                       ))}

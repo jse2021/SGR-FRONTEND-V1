@@ -8,8 +8,10 @@ const { VITE_API_URL } = getEnvVariables();
 
 //Toda peticion, pasa por aca
 const calendarApi = axios.create({
-  baseURL: VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
+  
 });
+
 
 //--> Luego agregamos el token a cada peticion, que se encuentra guardado en el localStorage.
 calendarApi.interceptors.request.use((config) => {
