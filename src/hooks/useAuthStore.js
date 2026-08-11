@@ -14,7 +14,7 @@ export const useAuthStore = () => {
   const dispatch = useDispatch();
 
   /**
-   * INCIAR SESION
+   * INICIAR SESION
    */
   const startLogin = async ({ user, password }) => {
     dispatch(onChecking());
@@ -28,11 +28,13 @@ export const useAuthStore = () => {
       return { ok: true };
     } catch (error) {
       console.error(" Error login", error);
-      const msg = error.response.data?.msg;
+      // Validación segura: si no hay respuesta, asignamos un mensaje por defecto
+      const msg = error.response?.data?.msg || "Error de conexión con el servidor";
       dispatch(onLogout());
       return { ok: false, msg };
     }
   };
+  
   //_----------------------------------------------------------------------------------------------
   /**
    * REGISTRAR USUARIOS
