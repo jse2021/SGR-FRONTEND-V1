@@ -51,6 +51,8 @@ export const CalendarModal = ({ date, cliente }) => {
   const [horariosDisponibles, setHorariosDisponibles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false); // manejo de boton guardar
 
+
+
   // --------------------------NUEVO METODO--->
 function normalizeFromEvent(evt, canchasList = []) {
   const rawDate = evt?.fechaCopia || evt?.fecha || evt?.start;
@@ -150,6 +152,32 @@ function normalizeFromEvent(evt, canchasList = []) {
     monto_sena: "",
   });
 
+  //---------------------------------------------------------------------------------------
+  // --------------------------NUEVO: Estado y funciones para los pagos divididos
+  const [pagosList, setPagosList] = useState([{ forma_pago: "", monto: "" }]);
+
+  const handleAddPago = () => {
+    setPagosList([...pagosList, { forma_pago: "", monto: "" }]);
+  };
+
+  const handleRemovePago = (index) => {
+    const newPagos = [...pagosList];
+    newPagos.splice(index, 1);
+    setPagosList(newPagos);
+  };
+
+  const handlePagoChange = (index, field, value) => {
+    const newPagos = [...pagosList];
+    newPagos[index][field] = value;
+    setPagosList(newPagos);
+  };
+
+  // Sincronizar automáticamente el monto cuando el backend nos dice cuánto cuesta
+  useEffect(() => {
+    if (pagosList.length === 1 && formValues.monto !== undefined) {
+      setPagosList([{ ...pagosList[0], monto: formValues.monto }]);
+    }
+  }, [formValues.monto]);
   //---------------------------------------------------------------------------------------
   /**
    * PASO PARAMETROS A LA FUNCION OBTENER_HORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA,
@@ -360,28 +388,47 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
    * TRABAJO ENVIO DE RESERVA AL BACKEND
    * Trabajo el manejo de error por cada elemento.
    */
-  const onSubmit = async (event) => {
+const onSubmit = async (event) => {
     event.preventDefault();
-
-    if (
-      formValues.cliente == "" ||
-      formValues.cancha == "" ||
-      formValues.hora == "" ||
-      formValues.estado_pago == "" ||
-      formValues.forma_pago == ""
+if (
+      !formValues.cliente ||
+      !formValues.cancha ||
+      !formValues.hora ||
+      !formValues.estado_pago
     ) {
       return Swal.fire({
         icon: "warning",
         title: "Campos obligatorios",
-        text: "Por favor, completá todos los campos antes de guardar.",
+        text: "Por favor, completá todos los campos base antes de guardar (asegúrate de seleccionar un Cliente).",
       });
+    }
+
+    // NUEVO: Validación estricta de Pagos Divididos
+    if (formValues.estado_pago !== "IMPAGO") {
+      const sumaPagos = pagosList.reduce((acc, p) => acc + Number(p.monto || 0), 0);
+      
+      if (sumaPagos !== Number(formValues.monto)) {
+        return Swal.fire({
+          icon: "warning",
+          title: "Montos no coinciden",
+          text: `El total a cobrar es $${formValues.monto}, pero tus pagos suman $${sumaPagos}.`,
+        });
+      }
+
+      const pagosIncompletos = pagosList.some(p => p.forma_pago === "");
+      if (pagosIncompletos) {
+        return Swal.fire({
+          icon: "warning",
+          title: "Forma de pago faltante",
+          text: "Por favor selecciona la forma de pago en todas las filas agregadas.",
+        });
+      }
     }
 
     setActiveEvent({
       title: "",
       start: "",
       end: "",
-      // cliente: "",
       cliente: null,
       cancha: "",
       fecha: date,
@@ -394,10 +441,23 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
     });
     setDni("");
     setActiveEvent(null);
-    setIsSubmitting(true); // cuando estoy por mandar a backend, cambia estado de boton
+    setIsSubmitting(true);
     setFormSubmitted(true);
-    const reservaGuardada = activeEvent;
-    await startSavingEvent({ ...formValues, fecha: date, cliente: dni });
+    
+    // Inyectamos el nuevo array de pagos al backend
+    // await startSavingEvent({ ...formValues, fecha: date, cliente: dni, pagos: pagosList });
+    
+    // Unimos los nombres de los pagos para pasar la validación estricta de rutas del backend
+    const formaPagoResumen = pagosList.map(p => p.forma_pago).join(" + ") || "IMPAGO";
+
+    // Inyectamos el nuevo array de pagos y el resumen al backend
+    await startSavingEvent({ 
+      ...formValues, 
+      fecha: date, 
+      cliente: dni, 
+      pagos: pagosList,
+      forma_pago: formaPagoResumen // <- Esto engaña felizmente al validador
+    });
     closeDateModal();
 
     setFormSubmitted(false);
@@ -422,7 +482,9 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
         cliente: "",
         monto_cancha: "",
         monto_sena: "",
+        
       });
+      setPagosList([{ forma_pago: "", monto: "" }]); // Limpiar pagos al cerrar
       // setDni("");
     }
   }, [isDateModalOpen]);
@@ -566,7 +628,7 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
           </select>
         </div>
 
-        <div className="form-group mb-2">
+        {/* <div className="form-group mb-2">
           <input
             type="number"
             name="monto"
@@ -593,6 +655,57 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
             <option value="TRANSFERENCIA">TRANSFERENCIA</option>
             <option value="SO">SIN OPERACION</option>
           </select>
+        </div> */}
+        <div className="form-group mb-2">
+          <label className="mb-2 text-muted" style={{ display: 'block', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
+            <strong>Total a cobrar esperado: ${formValues.monto || 0}</strong>
+          </label>
+
+          {pagosList.map((pago, index) => (
+            <div key={index} className="d-flex mb-2 gap-2">
+              <input
+                type="number"
+                placeholder="Monto $"
+                className="form-control"
+                value={pago.monto}
+                onChange={(e) => handlePagoChange(index, "monto", e.target.value)}
+                disabled={formValues.estado_pago === "IMPAGO"}
+              />
+              <select
+                className="form-select"
+                value={pago.forma_pago}
+                onChange={(e) => handlePagoChange(index, "forma_pago", e.target.value)}
+                disabled={formValues.estado_pago === "IMPAGO"}
+              >
+                <option value="" disabled>Método</option>
+                <option value="TARJETA">TARJETA</option>
+                <option value="DEBITO">DEBITO</option>
+                <option value="EFECTIVO">EFECTIVO</option>
+                <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+              </select>
+              
+              {pagosList.length > 1 && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemovePago(index)}
+                  title="Eliminar este pago"
+                >
+                  X
+                </button>
+              )}
+            </div>
+          ))}
+
+          {formValues.estado_pago !== "IMPAGO" && (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-primary mt-1"
+              onClick={handleAddPago}
+            >
+              + Agregar otro pago
+            </button>
+          )}
         </div>
 
         <div className="form-group mb-2">

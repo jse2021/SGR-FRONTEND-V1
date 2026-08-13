@@ -108,7 +108,24 @@ export const useCalendarStore = () => {
         });
       }
     } catch (error) {
-      console.error(error);
+   console.error("Detalle del error del backend:", error.response?.data || error);
+      
+      let errorMessage = error.response?.data?.msg;
+      
+      // Si el error viene de Express Validator (rutas), extraemos todos los mensajes
+      if (!errorMessage && error.response?.data?.errors) {
+        errorMessage = Object.values(error.response.data.errors)
+                             .map(err => err.msg)
+                             .join(" - ");
+      }
+      
+      errorMessage = errorMessage || "Ocurrió un error inesperado al procesar la reserva.";
+      
+      Swal.fire({
+        icon: "error",
+        title: "Operación rechazada",
+        text: errorMessage,
+      });
     }
   };
   //_----------------------------------------------------------------------------------------------
