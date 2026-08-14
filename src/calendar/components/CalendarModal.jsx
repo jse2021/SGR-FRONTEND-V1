@@ -404,7 +404,20 @@ if (
     }
 
     // NUEVO: Validación estricta de Pagos Divididos
+// NUEVO: Validación estricta de Pagos Divididos
     if (formValues.estado_pago !== "IMPAGO") {
+      
+      // 1. BARRERA CONTRA CEROS Y NEGATIVOS
+      const pagosInvalidos = pagosList.some(p => Number(p.monto) <= 0);
+      if (pagosInvalidos) {
+        return Swal.fire({
+          icon: "warning",
+          title: "Monto inválido",
+          text: "Ningún pago parcial puede ser de $0 o tener valores negativos.",
+        });
+      }
+
+      // 2. VALIDACIÓN DE SUMA TOTAL
       const sumaPagos = pagosList.reduce((acc, p) => acc + Number(p.monto || 0), 0);
       
       if (sumaPagos !== Number(formValues.monto)) {
@@ -415,6 +428,7 @@ if (
         });
       }
 
+      // 3. VALIDACIÓN DE FORMA DE PAGO
       const pagosIncompletos = pagosList.some(p => p.forma_pago === "");
       if (pagosIncompletos) {
         return Swal.fire({
@@ -424,44 +438,72 @@ if (
         });
       }
     }
-
-    setActiveEvent({
-      title: "",
-      start: "",
-      end: "",
-      cliente: null,
-      cancha: "",
-      fecha: date,
-      hora: "",
-      forma_pago: "",
-      estado_pago: "",
-      observacion: "",
-      monto_cancha: "",
-      monto_sena: "",
-    });
-    setDni("");
-    setActiveEvent(null);
+// 4. PREPARAMOS EL ENVÍO
     setIsSubmitting(true);
     setFormSubmitted(true);
-    
-    // Inyectamos el nuevo array de pagos al backend
-    // await startSavingEvent({ ...formValues, fecha: date, cliente: dni, pagos: pagosList });
     
     // Unimos los nombres de los pagos para pasar la validación estricta de rutas del backend
     const formaPagoResumen = pagosList.map(p => p.forma_pago).join(" + ") || "IMPAGO";
 
-    // Inyectamos el nuevo array de pagos y el resumen al backend
-    await startSavingEvent({ 
+    // 5. ENVIAMOS Y ESPERAMOS LA RESPUESTA DEL MOTOR (true o false)
+    const exito = await startSavingEvent({ 
       ...formValues, 
       fecha: date, 
       cliente: dni, 
       pagos: pagosList,
-      forma_pago: formaPagoResumen // <- Esto engaña felizmente al validador
+      forma_pago: formaPagoResumen 
     });
-    closeDateModal();
 
+    // 6. EVALUAMOS QUÉ HACER
+    if (exito) {
+      // Solo si el backend guardó perfecto, limpiamos todo y cerramos el modal
+      setActiveEvent(null);
+      setDni("");
+      setPagosList([{ forma_pago: "", monto: "" }]);
+      closeDateModal();
+    }
+    
+    // Independientemente de si falló o no, reactivamos el botón para que pueda volver a intentar
+    setIsSubmitting(false);
     setFormSubmitted(false);
   };
+    // setActiveEvent({
+    //   title: "",
+    //   start: "",
+    //   end: "",
+    //   cliente: null,
+    //   cancha: "",
+    //   fecha: date,
+    //   hora: "",
+    //   forma_pago: "",
+    //   estado_pago: "",
+    //   observacion: "",
+    //   monto_cancha: "",
+    //   monto_sena: "",
+    // });
+    // setDni("");
+    // setActiveEvent(null);
+    // setIsSubmitting(true);
+    // setFormSubmitted(true);
+    
+    // // Inyectamos el nuevo array de pagos al backend
+    // // await startSavingEvent({ ...formValues, fecha: date, cliente: dni, pagos: pagosList });
+    
+    // // Unimos los nombres de los pagos para pasar la validación estricta de rutas del backend
+    // const formaPagoResumen = pagosList.map(p => p.forma_pago).join(" + ") || "IMPAGO";
+
+    // // Inyectamos el nuevo array de pagos y el resumen al backend
+    // await startSavingEvent({ 
+    //   ...formValues, 
+    //   fecha: date, 
+    //   cliente: dni, 
+    //   pagos: pagosList,
+    //   forma_pago: formaPagoResumen // <- Esto engaña felizmente al validador
+    // });
+    // closeDateModal();
+
+    // setFormSubmitted(false);
+  
   //---------------------------------------------------------------------------------------
   /**
    * EVITO QUE SE CARGUEN LOS DATOS ANTERIORES AL ABRIR NUEVAMENTE EL MODAL

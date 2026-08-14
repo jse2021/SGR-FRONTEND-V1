@@ -58,7 +58,7 @@ export const useCalendarStore = () => {
           showConfirmButton: false,
           timer: 1000,
         });
-        return;
+        return true;
       } else {
         // Proceso de cálculo previo al envío
         let monto_cancha = 0;
@@ -106,6 +106,7 @@ export const useCalendarStore = () => {
           showConfirmButton: false,
           timer: 600,
         });
+        return true;
       }
     } catch (error) {
    console.error("Detalle del error del backend:", error.response?.data || error);
@@ -126,6 +127,7 @@ export const useCalendarStore = () => {
         title: "Operación rechazada",
         text: errorMessage,
       });
+      return false;
     }
   };
   //_----------------------------------------------------------------------------------------------
