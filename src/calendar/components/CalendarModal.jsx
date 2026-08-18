@@ -302,35 +302,57 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
   /**
    * AL LEVANTAR NUEVAMENTE EL MODAL, TRAIGO EL CLIENTE COMO OBJETO (VALUE:LABEL)
    */
-  useEffect(() => {
-  if (!isDateModalOpen || !activeEvent) return;
+useEffect(() => {
+    if (!isDateModalOpen || !activeEvent) return;
 
-  const { fecha, dniStr, canchaStr, horaStr, monto } =
-    normalizeFromEvent(activeEvent, cancha /* tu array de canchas */);
+    const { fecha, dniStr, canchaStr, horaStr, monto } =
+      normalizeFromEvent(activeEvent, cancha /* tu array de canchas */);
 
-  const clienteValue = {
-    value: dniStr,
-    label: `${dniStr}-${activeEvent?.apellidoCliente ?? ""} ${activeEvent?.nombreCliente ?? ""}`.trim(),
-  };
+    const clienteValue = {
+      value: dniStr,
+      label: `${dniStr}-${activeEvent?.apellidoCliente ?? ""} ${activeEvent?.nombreCliente ?? ""}`.trim(),
+    };
 
-  setFormValues(prev => ({
-    ...prev,
-    ...activeEvent,
-    fecha,
-    cliente: clienteValue,
-    cancha: canchaStr,
-    hora: horaStr,
-    monto,
-  }));
+    setFormValues(prev => ({
+      ...prev,
+      ...activeEvent,
+      fecha,
+      cliente: clienteValue,
+      cancha: canchaStr,
+      hora: horaStr,
+      monto,
+    }));
 
-  setDni(dniStr);
+    setDni(dniStr);
 
-  if (canchaStr && !isNaN(fecha.getTime())) {
-    // Usa la función que ya tienes para cargar horarios (ajusta el nombre si difiere)
-    obtenerHorarios(canchaStr, horaStr);
-    // o cargarHorasDisponibles({ fecha, cancha: canchaStr, reservaId: activeEvent?.id })
-  }
-}, [isDateModalOpen, activeEvent, cancha]);
+    // --- NUEVO: RECONSTRUCCIÓN DE FILAS DE PAGOS ---
+    if (activeEvent.pagos && activeEvent.pagos.length > 0) {
+      // 1. Si el backend envió la lista de pagos de esta reserva
+      const pagosOriginales = activeEvent.pagos.map(p => ({
+        forma_pago: p.forma_pago,
+        monto: Number(p.monto)
+      }));
+      setPagosList(pagosOriginales);
+    } else {
+      // 2. Fallback para reservas viejas (previas a esta actualización)
+      const formaPagoVieja = activeEvent.forma_pago || "";
+      const metodosValidos = ["TARJETA", "DEBITO", "EFECTIVO", "TRANSFERENCIA"];
+      
+      if (metodosValidos.includes(formaPagoVieja)) {
+        // Si el método antiguo coincide con uno de nuestros selectores
+        setPagosList([{ forma_pago: formaPagoVieja, monto: monto }]);
+      } else {
+        // Si dice "EFECTIVO + TARJETA" o está vacío, dejamos una fila lista para que el cajero reasigne
+        setPagosList([{ forma_pago: "", monto: monto }]);
+      }
+    }
+    // ----------------------------------------------
+
+    if (canchaStr && !isNaN(fecha.getTime())) {
+      // Usa la función que ya tienes para cargar horarios
+      obtenerHorarios(canchaStr, horaStr);
+    }
+  }, [isDateModalOpen, activeEvent, cancha]);
   //_-------------------------------------------------------------------------------------
   /*
    * MANEJO DEL CAMBIO DE ESTADO DE LOS COMPONENTES:TAMBIEN EL CAMBIO DE ESTADO DE ESTADO DE PAGO E INPUT MONTO

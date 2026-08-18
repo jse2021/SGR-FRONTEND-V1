@@ -40,7 +40,18 @@ export const useCalendarStore = () => {
           calendarEvent.fecha = calendarEvent.fechaCopia;
         }
 
-        const payload = sanitizeReservaUpdate(calendarEvent);
+        // const payload = sanitizeReservaUpdate(calendarEvent);
+
+        // const { data } = await calendarApi.put(
+        //   `/reserva/${calendarEvent.id}`,
+        //   payload
+        // );
+        // NUEVO: Ejecutamos el limpiador, pero forzamos a que conserve nuestros pagos múltiples
+        const payload = {
+          ...sanitizeReservaUpdate(calendarEvent),
+          pagos: calendarEvent.pagos,           // <-- Rescatamos el array de tickets
+          forma_pago: calendarEvent.forma_pago  // <-- Rescatamos el texto resumen
+        };
 
         const { data } = await calendarApi.put(
           `/reserva/${calendarEvent.id}`,
