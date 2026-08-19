@@ -89,6 +89,9 @@ export const FormaPago = () => {
     }
 
     setIsLoading(true);
+    // NUEVO: Borramos los datos viejos de la pantalla al instante para forzar el refresco visual
+    setResultados([]);
+    setTotales({ monto_cancha: 0, monto_sena: 0, monto_deuda: 0, total: 0 });
 
     // 2) Fecha a YYYY-MM-DD ---> No mando ISO completo
     const f = new Date(fecha);
@@ -102,9 +105,13 @@ export const FormaPago = () => {
     const formaParam = sinTildes(forma_pago || "TODAS");
     const estadoParam = sinTildes(estado_pago || "TODAS");
 
-    // 4) URL (ruta acordada con backend)
+// 4) URL (ruta acordada con backend)
     const base = "/reserva/recaudacionFP";
-    const url = `${base}/${fechaYMD}/${canchaParam}/${formaParam}/${estadoParam}?page=${pagina}&limit=2`;
+    
+    // NUEVO: Agregamos &t=${Date.now()} al final para evitar que el navegador congele los montos
+    const url = `${base}/${fechaYMD}/${canchaParam}/${formaParam}/${estadoParam}?page=${pagina}&limit=2&t=${Date.now()}`;
+    // const url = `${base}/${fechaYMD}/${canchaParam}/${formaParam}/${estadoParam}?page=${pagina}&limit=2`;
+
 
     try {
       const { data } = await calendarApi.get(url);
@@ -195,7 +202,7 @@ export const FormaPago = () => {
       <h1 className="text-center my-4 mt-5">Control Formas de Pago</h1>
 
       <div className="col-md-8 login-form-3 mx-auto">
-        <form>
+        <form onSubmit={handleBuscar}>
           <div className="row align-items-end g-2">
             {/* Fecha */}
             <div className="col-md-3">
@@ -260,8 +267,17 @@ export const FormaPago = () => {
               />
             </div>
           </div>
-
           <div className="text-center mt-4">
+            <button
+              type="button" 
+              className="btn btn-dark px-5 py-2 rounded-pill"
+              disabled={isLoading}
+              onClick={handleBuscar} 
+            >
+              {isLoading ? "Buscando..." : "Buscar"}
+            </button>
+          </div>
+            {/* <div className="text-center mt-4">
             <input
               type="button"
               className="btn btn-dark px-5 py-2 rounded-pill"
@@ -269,7 +285,7 @@ export const FormaPago = () => {
               disabled={isLoading}
               onClick={handleBuscar}
             />
-          </div>
+          </div> */}
         </form>
 
         {busquedaRealizada && (
