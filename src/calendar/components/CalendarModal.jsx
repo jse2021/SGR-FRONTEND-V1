@@ -22,7 +22,7 @@ const customStyles = {
     left: "50%",
     transform: "translateX(-50%)",
     width: "90%",
-    maxWidth: "500px",
+    maxWidth: "600px", // Ensanchado para la nueva grilla visual
     maxHeight: "90vh",
     overflowY: "auto",
     borderRadius: "12px",
@@ -49,82 +49,66 @@ export const CalendarModal = ({ date, cliente }) => {
   const [dni, setDni] = useState("");
 
   const [horariosDisponibles, setHorariosDisponibles] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false); // manejo de boton guardar
-
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // --------------------------NUEVO METODO--->
-function normalizeFromEvent(evt, canchasList = []) {
-  const rawDate = evt?.fechaCopia || evt?.fecha || evt?.start;
-  let fecha = new Date(rawDate);
-  if (isNaN(fecha.getTime())) fecha = new Date();
+  function normalizeFromEvent(evt, canchasList = []) {
+    const rawDate = evt?.fechaCopia || evt?.fecha || evt?.start;
+    let fecha = new Date(rawDate);
+    if (isNaN(fecha.getTime())) fecha = new Date();
 
-  const dniStr = typeof evt?.cliente === "object"
-    ? (evt?.cliente?.dni ?? evt?._cliente?.dni ?? "")
-    : (evt?.cliente ?? "");
+    const dniStr = typeof evt?.cliente === "object"
+      ? (evt?.cliente?.dni ?? evt?._cliente?.dni ?? "")
+      : (evt?.cliente ?? "");
 
-  let canchaStr = typeof evt?.cancha === "object"
-    ? (evt?.cancha?.nombre ?? "")
-    : (evt?.cancha ?? "");
+    let canchaStr = typeof evt?.cancha === "object"
+      ? (evt?.cancha?.nombre ?? "")
+      : (evt?.cancha ?? "");
 
-  if (!canchaStr) canchaStr = evt?.title ?? "";
+    if (!canchaStr) canchaStr = evt?.title ?? "";
 
-  if (!canchaStr && evt?.canchaId && Array.isArray(canchasList)) {
-    const found = canchasList.find(c => Number(c.id) === Number(evt.canchaId));
-    if (found) canchaStr = found.nombre;
+    if (!canchaStr && evt?.canchaId && Array.isArray(canchasList)) {
+      const found = canchasList.find(c => Number(c.id) === Number(evt.canchaId));
+      if (found) canchaStr = found.nombre;
+    }
+
+    const horaStr = String(evt?.hora ?? "").padStart(5, "0");
+
+    let monto = 0;
+    switch (evt?.estado_pago) {
+      case "TOTAL": monto = evt?.monto_cancha || 0; break;
+      case "SEÑA":  monto = evt?.monto_sena   || 0; break;
+      default:      monto = 0;
+    }
+    return { fecha, dniStr, canchaStr, horaStr, monto };
   }
 
-  const horaStr = String(evt?.hora ?? "").padStart(5, "0");
-
-  let monto = 0;
-  switch (evt?.estado_pago) {
-    case "TOTAL": monto = evt?.monto_cancha || 0; break;
-    case "SEÑA":  monto = evt?.monto_sena   || 0; break;
-    default:      monto = 0;
-  }
-  return { fecha, dniStr, canchaStr, horaStr, monto };
-}
-
-  /**
-   * TRABAJO CLIENTE PARA MANDARLO A ASYNCSELECT.
-   */
   useEffect(() => {
     const buscarCliente = async () => {
       const { data } = await calendarApi.get("/cliente");
-
       cliente = Array.from(data.clientes);
       const opciones = cliente.map((clientes) => ({
         value: clientes.dni,
         label: `${clientes.dni} - ${clientes.apellido} ${clientes.nombre}`,
       }));
-      //almacena los clientes
       setOpciones(opciones);
     };
     buscarCliente();
   }, []);
 
-  // Cargo Clientes por filtro - para pasarle al asyncSelect.
   const loadOptions = (searchValue, callback) => {
     const opcionesFiltradas = opciones.filter((opcion) =>
       opcion.label.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
     );
-
-    callback(opcionesFiltradas); ///----->Devuelve ese resultado al AsyncSelect para mostrarlo.
+    callback(opcionesFiltradas);
   };
-  //_-------------------------------------------------------------------------------------
 
-  /**
-   * TRAIGO LAS CANCHAS QUE TIENEN PRECIO ASIGNADO, DIRECTAMENTE DESDE TABLA CONFIGURACION Y NO DE CANCHAS
-   */
   async function fetchData() {
     const { data } = await calendarApi.get("/configuracion");
     if (data.canchasPrecio instanceof Array) {
       setCancha(
         data.canchasPrecio.map((cancha) => {
-          return {
-            id: cancha.id,
-            nombre: cancha.nombre,
-          };
+          return { id: cancha.id, nombre: cancha.nombre };
         })
       );
     }
@@ -133,10 +117,7 @@ function normalizeFromEvent(evt, canchasList = []) {
   useEffect(() => {
     fetchData();
   }, []);
-  //---------------------------------------------------------------------------------------
-  /**
-   * MANEJO DE INICIO DE FORMULARIO: RESETEA LOS CAMPOS CADA VEZ QUE ABRO MODAL
-   */
+
   const [formValues, setFormValues] = useState({
     title: "",
     start: "",
@@ -150,10 +131,10 @@ function normalizeFromEvent(evt, canchasList = []) {
     cliente: "",
     monto_cancha: "",
     monto_sena: "",
+    frecuencia: "NINGUNA",
+    fechaFin: null,
   });
 
-  //---------------------------------------------------------------------------------------
-  // --------------------------NUEVO: Estado y funciones para los pagos divididos
   const [pagosList, setPagosList] = useState([{ forma_pago: "", monto: "" }]);
 
   const handleAddPago = () => {
@@ -172,69 +153,45 @@ function normalizeFromEvent(evt, canchasList = []) {
     setPagosList(newPagos);
   };
 
-  // Sincronizar automáticamente el monto cuando el backend nos dice cuánto cuesta
   useEffect(() => {
     if (pagosList.length === 1 && formValues.monto !== undefined) {
       setPagosList([{ ...pagosList[0], monto: formValues.monto }]);
     }
   }, [formValues.monto]);
-  //---------------------------------------------------------------------------------------
-  /**
-   * PASO PARAMETROS A LA FUNCION OBTENER_HORARIOS PARA QUE AL MOMENTO DE REALIZAR UNA ACTUALIZACION DE LA RESERVA,
-   * EL MODAL MUESTRE EL HORARIO EXACTO DE LA RESERVA
-   */
+
   useEffect(() => {
-    if (
-      isDateModalOpen &&
-      activeEvent &&
-      activeEvent.cancha &&
-      activeEvent.hora
-    ) {
+    if (isDateModalOpen && activeEvent && activeEvent.cancha && activeEvent.hora) {
       obtenerHorarios(activeEvent.cancha, activeEvent.hora);
     }
   }, [isDateModalOpen]);
-  
-  //_-------------------------------------------------------------------------------------
-  /**
-   * TRABAJO LOS HORARIOS:
-   * PARA CREAR RESERVA: TRAIGO LOS HORARIOS DISPONIBLES
-   * PARA LA MODIFICACION: TRAIGO LOS HORARIOS DISPONIBLES, INCLUSO LA HORA DE LA RESERVA SELECCIONADA
-   */
-  // CalendarModal.jsx
-const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
-  try {
-    let fechaCruda = formValues.fecha || formValues.start || activeEvent?.start || date;
 
-    // Normalizamos YYYY-MM-DD SIN tocar horas
-    const d = new Date(fechaCruda);
-    const fechaYMD = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+  const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
+    try {
+      let fechaCruda = formValues.fecha || formValues.start || activeEvent?.start || date;
+      const d = new Date(fechaCruda);
+      const fechaYMD = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
 
-    const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
-      fecha: fechaYMD,
-      cancha: canchaSeleccionada,
-      reservaId: activeEvent?.id ?? undefined,
-    });
+      const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
+        fecha: fechaYMD,
+        cancha: canchaSeleccionada,
+        reservaId: activeEvent?.id ?? undefined,
+      });
 
-    if (data.ok) {
-      let horarios = data.horasDisponibles;
-      if (horarioActual && !horarios.includes(horarioActual)) {
-        horarios = [...horarios, horarioActual].sort();
+      if (data.ok) {
+        let horarios = data.horasDisponibles;
+        if (horarioActual && !horarios.includes(horarioActual)) {
+          horarios = [...horarios, horarioActual].sort();
+        }
+        setHorariosDisponibles(horarios);
+      } else {
+        Swal.fire("Error", "No se pudieron obtener los horarios disponibles", "error");
       }
-      setHorariosDisponibles(horarios);
-    } else {
-      Swal.fire("Error", "No se pudieron obtener los horarios disponibles", "error");
+    } catch (err) {
+      console.error("Error al obtener horarios:", err);
+      Swal.fire("Error", "Error al obtener horarios disponibles", "error");
     }
-  } catch (err) {
-    console.error("Error al obtener horarios:", err);
-    Swal.fire("Error", "Error al obtener horarios disponibles", "error");
-  }
-};
+  };
 
-
-  //---------------------------------------------------------------------------------------
-  /**
-   * TRABAJO MONTOS: OBTENGO LOS MONTOS SEGUN CANCHA SELECCIONADA
-   */
   useEffect(() => {
     const obtenerMonto = async () => {
       if (formValues.cancha && formValues.fecha && formValues.estado_pago) {
@@ -265,11 +222,7 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
               break;
           }
 
-          setFormValues((prev) => ({
-            ...prev,
-            monto_cancha,
-            monto_sena,
-          }));
+          setFormValues((prev) => ({ ...prev, monto_cancha, monto_sena }));
         } catch (error) {
           console.error("Error al obtener monto:", error);
         }
@@ -281,32 +234,18 @@ const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
     }
   }, [formValues.cancha, formValues.fecha, formValues.estado_pago]);
 
-  //---------------------------------------------------------------------------------------
-
-  /**
-   * MANEJO DE LOS INPUTCHANGED
-   */
-
-  //Seteo del cliente.  Para que quede seleccionado al enviar al backend
   const onClienteChanged = ({ target }, value) => {
     if (value && value.value) {
       setDni(value.value);
     }
-
-    setFormValues({
-      ...formValues,
-      [target.name]: target.value,
-    });
+    setFormValues({ ...formValues, [target.name]: target.value });
   };
-  //_-------------------------------------------------------------------------------------
-  /**
-   * AL LEVANTAR NUEVAMENTE EL MODAL, TRAIGO EL CLIENTE COMO OBJETO (VALUE:LABEL)
-   */
-useEffect(() => {
+
+  useEffect(() => {
     if (!isDateModalOpen || !activeEvent) return;
 
     const { fecha, dniStr, canchaStr, horaStr, monto } =
-      normalizeFromEvent(activeEvent, cancha /* tu array de canchas */);
+      normalizeFromEvent(activeEvent, cancha);
 
     const clienteValue = {
       value: dniStr,
@@ -321,98 +260,69 @@ useEffect(() => {
       cancha: canchaStr,
       hora: horaStr,
       monto,
+      frecuencia: activeEvent.frecuencia || "NINGUNA",
+      fechaFin: activeEvent.fechaFin ? new Date(activeEvent.fechaFin) : null,
     }));
 
     setDni(dniStr);
 
-    // --- NUEVO: RECONSTRUCCIÓN DE FILAS DE PAGOS ---
     if (activeEvent.pagos && activeEvent.pagos.length > 0) {
-      // 1. Si el backend envió la lista de pagos de esta reserva
       const pagosOriginales = activeEvent.pagos.map(p => ({
         forma_pago: p.forma_pago,
         monto: Number(p.monto)
       }));
       setPagosList(pagosOriginales);
     } else {
-      // 2. Fallback para reservas viejas (previas a esta actualización)
       const formaPagoVieja = activeEvent.forma_pago || "";
       const metodosValidos = ["TARJETA", "DEBITO", "EFECTIVO", "TRANSFERENCIA"];
       
       if (metodosValidos.includes(formaPagoVieja)) {
-        // Si el método antiguo coincide con uno de nuestros selectores
         setPagosList([{ forma_pago: formaPagoVieja, monto: monto }]);
       } else {
-        // Si dice "EFECTIVO + TARJETA" o está vacío, dejamos una fila lista para que el cajero reasigne
         setPagosList([{ forma_pago: "", monto: monto }]);
       }
     }
-    // ----------------------------------------------
 
     if (canchaStr && !isNaN(fecha.getTime())) {
-      // Usa la función que ya tienes para cargar horarios
       obtenerHorarios(canchaStr, horaStr);
     }
   }, [isDateModalOpen, activeEvent, cancha]);
-  //_-------------------------------------------------------------------------------------
-  /*
-   * MANEJO DEL CAMBIO DE ESTADO DE LOS COMPONENTES:TAMBIEN EL CAMBIO DE ESTADO DE ESTADO DE PAGO E INPUT MONTO
-   */
+
   const onInputChanged = async ({ target }) => {
     const { name, value } = target;
+    const newFormValues = { ...formValues, [name]: value };
 
-    const newFormValues = {
-      ...formValues,
-      [name]: value,
-    };
-    // Si no se está modificando 'fecha', aseguramos que sigue siendo un objeto Date
     if (name !== "fecha" && formValues.fecha instanceof Date) {
       newFormValues.fecha = formValues.fecha;
     }
 
     setFormValues(newFormValues);
-
     const { cancha, fecha, estado_pago } = newFormValues;
 
     if (cancha && estado_pago) {
       try {
         const { data } = await calendarApi.post("/reserva/obtener-monto", {
-          cancha,
-          estado_pago,
+          cancha, estado_pago,
         });
-
-        setFormValues((prev) => ({
-          ...prev,
-          monto: data.monto,
-        }));
+        setFormValues((prev) => ({ ...prev, monto: data.monto }));
       } catch (error) {
         console.error("Error al obtener monto:", error);
       }
     }
   };
-  //---------------------------------------------------------------------------------------
-  /**
-   * MANEJO DEL BOTON GUARDAR: REINICIO BOTON GUARDAR
-   */
+
   useEffect(() => {
-    setIsSubmitting(false); // se reinicia cuando cambia la fecha
+    setIsSubmitting(false);
   }, [date]);
 
-  //---------------------------------------------------------------------------------------
-  /**
-   * MANEJO DEL CIERRE DE MODAL
-   */
   const onCloseModal = async () => {
     closeDateModal();
-    setActiveEvent(null); //  limpiamos el evento activo
+    setActiveEvent(null);
   };
-  //---------------------------------------------------------------------------------------
-  /**
-   * TRABAJO ENVIO DE RESERVA AL BACKEND
-   * Trabajo el manejo de error por cada elemento.
-   */
-const onSubmit = async (event) => {
+
+  const onSubmit = async (event) => {
     event.preventDefault();
-if (
+    if (
       !formValues.cliente ||
       !formValues.cancha ||
       !formValues.hora ||
@@ -425,12 +335,27 @@ if (
       });
     }
 
-    // NUEVO: Validación estricta de Pagos Divididos
-// NUEVO: Validación estricta de Pagos Divididos
+    const frecuenciaSeleccionADA = formValues.frecuencia || "NINGUNA";
+
+    if (frecuenciaSeleccionADA !== "NINGUNA" && !formValues.fechaFin) {
+      return Swal.fire(
+        "Fecha requerida",
+        "Por favor selecciona hasta qué fecha se repetirá el turno fijo",
+        "warning"
+      );
+    }
+
+    let fechaFinYMD = null;
+    if (formValues.fechaFin) {
+      const f = new Date(formValues.fechaFin);
+      const y = f.getFullYear();
+      const m = String(f.getMonth() + 1).padStart(2, "0");
+      const d = String(f.getDate()).padStart(2, "0");
+      fechaFinYMD = `${y}-${m}-${d}`;
+    }
+
     if (formValues.estado_pago !== "IMPAGO") {
-      
-      // 1. BARRERA CONTRA CEROS Y NEGATIVOS
-      const pagosInvalidos = pagosList.some(p => Number(p.monto) <= 0);
+      const pagosInvalidos = pagosList.some((p) => Number(p.monto) <= 0);
       if (pagosInvalidos) {
         return Swal.fire({
           icon: "warning",
@@ -439,9 +364,7 @@ if (
         });
       }
 
-      // 2. VALIDACIÓN DE SUMA TOTAL
       const sumaPagos = pagosList.reduce((acc, p) => acc + Number(p.monto || 0), 0);
-      
       if (sumaPagos !== Number(formValues.monto)) {
         return Swal.fire({
           icon: "warning",
@@ -450,8 +373,7 @@ if (
         });
       }
 
-      // 3. VALIDACIÓN DE FORMA DE PAGO
-      const pagosIncompletos = pagosList.some(p => p.forma_pago === "");
+      const pagosIncompletos = pagosList.some((p) => p.forma_pago === "");
       if (pagosIncompletos) {
         return Swal.fire({
           icon: "warning",
@@ -460,76 +382,32 @@ if (
         });
       }
     }
-// 4. PREPARAMOS EL ENVÍO
+
     setIsSubmitting(true);
     setFormSubmitted(true);
-    
-    // Unimos los nombres de los pagos para pasar la validación estricta de rutas del backend
-    const formaPagoResumen = pagosList.map(p => p.forma_pago).join(" + ") || "IMPAGO";
 
-    // 5. ENVIAMOS Y ESPERAMOS LA RESPUESTA DEL MOTOR (true o false)
-    const exito = await startSavingEvent({ 
-      ...formValues, 
-      fecha: date, 
-      cliente: dni, 
+    const formaPagoResumen = pagosList.map((p) => p.forma_pago).join(" + ") || "IMPAGO";
+
+    const exito = await startSavingEvent({
+      ...formValues,
+      fecha: date,
+      cliente: dni,
       pagos: pagosList,
-      forma_pago: formaPagoResumen 
+      forma_pago: formaPagoResumen,
+      frecuencia: frecuenciaSeleccionADA,
+      fechaFin: fechaFinYMD,             
     });
 
-    // 6. EVALUAMOS QUÉ HACER
     if (exito) {
-      // Solo si el backend guardó perfecto, limpiamos todo y cerramos el modal
       setActiveEvent(null);
       setDni("");
       setPagosList([{ forma_pago: "", monto: "" }]);
       closeDateModal();
     }
-    
-    // Independientemente de si falló o no, reactivamos el botón para que pueda volver a intentar
+
     setIsSubmitting(false);
     setFormSubmitted(false);
   };
-    // setActiveEvent({
-    //   title: "",
-    //   start: "",
-    //   end: "",
-    //   cliente: null,
-    //   cancha: "",
-    //   fecha: date,
-    //   hora: "",
-    //   forma_pago: "",
-    //   estado_pago: "",
-    //   observacion: "",
-    //   monto_cancha: "",
-    //   monto_sena: "",
-    // });
-    // setDni("");
-    // setActiveEvent(null);
-    // setIsSubmitting(true);
-    // setFormSubmitted(true);
-    
-    // // Inyectamos el nuevo array de pagos al backend
-    // // await startSavingEvent({ ...formValues, fecha: date, cliente: dni, pagos: pagosList });
-    
-    // // Unimos los nombres de los pagos para pasar la validación estricta de rutas del backend
-    // const formaPagoResumen = pagosList.map(p => p.forma_pago).join(" + ") || "IMPAGO";
-
-    // // Inyectamos el nuevo array de pagos y el resumen al backend
-    // await startSavingEvent({ 
-    //   ...formValues, 
-    //   fecha: date, 
-    //   cliente: dni, 
-    //   pagos: pagosList,
-    //   forma_pago: formaPagoResumen // <- Esto engaña felizmente al validador
-    // });
-    // closeDateModal();
-
-    // setFormSubmitted(false);
-  
-  //---------------------------------------------------------------------------------------
-  /**
-   * EVITO QUE SE CARGUEN LOS DATOS ANTERIORES AL ABRIR NUEVAMENTE EL MODAL
-   */
 
   useEffect(() => {
     if (!isDateModalOpen) {
@@ -546,38 +424,16 @@ if (
         cliente: "",
         monto_cancha: "",
         monto_sena: "",
-        
+        frecuencia: "NINGUNA",
+        fechaFin: null,
       });
-      setPagosList([{ forma_pago: "", monto: "" }]); // Limpiar pagos al cerrar
-      // setDni("");
+      setPagosList([{ forma_pago: "", monto: "" }]);
     }
   }, [isDateModalOpen]);
 
-  //---------------------------------------------------------------------------------------
-  /**
-   * MANEJO LA FECHA DEL CALENDARIO PRINCIPAL
-   */
-  const fechaReserva = new Date(date).toLocaleDateString("es-AR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  //---------------------------------------------------------------------------------------
-  /**
-   * SOLUCION A INVALID DATE EN MODAL.
-   */
-  const getFechaFormateada = (fecha) => {
-    if (!(fecha instanceof Date) || isNaN(fecha)) return "Fecha no válida";
-
-    return fecha.toLocaleDateString("es-AR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
   useEffect(() => {
     if (isDateModalOpen) {
-      setIsSubmitting(false); // Reinicia botón al abrir modal
+      setIsSubmitting(false);
     }
   }, [isDateModalOpen]);
 
@@ -590,153 +446,98 @@ if (
       overlayClassName="modal-fondo"
       closeTimeoutMS={200}
     >
-      <h1 className="display-6" id="titulo">
-        Gestión de la Reserva
-      </h1>
+      <h1 className="display-6" id="titulo">Gestión de la Reserva</h1>
       <hr />
-      <form className="container" onSubmit={onSubmit}>
-        <div className="form-group mb-2">
-          <h5 style={{ textAlign: "center" }}>
-            {/* {<h3>{getFechaFormateada(formValues.fecha)}</h3>} */}
-          </h5>
-        </div>
-        <div className="form-group mb-2">
+      <form className="container px-1" onSubmit={onSubmit}>
+        <div className="form-group mb-3">
+          <label className="form-label fw-bold text-secondary small mb-1">Cliente</label>
           <AsyncSelect
             className="select-option"
             name="cliente"
-            placeholder="Buscar Cliente"
+            placeholder="Buscar Cliente por DNI o Nombre..."
             loadOptions={loadOptions}
             defaultOptions
             value={formValues.cliente}
-            isDisabled={!!activeEvent} //desactiva si es edición
-            onChange={(value) =>
-              onClienteChanged(
-                { target: { name: "cliente", value: value } },
-                value
-              )
-            }
+            isDisabled={!!activeEvent}
+            onChange={(value) => onClienteChanged({ target: { name: "cliente", value: value } }, value)}
           />
         </div>
-        <div className="form-group mb-2">
-          <select
-            className="form-select"
-            name="cancha"
-            id="select-cancha"
-            value={formValues.cancha}
-            onChange={(event) => {
-              const nuevaCancha = event.target.value;
-              setFormValues((prev) => ({
-                ...prev,
-                cancha: nuevaCancha,
-              }));
 
-              setHorariosDisponibles([]); //Limpia los horarios anteriores
+        <div className="d-flex gap-2 mb-3">
+          <div className="w-50">
+            <label className="form-label fw-bold text-secondary small mb-1">Cancha</label>
+            <select
+              className="form-select shadow-sm"
+              name="cancha"
+              value={formValues.cancha}
+              onChange={(event) => {
+                const nuevaCancha = event.target.value;
+                setFormValues((prev) => ({ ...prev, cancha: nuevaCancha }));
+                setHorariosDisponibles([]);
+                obtenerHorarios(nuevaCancha);
+              }}
+            >
+              <option value="" disabled>Seleccionar Cancha</option>
+              {cancha && cancha.length > 0 && cancha.map((c) => (
+                <option key={c.id} value={c.nombre}>{c.nombre}</option>
+              ))}
+            </select>
+          </div>
 
-              //Llamada al backend.
-              // obtenerHorarios(nuevaCancha, formValues.hora);
-              obtenerHorarios(nuevaCancha);
-            }}
-          >
-            <option key="0" value="" disabled>
-              Selecciona una cancha
-            </option>
-            {cancha && cancha.length > 0
-              ? cancha.map((cancha) => (
-                  <option key={cancha.id} value={cancha.nombre}>
-                    {cancha.nombre}
-                  </option>
-                ))
-              : null}
-          </select>
+          <div className="w-50">
+            <label className="form-label fw-bold text-secondary small mb-1">Horario</label>
+            <select
+              className="form-select shadow-sm"
+              name="hora"
+              value={formValues.hora || ""}
+              onChange={(e) => setFormValues((prev) => ({ ...prev, hora: e.target.value }))}
+            >
+              <option value="" disabled>Seleccionar Horario</option>
+              {horariosDisponibles.map((hora, index) => (
+                <option key={index} value={hora}>{hora} hs</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="form-group mb-2">
+        <div className="form-group mb-3">
+          <label className="form-label fw-bold text-secondary small mb-1">Estado del Pago</label>
           <select
-            className="form-select"
-            name="hora"
-            id="select-hora"
-            value={formValues.hora || ""}
-            onChange={(e) =>
-              setFormValues((prev) => ({
-                ...prev,
-                hora: e.target.value,
-              }))
-            }
-          >
-            <option key="0" value="" disabled>
-              Seleccione horario
-            </option>
-
-            {horariosDisponibles.map((hora, index) => (
-              <option key={index} value={hora}>
-                {hora}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group mb-2">
-          <select
-            className="form-select"
+            className="form-select shadow-sm"
             name="estado_pago"
-            id="select-ePago"
             value={formValues.estado_pago}
             onChange={onInputChanged}
           >
-            <option key="0" value="" disabled>
-              Seleccione estado de pago
-            </option>
-            <option value="TOTAL">TOTAL</option>
-            <option value="SEÑA">SEÑA</option>
-            <option value="IMPAGO">IMPAGO</option>
+            <option value="" disabled>Seleccione Estado de Pago</option>
+            <option value="TOTAL">TOTAL (Pago Completo)</option>
+            <option value="SEÑA">SEÑA (Pago Parcial)</option>
+            <option value="IMPAGO">IMPAGO (A pagar en cancha)</option>
           </select>
         </div>
 
-        {/* <div className="form-group mb-2">
-          <input
-            type="number"
-            name="monto"
-            placeholder="Monto"
-            id="input-monto"
-            value={formValues.monto || ""}
-            className="form-control"
-            disabled // para no editar
-          />
-
-          <select
-            className="form-select"
-            name="forma_pago"
-            id="select-fPago"
-            value={formValues.forma_pago}
-            onChange={onInputChanged}
-          >
-            <option key="0" value="" disabled>
-              Forma de pago
-            </option>
-            <option value="TARJETA">TARJETA</option>
-            <option value="DEBITO">DEBITO</option>
-            <option value="EFECTIVO">EFECTIVO</option>
-            <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-            <option value="SO">SIN OPERACION</option>
-          </select>
-        </div> */}
-        <div className="form-group mb-2">
-          <label className="mb-2 text-muted" style={{ display: 'block', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
-            <strong>Total a cobrar esperado: ${formValues.monto || 0}</strong>
-          </label>
+        <div className="form-group mb-3 p-3 bg-light rounded border shadow-sm">
+          <div className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+            <span className="fw-bold text-dark">Total a Cobrar Esperado:</span>
+            <span className="badge bg-success fs-6 px-3 py-2">${formValues.monto || 0}</span>
+          </div>
 
           {pagosList.map((pago, index) => (
-            <div key={index} className="d-flex mb-2 gap-2">
-              <input
-                type="number"
-                placeholder="Monto $"
-                className="form-control"
-                value={pago.monto}
-                onChange={(e) => handlePagoChange(index, "monto", e.target.value)}
-                disabled={formValues.estado_pago === "IMPAGO"}
-              />
+            <div key={index} className="d-flex gap-2 mb-2 align-items-center">
+              <div className="input-group input-group-sm" style={{ flex: "1 1 45%" }}>
+                <span className="input-group-text bg-white fw-bold">$</span>
+                <input
+                  type="number"
+                  placeholder="Monto"
+                  className="form-control"
+                  value={pago.monto}
+                  onChange={(e) => handlePagoChange(index, "monto", e.target.value)}
+                  disabled={formValues.estado_pago === "IMPAGO"}
+                />
+              </div>
+
               <select
-                className="form-select"
+                className="form-select form-select-sm"
+                style={{ flex: "1 1 45%" }}
                 value={pago.forma_pago}
                 onChange={(e) => handlePagoChange(index, "forma_pago", e.target.value)}
                 disabled={formValues.estado_pago === "IMPAGO"}
@@ -747,50 +548,84 @@ if (
                 <option value="EFECTIVO">EFECTIVO</option>
                 <option value="TRANSFERENCIA">TRANSFERENCIA</option>
               </select>
-              
+
               {pagosList.length > 1 && (
                 <button
                   type="button"
-                  className="btn btn-danger"
+                  className="btn btn-sm btn-outline-danger fw-bold"
+                  style={{ flex: "0 0 38px" }}
                   onClick={() => handleRemovePago(index)}
-                  title="Eliminar este pago"
+                  title="Eliminar fila"
                 >
-                  X
+                  ✕
                 </button>
               )}
             </div>
           ))}
 
           {formValues.estado_pago !== "IMPAGO" && (
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-primary mt-1"
-              onClick={handleAddPago}
-            >
-              + Agregar otro pago
-            </button>
+            <div className="text-end mt-2">
+              <button type="button" className="btn btn-sm btn-outline-dark fw-bold" onClick={handleAddPago}>
+                + Agregar método de pago
+              </button>
+            </div>
           )}
         </div>
 
-        <div className="form-group mb-2">
+        <div className="form-group mb-3 p-3 bg-light rounded border shadow-sm">
+          <label className="form-label fw-bold text-dark d-block mb-1">📅 Tipo de Reserva</label>
+          <select
+            className="form-select form-select-sm mb-2"
+            name="frecuencia"
+            value={formValues.frecuencia || "NINGUNA"}
+            onChange={(e) =>
+              setFormValues((prev) => ({
+                ...prev,
+                frecuencia: e.target.value,
+                fechaFin: e.target.value === "NINGUNA" ? null : prev.fechaFin,
+              }))
+            }
+          >
+            <option value="NINGUNA">Reserva Simple (Una sola fecha)</option>
+            <option value="SEMANAL">Turno Fijo - Semanal (Cada 7 días)</option>
+            <option value="QUINCENAL">Turno Fijo - Quincenal (Cada 14 días)</option>
+            <option value="MENSUAL">Turno Fijo - Mensual (Cada mes)</option>
+          </select>
+
+          {formValues.frecuencia && formValues.frecuencia !== "NINGUNA" && (
+            <div className="mt-2">
+              <label className="form-label text-muted small fw-bold mb-1">Repetir hasta la fecha:</label>
+              <DatePicker
+                selected={formValues.fechaFin}
+                onChange={(date) => setFormValues((prev) => ({ ...prev, fechaFin: date }))}
+                dateFormat="dd/MM/yyyy"
+                className="form-control form-control-sm w-100"
+                placeholderText="Seleccionar fecha límite"
+                locale="es"
+                minDate={new Date()}
+              />
+              <small className="text-info d-block mt-1">💡 Se crearán automáticamente las reservas hasta esta fecha.</small>
+            </div>
+          )}
+        </div>
+
+        <div className="form-group mb-3">
+          <label className="form-label fw-bold text-secondary small mb-1">Observaciones</label>
           <textarea
-            type="text"
-            className="form-control"
-            placeholder="Observaciones"
+            className="form-control shadow-sm"
+            placeholder="Notas adicionales sobre la reserva..."
             id="ta-observaciones"
-            rows="5"
+            rows="3"
             name="observacion"
             value={formValues.observacion}
             onChange={onInputChanged}
           ></textarea>
         </div>
-        <hr />
+
+        <hr className="my-3" />
+
         <div className="d-grid gap-2">
-          <button
-            type="submit"
-            className="btn btn-secondary"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="btn btn-secondary py-2 fw-bold shadow-sm" disabled={isSubmitting}>
             {isSubmitting ? "Guardando..." : "Guardar Reserva"}
           </button>
         </div>
