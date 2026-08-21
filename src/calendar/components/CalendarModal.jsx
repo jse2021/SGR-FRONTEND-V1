@@ -240,6 +240,55 @@ export const CalendarModal = ({ date, cliente }) => {
     }
     setFormValues({ ...formValues, [target.name]: target.value });
   };
+  // =====================================================================
+  // NUEVO: CREAR CLIENTE EXPRESS DESDE EL MODAL
+  // =====================================================================
+  const handleCrearClienteExpress = async () => {
+    const { value: nombreInvitado } = await Swal.fire({
+      title: 'Nuevo Cliente Invitado',
+      input: 'text',
+      inputLabel: 'Nombre del jugador (ej: Juan Pérez)',
+      inputPlaceholder: 'Ingresa el nombre...',
+      showCancelButton: true,
+      confirmButtonText: 'Crear Rápido',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Necesitas escribir un nombre!';
+        }
+      }
+    });
+
+    if (nombreInvitado) {
+      try {
+        const { data } = await calendarApi.post('/cliente/express', { nombre: nombreInvitado });
+        
+        if (data.ok) {
+          const nuevoCliente = data.cliente;
+          
+          // 1. Armamos el formato exacto que espera tu AsyncSelect
+          const opcionFormateada = {
+            value: nuevoCliente.dni,
+            label: `${nuevoCliente.dni} - ${nuevoCliente.apellido} ${nuevoCliente.nombre}`
+          };
+          
+          // 2. Lo inyectamos en el formulario obligando al select a actualizarse
+          onClienteChanged({ target: { name: 'cliente', value: opcionFormateada } }, opcionFormateada);
+          
+          Swal.fire({
+            icon: 'success',
+            title: '¡Invitado listo!',
+            text: 'Cliente seleccionado, ya puedes guardar la reserva.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
+      } catch (error) {
+        console.error("Error al crear express:", error);
+        Swal.fire('Error', 'No se pudo crear el cliente invitado', 'error');
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isDateModalOpen || !activeEvent) return;
@@ -449,18 +498,41 @@ export const CalendarModal = ({ date, cliente }) => {
       <h1 className="display-6" id="titulo">Gestión de la Reserva</h1>
       <hr />
       <form className="container px-1" onSubmit={onSubmit}>
+          {/* BUSCAR CLIENTE Y BOTÓN EXPRESS */}
         <div className="form-group mb-3">
           <label className="form-label fw-bold text-secondary small mb-1">Cliente</label>
-          <AsyncSelect
-            className="select-option"
-            name="cliente"
-            placeholder="Buscar Cliente por DNI o Nombre..."
-            loadOptions={loadOptions}
-            defaultOptions
-            value={formValues.cliente}
-            isDisabled={!!activeEvent}
-            onChange={(value) => onClienteChanged({ target: { name: "cliente", value: value } }, value)}
-          />
+          <div className="d-flex gap-2 align-items-center">
+            <div style={{ flex: 1 }}>
+              <AsyncSelect
+                className="select-option shadow-sm"
+                name="cliente"
+                placeholder="Buscar Cliente por DNI o Nombre..."
+                loadOptions={loadOptions}
+                defaultOptions
+                value={formValues.cliente}
+                isDisabled={!!activeEvent}
+                onChange={(value) =>
+                  onClienteChanged(
+                    { target: { name: "cliente", value: value } },
+                    value
+                  )
+                }
+              />
+            </div>
+            
+            {/* El botón de invitado solo se muestra si NO estamos editando una reserva vieja */}
+            {!activeEvent && (
+              <button
+                type="button"
+                className="btn btn-outline-success fw-bold shadow-sm"
+                style={{ whiteSpace: "nowrap" }}
+                onClick={handleCrearClienteExpress}
+                title="Crear cliente rápido sin pedir DNI"
+              >
+                + Invitado
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="d-flex gap-2 mb-3">
@@ -572,41 +644,62 @@ export const CalendarModal = ({ date, cliente }) => {
           )}
         </div>
 
+          {/* SECCIÓN TURNO FIJO */}
         <div className="form-group mb-3 p-3 bg-light rounded border shadow-sm">
           <label className="form-label fw-bold text-dark d-block mb-1">📅 Tipo de Reserva</label>
-          <select
-            className="form-select form-select-sm mb-2"
-            name="frecuencia"
-            value={formValues.frecuencia || "NINGUNA"}
-            onChange={(e) =>
-              setFormValues((prev) => ({
-                ...prev,
-                frecuencia: e.target.value,
-                fechaFin: e.target.value === "NINGUNA" ? null : prev.fechaFin,
-              }))
-            }
-          >
-            <option value="NINGUNA">Reserva Simple (Una sola fecha)</option>
-            <option value="SEMANAL">Turno Fijo - Semanal (Cada 7 días)</option>
-            <option value="QUINCENAL">Turno Fijo - Quincenal (Cada 14 días)</option>
-            <option value="MENSUAL">Turno Fijo - Mensual (Cada mes)</option>
-          </select>
+          
+          {(() => {
+            // Detectamos si es un cliente Express chequeando si su ID/DNI empieza con EXP-
+            const isExpressClient = formValues.cliente?.value?.startsWith("EXP-");
 
-          {formValues.frecuencia && formValues.frecuencia !== "NINGUNA" && (
-            <div className="mt-2">
-              <label className="form-label text-muted small fw-bold mb-1">Repetir hasta la fecha:</label>
-              <DatePicker
-                selected={formValues.fechaFin}
-                onChange={(date) => setFormValues((prev) => ({ ...prev, fechaFin: date }))}
-                dateFormat="dd/MM/yyyy"
-                className="form-control form-control-sm w-100"
-                placeholderText="Seleccionar fecha límite"
-                locale="es"
-                minDate={new Date()}
-              />
-              <small className="text-info d-block mt-1">💡 Se crearán automáticamente las reservas hasta esta fecha.</small>
-            </div>
-          )}
+            return (
+              <>
+                <select
+                  className="form-select form-select-sm mb-2"
+                  name="frecuencia"
+                  value={isExpressClient ? "NINGUNA" : (formValues.frecuencia || "NINGUNA")}
+                  onChange={(e) =>
+                    setFormValues((prev) => ({
+                      ...prev,
+                      frecuencia: e.target.value,
+                      fechaFin: e.target.value === "NINGUNA" ? null : prev.fechaFin,
+                    }))
+                  }
+                  disabled={isExpressClient} // Bloqueamos si es express
+                >
+                  <option value="NINGUNA">Reserva Simple (Una sola fecha)</option>
+                  {!isExpressClient && (
+                    <>
+                      <option value="SEMANAL">Turno Fijo - Semanal (Cada 7 días)</option>
+                      <option value="QUINCENAL">Turno Fijo - Quincenal (Cada 14 días)</option>
+                      <option value="MENSUAL">Turno Fijo - Mensual (Cada mes)</option>
+                    </>
+                  )}
+                </select>
+
+                {isExpressClient && (
+                  <small className="text-danger d-block mt-1 fw-bold">
+                    ⚠️ Los turnos fijos requieren un cliente formal, no un invitado.
+                  </small>
+                )}
+
+                {!isExpressClient && formValues.frecuencia && formValues.frecuencia !== "NINGUNA" && (
+                  <div className="mt-2">
+                    <label className="form-label text-muted small fw-bold mb-1">Repetir hasta la fecha:</label>
+                    <DatePicker
+                      selected={formValues.fechaFin}
+                      onChange={(date) => setFormValues((prev) => ({ ...prev, fechaFin: date }))}
+                      dateFormat="dd/MM/yyyy"
+                      className="form-control form-control-sm w-100"
+                      placeholderText="Seleccionar fecha límite"
+                      locale="es"
+                      minDate={new Date()}
+                    />
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
 
         <div className="form-group mb-3">
