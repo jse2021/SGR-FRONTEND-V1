@@ -57,18 +57,22 @@ export const CalendarModal = ({ date, cliente }) => {
     let fecha = new Date(rawDate);
     if (isNaN(fecha.getTime())) fecha = new Date();
 
-    const dniStr = typeof evt?.cliente === "object"
-      ? (evt?.cliente?.dni ?? evt?._cliente?.dni ?? "")
-      : (evt?.cliente ?? "");
+    const dniStr =
+      typeof evt?.cliente === "object"
+        ? evt?.cliente?.dni ?? evt?._cliente?.dni ?? ""
+        : evt?.cliente ?? "";
 
-    let canchaStr = typeof evt?.cancha === "object"
-      ? (evt?.cancha?.nombre ?? "")
-      : (evt?.cancha ?? "");
+    let canchaStr =
+      typeof evt?.cancha === "object"
+        ? evt?.cancha?.nombre ?? ""
+        : evt?.cancha ?? "";
 
     if (!canchaStr) canchaStr = evt?.title ?? "";
 
     if (!canchaStr && evt?.canchaId && Array.isArray(canchasList)) {
-      const found = canchasList.find(c => Number(c.id) === Number(evt.canchaId));
+      const found = canchasList.find(
+        (c) => Number(c.id) === Number(evt.canchaId)
+      );
       if (found) canchaStr = found.nombre;
     }
 
@@ -76,9 +80,14 @@ export const CalendarModal = ({ date, cliente }) => {
 
     let monto = 0;
     switch (evt?.estado_pago) {
-      case "TOTAL": monto = evt?.monto_cancha || 0; break;
-      case "SEÑA":  monto = evt?.monto_sena   || 0; break;
-      default:      monto = 0;
+      case "TOTAL":
+        monto = evt?.monto_cancha || 0;
+        break;
+      case "SEÑA":
+        monto = evt?.monto_sena || 0;
+        break;
+      default:
+        monto = 0;
     }
     return { fecha, dniStr, canchaStr, horaStr, monto };
   }
@@ -160,16 +169,24 @@ export const CalendarModal = ({ date, cliente }) => {
   }, [formValues.monto]);
 
   useEffect(() => {
-    if (isDateModalOpen && activeEvent && activeEvent.cancha && activeEvent.hora) {
+    if (
+      isDateModalOpen &&
+      activeEvent &&
+      activeEvent.cancha &&
+      activeEvent.hora
+    ) {
       obtenerHorarios(activeEvent.cancha, activeEvent.hora);
     }
   }, [isDateModalOpen]);
 
   const obtenerHorarios = async (canchaSeleccionada, horarioActual = null) => {
     try {
-      let fechaCruda = formValues.fecha || formValues.start || activeEvent?.start || date;
+      let fechaCruda =
+        formValues.fecha || formValues.start || activeEvent?.start || date;
       const d = new Date(fechaCruda);
-      const fechaYMD = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;
+      const fechaYMD = `${d.getUTCFullYear()}-${String(
+        d.getUTCMonth() + 1
+      ).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
 
       const { data } = await calendarApi.post("/reserva/horarios-disponibles", {
         fecha: fechaYMD,
@@ -184,7 +201,11 @@ export const CalendarModal = ({ date, cliente }) => {
         }
         setHorariosDisponibles(horarios);
       } else {
-        Swal.fire("Error", "No se pudieron obtener los horarios disponibles", "error");
+        Swal.fire(
+          "Error",
+          "No se pudieron obtener los horarios disponibles",
+          "error"
+        );
       }
     } catch (err) {
       console.error("Error al obtener horarios:", err);
@@ -245,47 +266,52 @@ export const CalendarModal = ({ date, cliente }) => {
   // =====================================================================
   const handleCrearClienteExpress = async () => {
     const { value: nombreInvitado } = await Swal.fire({
-      title: 'Nuevo Cliente Invitado',
-      input: 'text',
-      inputLabel: 'Nombre del jugador (ej: Juan Pérez)',
-      inputPlaceholder: 'Ingresa el nombre...',
+      title: "Nuevo Cliente Invitado",
+      input: "text",
+      inputLabel: "Nombre del jugador (ej: Juan Pérez)",
+      inputPlaceholder: "Ingresa el nombre...",
       showCancelButton: true,
-      confirmButtonText: 'Crear Rápido',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: "Crear Rápido",
+      cancelButtonText: "Cancelar",
       inputValidator: (value) => {
         if (!value) {
-          return '¡Necesitas escribir un nombre!';
+          return "¡Necesitas escribir un nombre!";
         }
-      }
+      },
     });
 
     if (nombreInvitado) {
       try {
-        const { data } = await calendarApi.post('/cliente/express', { nombre: nombreInvitado });
-        
+        const { data } = await calendarApi.post("/cliente/express", {
+          nombre: nombreInvitado,
+        });
+
         if (data.ok) {
           const nuevoCliente = data.cliente;
-          
+
           // 1. Armamos el formato exacto que espera tu AsyncSelect
           const opcionFormateada = {
             value: nuevoCliente.dni,
-            label: `${nuevoCliente.dni} - ${nuevoCliente.apellido} ${nuevoCliente.nombre}`
+            label: `${nuevoCliente.dni} - ${nuevoCliente.apellido} ${nuevoCliente.nombre}`,
           };
-          
+
           // 2. Lo inyectamos en el formulario obligando al select a actualizarse
-          onClienteChanged({ target: { name: 'cliente', value: opcionFormateada } }, opcionFormateada);
-          
+          onClienteChanged(
+            { target: { name: "cliente", value: opcionFormateada } },
+            opcionFormateada
+          );
+
           Swal.fire({
-            icon: 'success',
-            title: '¡Invitado listo!',
-            text: 'Cliente seleccionado, ya puedes guardar la reserva.',
+            icon: "success",
+            title: "¡Invitado listo!",
+            text: "Cliente seleccionado, ya puedes guardar la reserva.",
             timer: 2000,
-            showConfirmButton: false
+            showConfirmButton: false,
           });
         }
       } catch (error) {
         console.error("Error al crear express:", error);
-        Swal.fire('Error', 'No se pudo crear el cliente invitado', 'error');
+        Swal.fire("Error", "No se pudo crear el cliente invitado", "error");
       }
     }
   };
@@ -293,15 +319,19 @@ export const CalendarModal = ({ date, cliente }) => {
   useEffect(() => {
     if (!isDateModalOpen || !activeEvent) return;
 
-    const { fecha, dniStr, canchaStr, horaStr, monto } =
-      normalizeFromEvent(activeEvent, cancha);
+    const { fecha, dniStr, canchaStr, horaStr, monto } = normalizeFromEvent(
+      activeEvent,
+      cancha
+    );
 
     const clienteValue = {
       value: dniStr,
-      label: `${dniStr}-${activeEvent?.apellidoCliente ?? ""} ${activeEvent?.nombreCliente ?? ""}`.trim(),
+      label: `${dniStr}-${activeEvent?.apellidoCliente ?? ""} ${
+        activeEvent?.nombreCliente ?? ""
+      }`.trim(),
     };
 
-    setFormValues(prev => ({
+    setFormValues((prev) => ({
       ...prev,
       ...activeEvent,
       fecha,
@@ -316,15 +346,15 @@ export const CalendarModal = ({ date, cliente }) => {
     setDni(dniStr);
 
     if (activeEvent.pagos && activeEvent.pagos.length > 0) {
-      const pagosOriginales = activeEvent.pagos.map(p => ({
+      const pagosOriginales = activeEvent.pagos.map((p) => ({
         forma_pago: p.forma_pago,
-        monto: Number(p.monto)
+        monto: Number(p.monto),
       }));
       setPagosList(pagosOriginales);
     } else {
       const formaPagoVieja = activeEvent.forma_pago || "";
       const metodosValidos = ["TARJETA", "DEBITO", "EFECTIVO", "TRANSFERENCIA"];
-      
+
       if (metodosValidos.includes(formaPagoVieja)) {
         setPagosList([{ forma_pago: formaPagoVieja, monto: monto }]);
       } else {
@@ -351,7 +381,8 @@ export const CalendarModal = ({ date, cliente }) => {
     if (cancha && estado_pago) {
       try {
         const { data } = await calendarApi.post("/reserva/obtener-monto", {
-          cancha, estado_pago,
+          cancha,
+          estado_pago,
         });
         setFormValues((prev) => ({ ...prev, monto: data.monto }));
       } catch (error) {
@@ -413,7 +444,10 @@ export const CalendarModal = ({ date, cliente }) => {
         });
       }
 
-      const sumaPagos = pagosList.reduce((acc, p) => acc + Number(p.monto || 0), 0);
+      const sumaPagos = pagosList.reduce(
+        (acc, p) => acc + Number(p.monto || 0),
+        0
+      );
       if (sumaPagos !== Number(formValues.monto)) {
         return Swal.fire({
           icon: "warning",
@@ -435,7 +469,8 @@ export const CalendarModal = ({ date, cliente }) => {
     setIsSubmitting(true);
     setFormSubmitted(true);
 
-    const formaPagoResumen = pagosList.map((p) => p.forma_pago).join(" + ") || "IMPAGO";
+    const formaPagoResumen =
+      pagosList.map((p) => p.forma_pago).join(" + ") || "IMPAGO";
 
     const exito = await startSavingEvent({
       ...formValues,
@@ -444,7 +479,7 @@ export const CalendarModal = ({ date, cliente }) => {
       pagos: pagosList,
       forma_pago: formaPagoResumen,
       frecuencia: frecuenciaSeleccionADA,
-      fechaFin: fechaFinYMD,             
+      fechaFin: fechaFinYMD,
     });
 
     if (exito) {
@@ -495,12 +530,16 @@ export const CalendarModal = ({ date, cliente }) => {
       overlayClassName="modal-fondo"
       closeTimeoutMS={200}
     >
-      <h1 className="display-6" id="titulo">Gestión de la Reserva</h1>
+      <h1 className="display-6" id="titulo">
+        Gestión de la Reserva
+      </h1>
       <hr />
       <form className="container px-1" onSubmit={onSubmit}>
-          {/* BUSCAR CLIENTE Y BOTÓN EXPRESS */}
+        {/* BUSCAR CLIENTE Y BOTÓN EXPRESS */}
         <div className="form-group mb-3">
-          <label className="form-label fw-bold text-secondary small mb-1">Cliente</label>
+          <label className="form-label fw-bold text-secondary small mb-1">
+            Cliente
+          </label>
           <div className="d-flex gap-2 align-items-center">
             <div style={{ flex: 1 }}>
               <AsyncSelect
@@ -519,7 +558,7 @@ export const CalendarModal = ({ date, cliente }) => {
                 }
               />
             </div>
-            
+
             {/* El botón de invitado solo se muestra si NO estamos editando una reserva vieja */}
             {!activeEvent && (
               <button
@@ -537,7 +576,9 @@ export const CalendarModal = ({ date, cliente }) => {
 
         <div className="d-flex gap-2 mb-3">
           <div className="w-50">
-            <label className="form-label fw-bold text-secondary small mb-1">Cancha</label>
+            <label className="form-label fw-bold text-secondary small mb-1">
+              Cancha
+            </label>
             <select
               className="form-select shadow-sm"
               name="cancha"
@@ -549,38 +590,56 @@ export const CalendarModal = ({ date, cliente }) => {
                 obtenerHorarios(nuevaCancha);
               }}
             >
-              <option value="" disabled>Seleccionar Cancha</option>
-              {cancha && cancha.length > 0 && cancha.map((c) => (
-                <option key={c.id} value={c.nombre}>{c.nombre}</option>
-              ))}
+              <option value="" disabled>
+                Seleccionar Cancha
+              </option>
+              {cancha &&
+                cancha.length > 0 &&
+                cancha.map((c) => (
+                  <option key={c.id} value={c.nombre}>
+                    {c.nombre}
+                  </option>
+                ))}
             </select>
           </div>
 
           <div className="w-50">
-            <label className="form-label fw-bold text-secondary small mb-1">Horario</label>
+            <label className="form-label fw-bold text-secondary small mb-1">
+              Horario
+            </label>
             <select
               className="form-select shadow-sm"
               name="hora"
               value={formValues.hora || ""}
-              onChange={(e) => setFormValues((prev) => ({ ...prev, hora: e.target.value }))}
+              onChange={(e) =>
+                setFormValues((prev) => ({ ...prev, hora: e.target.value }))
+              }
             >
-              <option value="" disabled>Seleccionar Horario</option>
+              <option value="" disabled>
+                Seleccionar Horario
+              </option>
               {horariosDisponibles.map((hora, index) => (
-                <option key={index} value={hora}>{hora} hs</option>
+                <option key={index} value={hora}>
+                  {hora} hs
+                </option>
               ))}
             </select>
           </div>
         </div>
 
         <div className="form-group mb-3">
-          <label className="form-label fw-bold text-secondary small mb-1">Estado del Pago</label>
+          <label className="form-label fw-bold text-secondary small mb-1">
+            Estado del Pago
+          </label>
           <select
             className="form-select shadow-sm"
             name="estado_pago"
             value={formValues.estado_pago}
             onChange={onInputChanged}
           >
-            <option value="" disabled>Seleccione Estado de Pago</option>
+            <option value="" disabled>
+              Seleccione Estado de Pago
+            </option>
             <option value="TOTAL">TOTAL (Pago Completo)</option>
             <option value="SEÑA">SEÑA (Pago Parcial)</option>
             <option value="IMPAGO">IMPAGO (A pagar en cancha)</option>
@@ -590,19 +649,26 @@ export const CalendarModal = ({ date, cliente }) => {
         <div className="form-group mb-3 p-3 bg-light rounded border shadow-sm">
           <div className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
             <span className="fw-bold text-dark">Total a Cobrar Esperado:</span>
-            <span className="badge bg-success fs-6 px-3 py-2">${formValues.monto || 0}</span>
+            <span className="badge bg-success fs-6 px-3 py-2">
+              ${formValues.monto || 0}
+            </span>
           </div>
 
           {pagosList.map((pago, index) => (
             <div key={index} className="d-flex gap-2 mb-2 align-items-center">
-              <div className="input-group input-group-sm" style={{ flex: "1 1 45%" }}>
+              <div
+                className="input-group input-group-sm"
+                style={{ flex: "1 1 45%" }}
+              >
                 <span className="input-group-text bg-white fw-bold">$</span>
                 <input
                   type="number"
                   placeholder="Monto"
                   className="form-control"
                   value={pago.monto}
-                  onChange={(e) => handlePagoChange(index, "monto", e.target.value)}
+                  onChange={(e) =>
+                    handlePagoChange(index, "monto", e.target.value)
+                  }
                   disabled={formValues.estado_pago === "IMPAGO"}
                 />
               </div>
@@ -611,10 +677,14 @@ export const CalendarModal = ({ date, cliente }) => {
                 className="form-select form-select-sm"
                 style={{ flex: "1 1 45%" }}
                 value={pago.forma_pago}
-                onChange={(e) => handlePagoChange(index, "forma_pago", e.target.value)}
+                onChange={(e) =>
+                  handlePagoChange(index, "forma_pago", e.target.value)
+                }
                 disabled={formValues.estado_pago === "IMPAGO"}
               >
-                <option value="" disabled>Método</option>
+                <option value="" disabled>
+                  Método
+                </option>
                 <option value="TARJETA">TARJETA</option>
                 <option value="DEBITO">DEBITO</option>
                 <option value="EFECTIVO">EFECTIVO</option>
@@ -637,73 +707,102 @@ export const CalendarModal = ({ date, cliente }) => {
 
           {formValues.estado_pago !== "IMPAGO" && (
             <div className="text-end mt-2">
-              <button type="button" className="btn btn-sm btn-outline-dark fw-bold" onClick={handleAddPago}>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-dark fw-bold"
+                onClick={handleAddPago}
+              >
                 + Agregar método de pago
               </button>
             </div>
           )}
         </div>
 
-          {/* SECCIÓN TURNO FIJO */}
+        {/* SECCIÓN TURNO FIJO */}
         <div className="form-group mb-3 p-3 bg-light rounded border shadow-sm">
-          <label className="form-label fw-bold text-dark d-block mb-1">📅 Tipo de Reserva</label>
-          
+          <label className="form-label fw-bold text-dark d-block mb-1">
+            📅 Tipo de Reserva
+          </label>
+
           {(() => {
             // Detectamos si es un cliente Express chequeando si su ID/DNI empieza con EXP-
-            const isExpressClient = formValues.cliente?.value?.startsWith("EXP-");
+            const isExpressClient =
+              formValues.cliente?.value?.startsWith("EXP-");
 
             return (
               <>
                 <select
                   className="form-select form-select-sm mb-2"
                   name="frecuencia"
-                  value={isExpressClient ? "NINGUNA" : (formValues.frecuencia || "NINGUNA")}
+                  value={
+                    isExpressClient
+                      ? "NINGUNA"
+                      : formValues.frecuencia || "NINGUNA"
+                  }
                   onChange={(e) =>
                     setFormValues((prev) => ({
                       ...prev,
                       frecuencia: e.target.value,
-                      fechaFin: e.target.value === "NINGUNA" ? null : prev.fechaFin,
+                      fechaFin:
+                        e.target.value === "NINGUNA" ? null : prev.fechaFin,
                     }))
                   }
                   disabled={isExpressClient} // Bloqueamos si es express
                 >
-                  <option value="NINGUNA">Reserva Simple (Una sola fecha)</option>
+                  <option value="NINGUNA">
+                    Reserva Simple (Una sola fecha)
+                  </option>
                   {!isExpressClient && (
                     <>
-                      <option value="SEMANAL">Turno Fijo - Semanal (Cada 7 días)</option>
-                      <option value="QUINCENAL">Turno Fijo - Quincenal (Cada 14 días)</option>
-                      <option value="MENSUAL">Turno Fijo - Mensual (Cada mes)</option>
+                      <option value="SEMANAL">
+                        Turno Fijo - Semanal (Cada 7 días)
+                      </option>
+                      <option value="QUINCENAL">
+                        Turno Fijo - Quincenal (Cada 14 días)
+                      </option>
+                      <option value="MENSUAL">
+                        Turno Fijo - Mensual (Cada mes)
+                      </option>
                     </>
                   )}
                 </select>
 
                 {isExpressClient && (
                   <small className="text-danger d-block mt-1 fw-bold">
-                    ⚠️ Los turnos fijos requieren un cliente formal, no un invitado.
+                    ⚠️ Los turnos fijos requieren un cliente formal, no un
+                    invitado.
                   </small>
                 )}
 
-                {!isExpressClient && formValues.frecuencia && formValues.frecuencia !== "NINGUNA" && (
-                  <div className="mt-2">
-                    <label className="form-label text-muted small fw-bold mb-1">Repetir hasta la fecha:</label>
-                    <DatePicker
-                      selected={formValues.fechaFin}
-                      onChange={(date) => setFormValues((prev) => ({ ...prev, fechaFin: date }))}
-                      dateFormat="dd/MM/yyyy"
-                      className="form-control form-control-sm w-100"
-                      placeholderText="Seleccionar fecha límite"
-                      locale="es"
-                      minDate={new Date()}
-                    />
-                  </div>
-                )}
+                {!isExpressClient &&
+                  formValues.frecuencia &&
+                  formValues.frecuencia !== "NINGUNA" && (
+                    <div className="mt-2">
+                      <label className="form-label text-muted small fw-bold mb-1">
+                        Repetir hasta la fecha:
+                      </label>
+                      <DatePicker
+                        selected={formValues.fechaFin}
+                        onChange={(date) =>
+                          setFormValues((prev) => ({ ...prev, fechaFin: date }))
+                        }
+                        dateFormat="dd/MM/yyyy"
+                        className="form-control form-control-sm w-100"
+                        placeholderText="Seleccionar fecha límite"
+                        locale="es"
+                        minDate={new Date()}
+                      />
+                    </div>
+                  )}
               </>
             );
           })()}
         </div>
 
         <div className="form-group mb-3">
-          <label className="form-label fw-bold text-secondary small mb-1">Observaciones</label>
+          <label className="form-label fw-bold text-secondary small mb-1">
+            Observaciones
+          </label>
           <textarea
             className="form-control shadow-sm"
             placeholder="Notas adicionales sobre la reserva..."
@@ -718,7 +817,11 @@ export const CalendarModal = ({ date, cliente }) => {
         <hr className="my-3" />
 
         <div className="d-grid gap-2">
-          <button type="submit" className="btn btn-secondary py-2 fw-bold shadow-sm" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="btn btn-secondary py-2 fw-bold shadow-sm"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Guardando..." : "Guardar Reserva"}
           </button>
         </div>
